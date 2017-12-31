@@ -4,6 +4,8 @@ using System.Reflection;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+#pragma warning disable CS1591
+
 namespace LoxSmoke.DocXmlUnitTests
 {
     [TestClass]
@@ -235,8 +237,7 @@ namespace LoxSmoke.DocXmlUnitTests
         public void TemplateMethod_Comments()
         {
             var m = GetReader();
-            var minfo = typeof(MyClass2).GetMethods().FirstOrDefault(
-                mt => mt.Name == "TemplateMethod");
+            var minfo = typeof(MyClass2).GetMethod("TemplateMethod");
             var mm = m.GetMethodComments(minfo);
             Assert.AreEqual(mm.Summary.Trim(), "TemplateMethod description");
             Assert.AreEqual(mm.Returns.Trim(), "Return value description");

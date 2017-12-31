@@ -14,12 +14,20 @@ namespace LoxSmoke.DocXml
         private readonly XPathDocument document;
         private readonly XPathNavigator navigator;
 
+        /// <summary>
+        /// Open specified XML documentation file
+        /// </summary>
+        /// <param name="fileName">The name of the XML documentation file.</param>
         public DocXmlReader(string fileName)
         {
             document = new XPathDocument(fileName);
             navigator = document.CreateNavigator();
         }
 
+        /// <summary>
+        /// Create reader for specified xpath document
+        /// </summary>
+        /// <param name="xPathDocument">XML documentation</param>
         public DocXmlReader(XPathDocument xPathDocument)
         {
             document = xPathDocument ?? throw new ArgumentException(nameof(xPathDocument));

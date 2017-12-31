@@ -86,7 +86,7 @@ namespace LoxSmoke.DocXml
         /// <summary>
         /// Get XML Id of field
         /// </summary>
-        /// <param name="propertyInfo"></param>
+        /// <param name="fieldInfo"></param>
         /// <returns></returns>
         public static string FieldId(this MemberInfo fieldInfo)
         {
@@ -97,7 +97,7 @@ namespace LoxSmoke.DocXml
         /// <summary>
         /// Get XML Id of event field
         /// </summary>
-        /// <param name="propertyInfo"></param>
+        /// <param name="eventInfo"></param>
         /// <returns></returns>
         public static string EventId(this MemberInfo eventInfo)
         {

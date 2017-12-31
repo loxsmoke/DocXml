@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Xml.XPath;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,11 +26,35 @@ namespace LoxSmoke.DocXmlUnitTests
         }
 
         [TestMethod]
+        public void Reader_From_XPathDocument()
+        {
+            var m = new DocXmlReader(new XPathDocument("DocXmlUnitTests.xml"));
+            var mm = m.GetTypeComments(typeof(MyClass2));
+            Assert.AreEqual(mm.Summary.Trim(), "This is MyClass2");
+        }
+
+        [TestMethod]
         public void NestedClass_Comment()
         {
             var m = GetReader();
             var mm = m.GetTypeComments(typeof(MyClass2.Nested));
             Assert.AreEqual(mm.Summary.Trim(), "Nested class");
+        }
+
+        [TestMethod]
+        public void EnumType_Comment()
+        {
+            var m = GetReader();
+            var mm = m.GetEnumComments(typeof(TestEnum2));
+            Assert.AreEqual(mm.Summary.Trim(), "Enum 2 type description");
+            Assert.AreEqual(mm.ValueComments.Count, 0);
+        }
+
+        [TestMethod]
+        public void NotEnumType_Comment()
+        {
+            var m = GetReader();
+            Assert.ThrowsException<ArgumentException>(() => m.GetEnumComments(typeof(MyClass2)));
         }
 
         [TestMethod]

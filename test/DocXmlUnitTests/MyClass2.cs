@@ -21,6 +21,17 @@ namespace LoxSmoke.DocXmlUnitTests
     };
 
     /// <summary>
+    /// Enum 2 type description
+    /// </summary>
+    public enum TestEnum2
+    {
+#pragma warning disable CS1591
+        Value21,
+        Value22
+#pragma warning restore CS1591
+    };
+
+    /// <summary>
     /// This is MyClass2 
     /// </summary>
     public class MyClass2

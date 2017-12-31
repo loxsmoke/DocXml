@@ -34,7 +34,8 @@ Console.WriteLine(comments.Returns);
 
 ## How to use
 
-Nuget is coming....
+DocXml is available as LoxSmoke.DocXml nuget package. It is built as .net standard 2.0 class library.
+Current version is 1.0.0
 
 ## Classes and methods
 

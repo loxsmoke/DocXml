@@ -10,22 +10,15 @@ here is the class with generic method and the piece of code that retrieves metho
 ```
 // Source code for XML documentation
 namespace LoxSmoke.DocXmlUnitTests
-
 {
-
     class MyClass2
     {
         /// <summary>
-
         /// TemplateMethod description
-
         /// </summary>
-
         /// <returns>Return value description</returns>
-
         public List<T> TemplateMethod<T>()
- { return null; }
-
+        { return null; }
     }
 }
 ```
@@ -33,10 +26,8 @@ namespace LoxSmoke.DocXmlUnitTests
 ```
 var minfo = typeof(MyClass2).GetMethod("TemplateMethod");
 
-
 DocXmlReader reader = new DocXmlReader("DocXmlUnitTests.xml");
 var comments = reader.GetMethodComments(minfo);
-
 Console.WriteLine(comments.Summary);
 Console.WriteLine(comments.Returns);
 ```

@@ -35,7 +35,7 @@ Console.WriteLine(comments.Returns);
 ## How to use
 
 DocXml is available as LoxSmoke.DocXml nuget package. It is built as .net standard 2.0 class library.
-Current version is 1.0.0
+Current version is 1.1.0
 
 ## Classes and methods
 
@@ -44,6 +44,7 @@ The main class is **DocXmlReader**. It reads XML file and returns documentation/
 Comment classes represent one or more comments associated with each item in the source code. Simple summary 
 comments are returned as strings and more complex comments are returned as comments objects. Here is the list of 
 comments classes:
+* **CommonComments** is the base class of all comments classes.
 * **TypeComments** is documentation of the class or struct. 
 * **MethodComments** is documentation of the method, constructor, operator or property with parameter descriptions.
 * **EnumComments** is documentation of the Enum type. Comments of enum values are included here as well.

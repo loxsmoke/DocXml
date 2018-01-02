@@ -28,5 +28,18 @@ namespace LoxSmoke.DocXmlUnitTests
     /// </summary>
     class MyClass3 : BaseClass
     {
+        /// <summary>
+        /// Constructor comment
+        /// </summary>
+        public MyClass3()
+        {
+        }
+
+        /// <summary>Method summary</summary>
+        /// <remarks>Method remarks</remarks>
+        /// <example>Method example</example>
+        public void MethodWithComments()
+        {
+        }
     }
 }

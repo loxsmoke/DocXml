@@ -38,7 +38,7 @@ namespace LoxSmoke.DocXml
         #region Public methods
         /// <summary>
         /// Returns the following comments for class method:
-        /// Summary, Description, Paramters (if present), Responses (if present), Returns
+        /// Summary, Remarks, Paramters (if present), Responses (if present), Returns
         /// </summary>
         /// <param name="methodInfo"></param>
         /// <returns></returns>
@@ -48,8 +48,7 @@ namespace LoxSmoke.DocXml
             var comments = new MethodComments();
             if (methodNode != null)
             {
-                comments.Summary = GetSummaryComment(methodNode);
-                comments.Description = GetRemarksComment(methodNode);
+                GetCommonComments(comments, methodNode);
                 comments.Parameters = GetParametersComments(methodNode);
                 comments.Returns = GetReturnsComment(methodNode);
                 comments.Responses = GetResponsesComments(methodNode);
@@ -73,7 +72,7 @@ namespace LoxSmoke.DocXml
                 {
                     comments.Parameters = GetParametersComments(typeNode);
                 }
-                comments.Summary = GetSummaryComment(typeNode);
+                GetCommonComments(comments, typeNode);
             }
             return comments;
         }
@@ -81,11 +80,24 @@ namespace LoxSmoke.DocXml
         /// <summary>
         /// Returns Summary comment for specified class member.
         /// </summary>
-        /// <param name="mmemberInfo"></param>
+        /// <param name="memberInfo"></param>
         /// <returns></returns>
         public string GetMemberComment(MemberInfo memberInfo)
         {
             return GetSummaryComment(GetXmlMemberNode(memberInfo.MemberId()));
+        }
+
+        /// <summary>
+        /// Returns comments for specified class member.
+        /// </summary>
+        /// <param name="memberInfo"></param>
+        /// <returns></returns>
+        public CommonComments GetMemberComments(MemberInfo memberInfo)
+        {
+            var comments = new CommonComments();
+            var node = GetXmlMemberNode(memberInfo.MemberId());
+            if (node != null) GetCommonComments(comments, node);
+            return comments;
         }
 
         /// <summary>
@@ -98,17 +110,19 @@ namespace LoxSmoke.DocXml
         {
             if (!enumType.IsEnum) throw new ArgumentException(nameof(enumType));
 
-            var comments = new EnumComments()
+            var comments = new EnumComments();
+            var typeNode = GetXmlMemberNode(enumType.TypeId());
+            if (typeNode != null)
             {
-                Summary = GetTypeComments(enumType).Summary
+                GetCommonComments(comments, typeNode);
             };
 
             bool valueCommentsExist = false;
             foreach (var enumName in enumType.GetEnumNames())
             {
-                var typeNode = GetXmlMemberNode(enumType.EnumValueId(enumName));
-                valueCommentsExist |= (typeNode != null);
-                comments.ValueComments.Add(new Tuple<string, string>(enumName, GetSummaryComment(typeNode)));
+                var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName));
+                valueCommentsExist |= (valueNode != null);
+                comments.ValueComments.Add(new Tuple<string, string>(enumName, GetSummaryComment(valueNode)));
             }
             if (!valueCommentsExist) comments.ValueComments.Clear();
             return comments;
@@ -120,6 +134,7 @@ namespace LoxSmoke.DocXml
         private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryXPath = "summary";
         private const string RemarksXPath = "remarks";
+        private const string ExampleXPath = "example";
         private const string ParamXPath = "param";
         private const string ResponsesXPath = "response";
         private const string ReturnsXPath = "returns";
@@ -130,6 +145,14 @@ namespace LoxSmoke.DocXml
         #endregion
 
         #region XML helper functions
+
+        private void GetCommonComments(CommonComments comments, XPathNavigator rootNode)
+        {
+            comments.Summary = GetSummaryComment(rootNode);
+            comments.Remarks = GetRemarksComment(rootNode);
+            comments.Example = GetExampleComment(rootNode);
+        }
+
         private XPathNavigator GetXmlMemberNode(string name)
         {
             return navigator.SelectSingleNode(string.Format(MemberXPath, name));
@@ -155,6 +178,11 @@ namespace LoxSmoke.DocXml
         private string GetRemarksComment(XPathNavigator rootNode)
         {
             return rootNode?.SelectSingleNode(RemarksXPath)?.InnerXml ?? "";
+        }
+
+        private string GetExampleComment(XPathNavigator rootNode)
+        {
+            return rootNode?.SelectSingleNode(ExampleXPath)?.InnerXml ?? "";
         }
 
         private string GetReturnsComment(XPathNavigator methodNode)

@@ -7,13 +7,8 @@ namespace LoxSmoke.DocXml
     /// <summary>
     /// Class, Struct and delegate comments
     /// </summary>
-    public class TypeComments
+    public class TypeComments : CommonComments
     {
-        /// <summary>
-        /// "summary" comment of type.
-        /// </summary>
-        public string Summary { get; set; } = "";
-
         /// <summary>
         /// This list contains descriptions of delegate type parameters. 
         /// For non-delegate types this list is empty.

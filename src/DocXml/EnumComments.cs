@@ -7,13 +7,8 @@ namespace LoxSmoke.DocXml
     /// <summary>
     /// Enum type comments
     /// </summary>
-    public class EnumComments
+    public class EnumComments : CommonComments
     {
-        /// <summary>
-        /// "summary" comment of Enum
-        /// </summary>
-        public string Summary { get; set; }
-
         /// <summary>
         /// "summary" comments of enum values. List contains tuples where 
         /// Item1 is the enum value name and Item2 is the summary comment.

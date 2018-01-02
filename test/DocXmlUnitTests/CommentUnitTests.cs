@@ -311,5 +311,25 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual(mm.Parameters[1].Item1, "parameter2");
             Assert.AreEqual(mm.Parameters[1].Item2, "Parameter description");
         }
+
+        [TestMethod]
+        public void MemberSummary_Comment()
+        {
+            var m = GetReader();
+            var constructors = typeof(MyClass3).GetConstructors();
+            Assert.AreEqual(constructors.Length, 1);
+            Assert.IsTrue(m.GetMemberComment(constructors.First()).Trim() == "Constructor comment");
+        }
+
+        [TestMethod]
+        public void MemberComments()
+        {
+            var m = GetReader();
+            var info = typeof(MyClass3).GetMethod("MethodWithComments");
+            var comments = m.GetMemberComments(info);
+            Assert.AreEqual(comments.Summary, "Method summary");
+            Assert.AreEqual(comments.Example, "Method example");
+            Assert.AreEqual(comments.Remarks, "Method remarks");
+        }
     }
 }

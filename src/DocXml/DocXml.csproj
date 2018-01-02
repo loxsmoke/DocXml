@@ -2,6 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>LoxSmoke.DocXml</PackageId>
+    <Authors>LoxSmoke</Authors>
+    <Company>LoxSmoke</Company>
+    <PackageLicenseUrl>https://github.com/loxsmoke/DocXml/blob/master/LICENSE</PackageLicenseUrl>
+    <Description>A set of helper classes and methods for compiler-generated XML documentation retrieval.</Description>
+    <Copyright>Copyright 2017-2018 LoxSmoke</Copyright>
+    <PackageTags>xml documentation comments docxml loxsmoke</PackageTags>
+    <RepositoryUrl>https://github.com/loxsmoke/DocXml</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/loxsmoke/DocXml</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>

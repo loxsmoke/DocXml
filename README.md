@@ -1,6 +1,6 @@
 # DocXml - C# XML documentation reader 
 
-[![Build status](https://ci.appveyor.com/api/github/webhook?id=06wykx631o8vs4wc)]
+[![Build status](https://ci.appveyor.com/api/projects/status/5dvuk9y8eo6q85n4?svg=true)](https://ci.appveyor.com/project/loxsmoke/docxml-nbx6b)
 
 This component is a set of helper classes and methods for compiler-generated XML documentation retrieval.
 XML documentation as described here https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments

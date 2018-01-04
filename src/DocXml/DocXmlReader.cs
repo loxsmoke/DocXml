@@ -50,8 +50,9 @@ namespace LoxSmoke.DocXml
             {
                 GetCommonComments(comments, methodNode);
                 comments.Parameters = GetParametersComments(methodNode);
+                comments.TypeParameters = GetNamedComments(methodNode, TypeParamXPath, NameAttribute);
                 comments.Returns = GetReturnsComment(methodNode);
-                comments.Responses = GetResponsesComments(methodNode);
+                comments.Responses = GetNamedComments(methodNode, ResponsesXPath, CodeAttribute);
             }
             return comments;
         }
@@ -136,6 +137,7 @@ namespace LoxSmoke.DocXml
         private const string RemarksXPath = "remarks";
         private const string ExampleXPath = "example";
         private const string ParamXPath = "param";
+        private const string TypeParamXPath = "typeparam";
         private const string ResponsesXPath = "response";
         private const string ReturnsXPath = "returns";
 
@@ -156,19 +158,6 @@ namespace LoxSmoke.DocXml
         private XPathNavigator GetXmlMemberNode(string name)
         {
             return navigator.SelectSingleNode(string.Format(MemberXPath, name));
-        }
-
-        private List<Tuple<string, string>> GetParametersComments(XPathNavigator rootNode)
-        {
-            var list = new List<Tuple<string, string>>();
-            if (rootNode == null) return list;
-            var paramNodes = rootNode.Select(ParamXPath);
-            while (paramNodes.MoveNext())
-            {
-                var name = paramNodes.Current.GetAttribute(NameAttribute, "");
-                list.Add(new Tuple<string, string>(name, paramNodes.Current.InnerXml ?? ""));
-            }
-            return list;
         }
 
         private string GetSummaryComment(XPathNavigator rootNode)
@@ -192,20 +181,25 @@ namespace LoxSmoke.DocXml
             return "";
         }
 
-        private List<Tuple<string, string>> GetResponsesComments(XPathNavigator methodNode)
+        private List<Tuple<string, string>> GetParametersComments(XPathNavigator rootNode)
+        {
+            return GetNamedComments(rootNode, ParamXPath, NameAttribute);
+        }
+
+        private List<Tuple<string, string>> GetNamedComments(XPathNavigator rootNode, string path, string attributeName)
         {
             var list = new List<Tuple<string, string>>();
-            var responseNodes = methodNode?.Select(ResponsesXPath);
-            if (responseNodes != null)
+            var childNodes = rootNode?.Select(path);
+            if (childNodes == null) return list;
+
+            while (childNodes.MoveNext())
             {
-                while (responseNodes.MoveNext())
-                {
-                    var code = responseNodes.Current.GetAttribute(CodeAttribute, "");
-                    list.Add(new Tuple<string, string>(code, responseNodes.Current.InnerXml ?? ""));
-                }
+                var code = childNodes.Current.GetAttribute(attributeName, "");
+                list.Add(new Tuple<string, string>(code, childNodes.Current.InnerXml ?? ""));
             }
             return list;
         }
+
         #endregion
     }
 }

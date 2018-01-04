@@ -267,6 +267,9 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual(mm.Summary.Trim(), "TemplateMethod description");
             Assert.AreEqual(mm.Returns.Trim(), "Return value description");
             Assert.AreEqual(mm.Parameters.Count,0);
+            Assert.AreEqual(mm.TypeParameters.Count, 1);
+            Assert.AreEqual(mm.TypeParameters[0].Item1, "T");
+            Assert.AreEqual(mm.TypeParameters[0].Item2, "Type parameter");
         }
 
         [TestMethod]
@@ -280,6 +283,9 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual(mm.Parameters.Count, 1);
             Assert.AreEqual(mm.Parameters[0].Item1, "parameter");
             Assert.AreEqual(mm.Parameters[0].Item2, "Parameter description");
+            Assert.AreEqual(mm.TypeParameters.Count, 1);
+            Assert.AreEqual(mm.TypeParameters[0].Item1, "T");
+            Assert.AreEqual(mm.TypeParameters[0].Item2, "Type parameter");
         }
 
         [TestMethod]
@@ -295,6 +301,11 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual(mm.Parameters[0].Item2, "Parameter description");
             Assert.AreEqual(mm.Parameters[1].Item1, "parameter2");
             Assert.AreEqual(mm.Parameters[1].Item2, "Parameter description");
+            Assert.AreEqual(mm.TypeParameters.Count, 2);
+            Assert.AreEqual(mm.TypeParameters[0].Item1, "X");
+            Assert.AreEqual(mm.TypeParameters[0].Item2, "Type parameter");
+            Assert.AreEqual(mm.TypeParameters[1].Item1, "Y");
+            Assert.AreEqual(mm.TypeParameters[1].Item2, "Type parameter");
         }
 
         [TestMethod]

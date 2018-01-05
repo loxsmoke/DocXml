@@ -342,5 +342,14 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual(comments.Example, "Method example");
             Assert.AreEqual(comments.Remarks, "Method remarks");
         }
+
+        [TestMethod]
+        public void MemberFunction_InParamter()
+        {
+            var m = GetReader();
+            var info = typeof(MyClass3).GetMethod("MethodWithInParam");
+            var comments = m.GetMethodComments(info);
+            Assert.AreEqual("MethodWithInParam description", comments.Summary.Trim());
+        }
     }
 }

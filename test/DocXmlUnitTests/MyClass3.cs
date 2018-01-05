@@ -41,5 +41,15 @@ namespace LoxSmoke.DocXmlUnitTests
         public void MethodWithComments()
         {
         }
+
+        /// <summary>
+        /// MethodWithInParam description
+        /// </summary>
+        /// <param name="paramIn"></param>
+        /// <returns></returns>
+        public int MethodWithInParam(in int paramIn)
+        {
+            return paramIn;
+        }
     }
 }

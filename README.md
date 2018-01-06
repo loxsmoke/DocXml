@@ -48,6 +48,23 @@ Console.WriteLine(comments.Summary);
 Console.WriteLine(comments.Returns);
 ```
 
+A bit more interesting example uses **JsonObjectContract** from popular **Newtonsoft.Json** nuget package. Here code retrieves summary comments for each property.
+```csharp
+// Just for the sake of this example create JsonObjectContract
+var jsonContract = new DefaultContractResolver().ResolveContract(typeof(MyClass2)) as JsonObjectContract;
+// Load XML documentation file
+DocXmlReader reader = new DocXmlReader("DocXmlUnitTests.xml");
+foreach (var jsonContractProperty in jsonContract.Properties)
+{
+    var minfo = jsonContractProperty.DeclaringType.GetMember(jsonContractProperty.UnderlyingName)[0];
+    // Get documentation from XML file
+    var comments = reader.GetMemberComments(minfo);
+    // and print it
+    Console.WriteLine(comments.Summary);
+}
+```
+
+
 ## How to use
 
 DocXml is available as LoxSmoke.DocXml nuget package. It is built as .net standard 2.0 class library.

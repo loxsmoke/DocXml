@@ -12,12 +12,12 @@ namespace LoxSmoke.DocXmlUnitTests
         /// <summary>
         /// Enum value one
         /// </summary>
-        Value1,
+        Value1 = 10,
         
         /// <summary>
         /// Enum value two
         /// </summary>
-        Value2
+        Value2 = 20
     };
 
     /// <summary>

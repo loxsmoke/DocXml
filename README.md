@@ -80,6 +80,7 @@ comments classes:
 * **TypeComments** is documentation of the class or struct. 
 * **MethodComments** is documentation of the method, constructor, operator or property with parameter descriptions.
 * **EnumComments** is documentation of the Enum type. Comments of enum values are included here as well.
+* **EnumValueComment** is documentation of one Enum value: name, integer value and relevant documentation comments.
 
 Static **XmlDocId** class is a set of static methods that generates IDs used for retrieval of documentation from 
 XML file. This class is used by **DocXmlReader**.   
@@ -123,7 +124,7 @@ public enum TestEnum
     Value2
 };
 ```
-**DocXmlReader** method **GetEnumComments** returns this comment as **EnumComments** object with **Summary** property and the list of **ValueComments**. Each element in **ValueComments** is the tuple where **Item1** is the name of the value e.g. **Value1** and **Item2** is the summary comment of the value. If none of values has any summary comment then **ValuesComments** list is empty.
+**DocXmlReader** method **GetEnumComments** returns this comment as **EnumComments** object with **Summary** property and the list of **ValueComments**. Each element in **ValueComments** has the name of the value e.g. **Value1**, actual integer value e.g. **10** and relevant comments such as summary comment of the value. If none of values has any summary comment then **ValuesComments** list is empty by default.
 
 Method comment with parameters and return value.
 ```csharp

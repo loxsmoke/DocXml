@@ -62,10 +62,12 @@ namespace LoxSmoke.DocXmlUnitTests
             var mm = Reader.GetEnumComments(typeof(TestEnum));
             Assert.AreEqual("Enum type description", mm.Summary.Trim());
             Assert.AreEqual(2, mm.ValueComments.Count);
-            Assert.AreEqual("Value1", mm.ValueComments[0].Item1.Trim());
-            Assert.AreEqual("Enum value one", mm.ValueComments[0].Item2.Trim());
-            Assert.AreEqual("Value2", mm.ValueComments[1].Item1.Trim());
-            Assert.AreEqual("Enum value two", mm.ValueComments[1].Item2.Trim());
+            Assert.AreEqual("Value1", mm.ValueComments[0].Name.Trim());
+            Assert.AreEqual(10, mm.ValueComments[0].Value);
+            Assert.AreEqual("Enum value one", mm.ValueComments[0].Summary.Trim());
+            Assert.AreEqual("Value2", mm.ValueComments[1].Name.Trim());
+            Assert.AreEqual(20, mm.ValueComments[1].Value);
+            Assert.AreEqual("Enum value two", mm.ValueComments[1].Summary.Trim());
         }
 
         [TestMethod]

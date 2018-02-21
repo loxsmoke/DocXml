@@ -11,8 +11,8 @@ namespace LoxSmoke.DocXml
 {
     public class DocXmlReader
     {
-        private readonly XPathDocument document;
-        private readonly XPathNavigator navigator;
+        protected readonly XPathDocument document;
+        protected readonly XPathNavigator navigator;
 
         /// <summary>
         /// Open specified XML documentation file
@@ -102,12 +102,14 @@ namespace LoxSmoke.DocXml
         }
 
         /// <summary>
-        /// Get enum type description and comments for enum values if comment exists for 
-        /// at least one enum value. 
+        /// Get enum type description and comments for enum values. If <paramref name="fillValues"/>
+        /// is false and no comments exist for any value then ValueComments list is empty.
         /// </summary>
         /// <param name="enumType">For non-enum types ArgumentException would be throws</param>
+        /// <param name="fillValues">True if ValueComments list should be filled even if 
+        /// non of the enum values have any summary comments</param>
         /// <returns>EnumComment</returns>
-        public EnumComments GetEnumComments(Type enumType)
+        public EnumComments GetEnumComments(Type enumType, bool fillValues = false)
         {
             if (!enumType.IsEnum) throw new ArgumentException(nameof(enumType));
 
@@ -123,9 +125,15 @@ namespace LoxSmoke.DocXml
             {
                 var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName));
                 valueCommentsExist |= (valueNode != null);
-                comments.ValueComments.Add(new Tuple<string, string>(enumName, GetSummaryComment(valueNode)));
+                var valueComment = new EnumValueComment()
+                {
+                    Name = enumName,
+                    Value = (int) Enum.Parse(enumType, enumName)
+                };
+                comments.ValueComments.Add(valueComment);
+                GetCommonComments(valueComment, valueNode);
             }
-            if (!valueCommentsExist) comments.ValueComments.Clear();
+            if (!valueCommentsExist && !fillValues) comments.ValueComments.Clear();
             return comments;
         }
         #endregion

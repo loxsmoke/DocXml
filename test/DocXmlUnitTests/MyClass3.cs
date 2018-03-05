@@ -51,5 +51,13 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             return paramIn;
         }
+
+        /// <summary>
+        /// Summary line 1
+        /// Summary line 2
+        /// Summary line 3
+        /// </summary>
+        public void MultilineSummary()
+        { }
     }
 }

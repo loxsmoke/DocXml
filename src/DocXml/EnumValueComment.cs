@@ -19,5 +19,10 @@ namespace LoxSmoke.DocXml
         /// Integer value of the enum
         /// </summary>
         public int Value { get; set; }
+
+        public override string ToString()
+        {
+            return $"{(Name??"")}={Value} {(Summary??"")}";
+        }
     }
 }

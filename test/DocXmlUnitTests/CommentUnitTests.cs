@@ -24,7 +24,7 @@ namespace LoxSmoke.DocXmlUnitTests
         public void Class_Comment()
         {
             var mm = Reader.GetTypeComments(typeof(MyClass2));
-            Assert.AreEqual("This is MyClass2", mm.Summary.Trim());
+            Assert.AreEqual("This is MyClass2", mm.Summary);
         }
 
         [TestMethod]
@@ -32,22 +32,14 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var m = new DocXmlReader(new XPathDocument("DocXmlUnitTests.xml"));
             var mm = m.GetTypeComments(typeof(MyClass2));
-            Assert.AreEqual("This is MyClass2", mm.Summary.Trim());
+            Assert.AreEqual("This is MyClass2", mm.Summary);
         }
 
         [TestMethod]
         public void NestedClass_Comment()
         {
             var mm = Reader.GetTypeComments(typeof(MyClass2.Nested));
-            Assert.AreEqual("Nested class", mm.Summary.Trim());
-        }
-
-        [TestMethod]
-        public void EnumType_Comment()
-        {
-            var mm = Reader.GetEnumComments(typeof(TestEnum2));
-            Assert.AreEqual("Enum 2 type description", mm.Summary.Trim());
-            Assert.AreEqual(mm.ValueComments.Count, 0);
+            Assert.AreEqual("Nested class", mm.Summary);
         }
 
         [TestMethod]
@@ -57,59 +49,81 @@ namespace LoxSmoke.DocXmlUnitTests
         }
 
         [TestMethod]
+        public void EnumType_Comment()
+        {
+            var mm = Reader.GetEnumComments(typeof(TestEnum2));
+            Assert.AreEqual("Enum 2 type description", mm.Summary);
+            Assert.AreEqual(mm.ValueComments.Count, 0);
+        }
+
+        [TestMethod]
+        public void EnumType_Values_NoComments()
+        {
+            var mm = Reader.GetEnumComments(typeof(TestEnum2), true);
+            Assert.AreEqual("Enum 2 type description", mm.Summary);
+            Assert.AreEqual(mm.ValueComments.Count, 2);
+            AssertEnumComment(0, "Value21", "", mm.ValueComments[0]);
+            AssertEnumComment(1, "Value22", "", mm.ValueComments[1]);
+        }
+
+
+        void AssertEnumComment(int expectedValue, string expectedName, string expectedSummary, EnumValueComment comment)
+        {
+            Assert.AreEqual(expectedValue, comment.Value);
+            Assert.AreEqual(expectedName, comment.Name);
+            Assert.AreEqual(expectedSummary, comment.Summary);
+        }
+
+        [TestMethod]
         public void EnumType_WithValues_Comments()
         {
             var mm = Reader.GetEnumComments(typeof(TestEnum));
-            Assert.AreEqual("Enum type description", mm.Summary.Trim());
+            Assert.AreEqual("Enum type description", mm.Summary);
             Assert.AreEqual(2, mm.ValueComments.Count);
-            Assert.AreEqual("Value1", mm.ValueComments[0].Name.Trim());
-            Assert.AreEqual(10, mm.ValueComments[0].Value);
-            Assert.AreEqual("Enum value one", mm.ValueComments[0].Summary.Trim());
-            Assert.AreEqual("Value2", mm.ValueComments[1].Name.Trim());
-            Assert.AreEqual(20, mm.ValueComments[1].Value);
-            Assert.AreEqual("Enum value two", mm.ValueComments[1].Summary.Trim());
+            AssertEnumComment(10, "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertEnumComment(20, "Value2", "Enum value two", mm.ValueComments[1]);
         }
 
         [TestMethod]
         public void SimpleField_Summary()
         {
             var mm = Reader.GetMemberComment(typeof(MyClass2).GetMember(nameof(MyClass2.stringField)).First());
-            Assert.AreEqual("String field description", mm.Trim());
+            Assert.AreEqual("String field description", mm);
         }
 
         [TestMethod]
         public void ConstField_Summary()
         {
             var mm = Reader.GetMemberComment(typeof(MyClass2).GetMember(nameof(MyClass2.PI)).First());
-            Assert.AreEqual("Const field description", mm.Trim());
+            Assert.AreEqual("Const field description", mm);
         }
 
         [TestMethod]
         public void ValueProperty_Summary()
         {
             var mm = Reader.GetMemberComment(typeof(MyClass2).GetMember(nameof(MyClass2.ValProperty)).First());
-            Assert.AreEqual("Value property description", mm.Trim());
+            Assert.AreEqual("Value property description", mm);
         }
 
         [TestMethod]
         public void EnumProperty_Summary()
         {
             var mm = Reader.GetMemberComment(typeof(MyClass2).GetMember(nameof(MyClass2.ImportantEnum)).First());
-            Assert.AreEqual("Enum property description", mm.Trim());
+            Assert.AreEqual("Enum property description", mm);
         }
 
         [TestMethod]
         public void EventField_Summary()
         {
             var mm = Reader.GetMemberComment(typeof(MyClass2).GetMember(nameof(MyClass2.eventField)).First());
-            Assert.AreEqual("Event field description", mm.Trim());
+            Assert.AreEqual("Event field description", mm);
         }
 
         [TestMethod]
         public void GenericField_Summary()
         {
             var mm = Reader.GetMemberComment(typeof(MyClass2).GetMember(nameof(MyClass2.genericTypeField)).First());
-            Assert.AreEqual("Generic field description", mm.Trim());
+            Assert.AreEqual("Generic field description", mm);
         }
 
         void AssertParam(MethodComments comments, int paramIndex, string name, string text)
@@ -134,13 +148,13 @@ namespace LoxSmoke.DocXmlUnitTests
                 if (constr.GetParameters().Length == 0)
                 {
                     Assert.AreEqual(mm.Parameters.Count, constr.GetParameters().Length);
-                    Assert.AreEqual("Constructor with no parameters", mm.Summary.Trim());
+                    Assert.AreEqual("Constructor with no parameters", mm.Summary);
                 }
                 else if (constr.GetParameters().Length == 1)
                 {
                     Assert.AreEqual(mm.Parameters.Count, constr.GetParameters().Length);
                     AssertParam(mm, 0, "one", "Parameter one");
-                    Assert.AreEqual("Constructor with one parameter", mm.Summary.Trim());
+                    Assert.AreEqual("Constructor with one parameter", mm.Summary);
                 }
             }
         }
@@ -149,11 +163,11 @@ namespace LoxSmoke.DocXmlUnitTests
         public void MemberFunction_Comments()
         {
             var mm = Reader.GetMethodComments(typeof(MyClass2).GetMethod(nameof(MyClass2.MemberFunction)));
-            Assert.AreEqual("Member function description", mm.Summary.Trim());
+            Assert.AreEqual("Member function description", mm.Summary);
             Assert.AreEqual(0, mm.Parameters.Count);
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
-            Assert.AreEqual("200", mm.Responses.First().Item1.Trim());
-            Assert.AreEqual("OK", mm.Responses.First().Item2.Trim());
+            Assert.AreEqual("Return value description", mm.Returns);
+            Assert.AreEqual("200", mm.Responses.First().Item1);
+            Assert.AreEqual("OK", mm.Responses.First().Item2);
         }
 
         [TestMethod]
@@ -164,22 +178,22 @@ namespace LoxSmoke.DocXmlUnitTests
                     nameof(MyClass2.MemberFunction2),
                      new [] { typeof(string), typeof(int).MakeByRefType()}));
 
-            Assert.AreEqual("Member function description. 2", mm.Summary.Trim());
+            Assert.AreEqual("Member function description. 2", mm.Summary);
             Assert.AreEqual(2, mm.Parameters.Count);
             AssertParam(mm, 0, "one", "Parameter one");
             AssertParam(mm, 1, "two", "Parameter two");
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("Return value description", mm.Returns);
 
             mm = Reader.GetMethodComments(
                 typeof(MyClass2).GetMethod(
                     nameof(MyClass2.MemberFunction2),
                     new[] { typeof(int), typeof(int).MakeByRefType() }));
 
-            Assert.AreEqual("Member function description. Overload 2", mm.Summary.Trim());
+            Assert.AreEqual("Member function description. Overload 2", mm.Summary);
             Assert.AreEqual(2, mm.Parameters.Count);
             AssertParam(mm, 0, "one", "Parameter one");
             AssertParam(mm, 1, "two", "Parameter two");
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("Return value description", mm.Returns);
         }
 
         [TestMethod]
@@ -189,11 +203,11 @@ namespace LoxSmoke.DocXmlUnitTests
                 typeof(MyClass2).GetMethod(
                     nameof(MyClass2.MemberFunctionWithArray)));
 
-            Assert.AreEqual("MemberFunctionWithArray description", mm.Summary.Trim());
+            Assert.AreEqual("MemberFunctionWithArray description", mm.Summary);
             Assert.AreEqual(2, mm.Parameters.Count);
             AssertParam(mm, 0, "array1", "Parameter array1");
             AssertParam(mm, 1, "array2", "Parameter array2");
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("Return value description", mm.Returns);
         }
 
         [TestMethod]
@@ -201,7 +215,7 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var mm = Reader.GetTypeComments(typeof(MyClass2)
                 .GetNestedType(nameof(MyClass2.DelegateType)));
-            Assert.AreEqual("Delegate type description", mm.Summary.Trim());
+            Assert.AreEqual("Delegate type description", mm.Summary);
             Assert.AreEqual(1, mm.Parameters.Count);
             AssertParam(mm, 0, "parameter", "Parameter description");
         }
@@ -212,8 +226,8 @@ namespace LoxSmoke.DocXmlUnitTests
             var minfo = typeof(MyClass2).GetMethods().FirstOrDefault(
                 mt => mt.IsSpecialName && mt.Name == "op_Addition");
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("Operator description", mm.Summary.Trim());
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("Operator description", mm.Summary);
+            Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual(2, mm.Parameters.Count);
             AssertParam(mm, 0, "param1", "Parameter param1");
             AssertParam(mm, 1, "param2", "Parameter param2");
@@ -225,8 +239,8 @@ namespace LoxSmoke.DocXmlUnitTests
             var minfo = typeof(MyClass2).GetMethods().FirstOrDefault(
                 mt => mt.IsSpecialName && mt.Name == "get_Item");
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("Property description", mm.Summary.Trim());
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("Property description", mm.Summary);
+            Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual(1, mm.Parameters.Count);
             AssertParam(mm, 0, "parameter", "Parameter description");
         }
@@ -237,8 +251,8 @@ namespace LoxSmoke.DocXmlUnitTests
             var minfo = typeof(MyClass2).GetMethods().FirstOrDefault(
                 mt => mt.IsSpecialName && mt.Name == "op_Explicit");
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("Operator description", mm.Summary.Trim());
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("Operator description", mm.Summary);
+            Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual(1, mm.Parameters.Count);
             AssertParam(mm, 0,  "parameter", "Parameter description");
         }
@@ -252,9 +266,9 @@ namespace LoxSmoke.DocXmlUnitTests
         [TestMethod]
         public void TemplateMethod_Comments()
         {
-            var minfo = typeof(MyClass2).GetMethod("TemplateMethod");
+            var minfo = typeof(MyClass2).GetMethod(nameof(MyClass2.TemplateMethod));
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("TemplateMethod description", mm.Summary.Trim());
+            Assert.AreEqual("TemplateMethod description", mm.Summary);
             Assert.AreEqual("Return value description", mm.Returns.Trim());
             Assert.AreEqual(0, mm.Parameters.Count);
             Assert.AreEqual(1, mm.TypeParameters.Count);
@@ -266,8 +280,8 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var minfo = typeof(MyClass2).GetMethods().FirstOrDefault(mt => mt.Name == "TemplateMethod2");
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("TemplateMethod2 description", mm.Summary.Trim());
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("TemplateMethod2 description", mm.Summary);
+            Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual(1, mm.Parameters.Count);
             AssertParam(mm, 0, "parameter", "Parameter description");
             Assert.AreEqual(mm.TypeParameters.Count, 1);
@@ -279,8 +293,8 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var minfo = typeof(MyClass2).GetMethods().FirstOrDefault(mt => mt.Name == "TemplateMethod3");
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("TemplateMethod3 description", mm.Summary.Trim());
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("TemplateMethod3 description", mm.Summary);
+            Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual(2, mm.Parameters.Count, 2);
             AssertParam(mm, 0, "parameter1", "Parameter description");
             AssertParam(mm, 1, "parameter2", "Parameter description");
@@ -294,8 +308,8 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var minfo = typeof(MyClass3).GetMethods().FirstOrDefault(mt => mt.Name == "TemplateMethod3");
             var mm = Reader.GetMethodComments(minfo);
-            Assert.AreEqual("TemplateMethod3 description", mm.Summary.Trim());
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
+            Assert.AreEqual("TemplateMethod3 description", mm.Summary);
+            Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual(2, mm.Parameters.Count);
             AssertParam(mm, 0, "parameter1", "Parameter description");
             AssertParam(mm, 1, "parameter2", "Parameter description");
@@ -306,13 +320,13 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var constructors = typeof(MyClass3).GetConstructors();
             Assert.AreEqual(1, constructors.Length);
-            Assert.AreEqual("Constructor comment", Reader.GetMemberComment(constructors.First()).Trim());
+            Assert.AreEqual("Constructor comment", Reader.GetMemberComment(constructors.First()));
         }
 
         [TestMethod]
         public void MemberComments()
         {
-            var info = typeof(MyClass3).GetMethod("MethodWithComments");
+            var info = typeof(MyClass3).GetMethod(nameof(MyClass3.MethodWithComments));
             var comments = Reader.GetMemberComments(info);
             Assert.AreEqual("Method summary", comments.Summary);
             Assert.AreEqual("Method example", comments.Example);
@@ -322,9 +336,17 @@ namespace LoxSmoke.DocXmlUnitTests
         [TestMethod]
         public void MemberFunction_InParamter()
         {
-            var info = typeof(MyClass3).GetMethod("MethodWithInParam");
+            var info = typeof(MyClass3).GetMethod(nameof(MyClass3.MethodWithInParam));
             var comments = Reader.GetMethodComments(info);
-            Assert.AreEqual("MethodWithInParam description", comments.Summary.Trim());
+            Assert.AreEqual("MethodWithInParam description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_MultiLineSummary()
+        {
+            var info = typeof(MyClass3).GetMethod(nameof(MyClass3.MultilineSummary));
+            var comments = Reader.GetMethodComments(info);
+            Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
         }
     }
 }

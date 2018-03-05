@@ -15,23 +15,41 @@ namespace LoxSmoke.DocXml
         protected readonly XPathNavigator navigator;
 
         /// <summary>
+        /// True if comments from XML should have unnecessary leading spaces removed.
+        /// By default XML comments are indented for human readability but it adds
+        /// unnecessary leading spaces that are not present in source code.
+        /// For example here is compiler genearated XML documentation with '-' 
+        /// showing spaces for readability. 
+        /// ----<summary>
+        /// ----Text
+        /// ----</summary>
+        /// With UnIndentText set to true returned summary text would be "Text"
+        /// With UnIndentText set to false returned summary text would be "\n----Text\n----" 
+        /// </summary>
+        public bool UnIndentText { get; set; } = true;
+
+        /// <summary>
         /// Open specified XML documentation file
         /// </summary>
         /// <param name="fileName">The name of the XML documentation file.</param>
-        public DocXmlReader(string fileName)
+        /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
+        public DocXmlReader(string fileName, bool unindentText = true)
         {
             document = new XPathDocument(fileName);
             navigator = document.CreateNavigator();
+            UnIndentText = unindentText;
         }
 
         /// <summary>
         /// Create reader for specified xpath document
         /// </summary>
         /// <param name="xPathDocument">XML documentation</param>
-        public DocXmlReader(XPathDocument xPathDocument)
+        /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
+        public DocXmlReader(XPathDocument xPathDocument, bool unindentText = true)
         {
             document = xPathDocument ?? throw new ArgumentException(nameof(xPathDocument));
             navigator = document.CreateNavigator();
+            UnIndentText = unindentText;
         }
 
 
@@ -168,24 +186,48 @@ namespace LoxSmoke.DocXml
             return navigator.SelectSingleNode(string.Format(MemberXPath, name));
         }
 
+        private string GetXmlText(XPathNavigator node)
+        {
+            var innerText = node?.InnerXml ?? "";
+            if (!UnIndentText || string.IsNullOrEmpty(innerText)) return innerText;
+
+            var outerText = node?.OuterXml ?? "";
+            var indentText = FindIndent(outerText);
+            if (string.IsNullOrEmpty(indentText)) return innerText;
+            return innerText.Replace(indentText, indentText[0].ToString()).Trim('\r', '\n');
+        }
+
+        private string FindIndent(string outerText)
+        {
+            if (string.IsNullOrEmpty(outerText)) return "";
+            var end = outerText.LastIndexOf("</");
+            if (end < 0) return "";
+            var start = end - 1;
+            for (; start >= 0 && outerText[start] != '\r' && outerText[start] != '\n'; start--) ;
+            if (start < 0 || end <= start) return "";
+            return outerText.Substring(start, end - start);
+        }
+
+
         private string GetSummaryComment(XPathNavigator rootNode)
         {
-            return rootNode?.SelectSingleNode(SummaryXPath)?.InnerXml ?? "";
+            return GetXmlText(rootNode?.SelectSingleNode(SummaryXPath));
         }
         private string GetRemarksComment(XPathNavigator rootNode)
         {
-            return rootNode?.SelectSingleNode(RemarksXPath)?.InnerXml ?? "";
+            return GetXmlText(rootNode?.SelectSingleNode(RemarksXPath));
         }
 
         private string GetExampleComment(XPathNavigator rootNode)
         {
-            return rootNode?.SelectSingleNode(ExampleXPath)?.InnerXml ?? "";
+            return GetXmlText(rootNode?.SelectSingleNode(ExampleXPath));
         }
 
         private string GetReturnsComment(XPathNavigator methodNode)
         {
             var responseNodes = methodNode?.Select(ReturnsXPath);
-            if (responseNodes?.MoveNext() == true) return responseNodes.Current.InnerXml ?? "";
+            if (responseNodes?.MoveNext() == true)
+                return GetXmlText(responseNodes.Current);
             return "";
         }
 
@@ -203,11 +245,10 @@ namespace LoxSmoke.DocXml
             while (childNodes.MoveNext())
             {
                 var code = childNodes.Current.GetAttribute(attributeName, "");
-                list.Add(new Tuple<string, string>(code, childNodes.Current.InnerXml ?? ""));
+                list.Add(new Tuple<string, string>(code, GetXmlText(childNodes.Current)));
             }
             return list;
         }
-
         #endregion
     }
 }

@@ -32,7 +32,7 @@ namespace LoxSmoke.DocXmlUnitTests
     };
 
     /// <summary>
-    /// This is MyClass2 
+    /// This is MyClass2
     /// </summary>
     public class MyClass2
     {
@@ -114,7 +114,7 @@ namespace LoxSmoke.DocXmlUnitTests
         public int MemberFunctionWithArray(short[] array1, int[,] array2) { return 0; }
 
         /// <summary>
-        /// Delegate type description 
+        /// Delegate type description
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         public delegate void DelegateType(int parameter);

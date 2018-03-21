@@ -79,6 +79,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public static string PropertyId(this MemberInfo propertyInfo)
         {
+            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
             if ((propertyInfo.MemberType & MemberTypes.Property) == 0) throw new ArgumentException(nameof(propertyInfo));
             return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;
         }
@@ -90,6 +91,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public static string FieldId(this MemberInfo fieldInfo)
         {
+            if (fieldInfo == null) throw new ArgumentNullException(nameof(fieldInfo));
             if ((fieldInfo.MemberType & MemberTypes.Field) == 0) throw new ArgumentException(nameof(fieldInfo));
             return FieldPrefix + ":" + GetTypeXmlId(fieldInfo.DeclaringType) + "." + fieldInfo.Name;
         }
@@ -101,6 +103,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public static string EventId(this MemberInfo eventInfo)
         {
+            if (eventInfo == null) throw new ArgumentNullException(nameof(eventInfo));
             if ((eventInfo.MemberType & MemberTypes.Event) == 0) throw new ArgumentException(nameof(eventInfo));
             return EventPrefix + ":" + GetTypeXmlId(eventInfo.DeclaringType) + "." + eventInfo.Name;
         }
@@ -113,6 +116,8 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public static string EnumValueId(this Type enumType, string enumName)
         {
+            if (enumType == null) throw new ArgumentNullException(nameof(enumType));
+            if (enumName == null) throw new ArgumentNullException(nameof(enumName));
             if (!enumType.IsEnum) throw new ArgumentException(nameof(enumType));
             return FieldPrefix + ":" + GetTypeXmlId(enumType) + "." + enumName;
         }

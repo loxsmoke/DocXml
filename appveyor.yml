@@ -9,3 +9,5 @@ build_script:
 test_script:
 - ps: ci\test.ps1
 
+on_success:
+  - ps: .\coverage.ps1 -UploadCodecov

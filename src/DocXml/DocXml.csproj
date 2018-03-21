@@ -16,6 +16,7 @@
     <RepositoryUrl>https://github.com/loxsmoke/DocXml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/loxsmoke/DocXml</PackageProjectUrl>
+    <Configurations>Debug;Release;Coverage</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -23,6 +24,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Coverage|AnyCPU'">
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 

@@ -1,6 +1,6 @@
- # DocXml - C# XML documentation reader 
+# DocXml - C# XML documentation reader 
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5dvuk9y8eo6q85n4?svg=true)](https://ci.appveyor.com/project/loxsmoke/docxml-nbx6b)  [![NuGet version](https://badge.fury.io/nu/LoxSmoke.DocXml.svg)](https://badge.fury.io/nu/LoxSmoke.DocXml) [![NuGet](https://img.shields.io/nuget/dt/LoxSmoke.DocXml.svg)](https://www.nuget.org/packages/LoxSmoke.DocXml) 
+[![Build status](https://ci.appveyor.com/api/projects/status/5dvuk9y8eo6q85n4?svg=true)](https://ci.appveyor.com/project/loxsmoke/docxml-nbx6b) [![codecov](https://codecov.io/gh/loxsmoke/docxml/branch/master/graph/badge.svg)](https://codecov.io/gh/loxsmoke/docxml) [![NuGet version](https://badge.fury.io/nu/LoxSmoke.DocXml.svg)](https://badge.fury.io/nu/LoxSmoke.DocXml) [![NuGet](https://img.shields.io/nuget/dt/LoxSmoke.DocXml.svg)](https://www.nuget.org/packages/LoxSmoke.DocXml) 
 
 This component is a set of helper classes and methods for compiler-generated XML documentation retrieval.
 XML documentation as described here https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments

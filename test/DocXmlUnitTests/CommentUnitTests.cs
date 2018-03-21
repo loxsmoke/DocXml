@@ -66,6 +66,24 @@ namespace LoxSmoke.DocXmlUnitTests
             AssertEnumComment(1, "Value22", "", mm.ValueComments[1]);
         }
 
+        [TestMethod]
+        public void EnumValueComments_ToString_Null()
+        {
+            var enumComment = new EnumValueComment();
+            Assert.AreEqual("=0", enumComment.ToString());
+        }
+
+        [TestMethod]
+        public void EnumValueComments_ToString()
+        {
+            var enumComment = new EnumValueComment()
+            {
+                Value = 5,
+                 Name = "name",
+                 Summary = "summary"
+            };
+            Assert.AreEqual("name=5 summary", enumComment.ToString());
+        }
 
         void AssertEnumComment(int expectedValue, string expectedName, string expectedSummary, EnumValueComment comment)
         {

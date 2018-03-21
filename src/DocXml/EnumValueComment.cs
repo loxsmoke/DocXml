@@ -22,7 +22,7 @@ namespace LoxSmoke.DocXml
 
         public override string ToString()
         {
-            return $"{(Name??"")}={Value} {(Summary??"")}";
+            return $"{(Name??"")}={Value}" + (Summary != null ? $" {Summary}" : "");
         }
     }
 }

@@ -19,7 +19,8 @@ Get-ChildItem -Filter .\test\ |
     ForEach-Object {
       $csprojPath = $_.FullName
       $testProjectName = $_.Name
-      $projectName = $testProjectName -replace ".{6}$"
+# Project name being tested is unit test project name with UnitTests removed. "UnitTests" length == 9 
+      $projectName = $testProjectName -replace ".{9}$"
         cmd.exe /c $openCoverConsole `
           -target:"c:\Program Files\dotnet\dotnet.exe" `
           -targetargs:"test -c $configuration $csprojPath\$testProjectName.csproj" `

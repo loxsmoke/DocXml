@@ -3,7 +3,7 @@ function dotnet-test {
     dotnet test $_ -c Release --no-build -l "trx;LogFileName=tests.xml"
     # upload results to AppVeyor
     $wc = New-Object 'System.Net.WebClient'
-    $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResults\tests.xml))
+    $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Join-Path $_.Directory.FullName TestResults\tests.xml))
   }
 }
 

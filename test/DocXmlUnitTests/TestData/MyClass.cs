@@ -7,7 +7,7 @@ namespace LoxSmoke.DocXmlUnitTests
     /// <summary>
     /// Enum type description
     /// </summary>
-    public enum TestEnum
+    public enum TestEnumWithValueComments
     {
         /// <summary>
         /// Enum value one
@@ -32,14 +32,14 @@ namespace LoxSmoke.DocXmlUnitTests
     };
 
     /// <summary>
-    /// This is MyClass2
+    /// This is MyClass
     /// </summary>
-    public class MyClass2
+    public class MyClass
     {
         /// <summary>
         /// Enum property description
         /// </summary>
-        public TestEnum ImportantEnum { get; set; }
+        public TestEnumWithValueComments ImportantEnum { get; set; }
 
         /// <summary>
         /// String field description
@@ -74,13 +74,13 @@ namespace LoxSmoke.DocXmlUnitTests
         /// <summary>
         /// Constructor with no parameters
         /// </summary>
-        public MyClass2() { }
+        public MyClass() { }
 
         /// <summary>
         /// Constructor with one parameter
         /// </summary>
         /// <param name="one">Parameter one</param>
-        public MyClass2(int one) { }
+        public MyClass(int one) { }
 
         /// <summary>
         /// Member function description
@@ -125,7 +125,7 @@ namespace LoxSmoke.DocXmlUnitTests
         /// <param name="param1">Parameter param1</param>
         /// <param name="param2">Parameter param2</param>
         /// <returns>Return value description</returns>
-        public static MyClass2 operator +(MyClass2 param1, MyClass2 param2) { return param1; }
+        public static MyClass operator +(MyClass param1, MyClass param2) { return param1; }
 
         /// <summary>
         /// Property description
@@ -139,7 +139,7 @@ namespace LoxSmoke.DocXmlUnitTests
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public static explicit operator int(MyClass2 parameter) { return 1; }
+        public static explicit operator int(MyClass parameter) { return 1; }
 
         /// <summary>
         /// TemplateMethod description

@@ -33,7 +33,7 @@ namespace LoxSmoke.DocXmlUnitTests
         [TestMethod]
         public void XmlDocId_PropertyId_NonProperty()
         {
-            var info = typeof(MyClass2).GetMember(nameof(MyClass2.stringField)).First();
+            var info = typeof(MyClass).GetMember(nameof(MyClass.stringField)).First();
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.PropertyId(info));
         }
 
@@ -46,7 +46,7 @@ namespace LoxSmoke.DocXmlUnitTests
         [TestMethod]
         public void XmlDocId_FieldId_NonField()
         {
-            var info = typeof(MyClass2).GetMember(nameof(MyClass2.ValProperty)).First();
+            var info = typeof(MyClass).GetMember(nameof(MyClass.ValProperty)).First();
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.FieldId(info));
         }
 
@@ -59,7 +59,7 @@ namespace LoxSmoke.DocXmlUnitTests
         [TestMethod]
         public void XmlDocId_EventId_NonEvent()
         {
-            var info = typeof(MyClass2).GetMember(nameof(MyClass2.ValProperty)).First();
+            var info = typeof(MyClass).GetMember(nameof(MyClass.ValProperty)).First();
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.EventId(info));
         }
 
@@ -71,12 +71,12 @@ namespace LoxSmoke.DocXmlUnitTests
         [TestMethod]
         public void XmlDocId_EnumValueIdId_ValueNull()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EnumValueId(typeof(TestEnum), null));
+            Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EnumValueId(typeof(TestEnumWithValueComments), null));
         }
         [TestMethod]
         public void XmlDocId_EnumValueIdId_NonEnum()
         {
-            Assert.ThrowsException<ArgumentException>(() => XmlDocId.EnumValueId(typeof(MyClass2), "notnull"));
+            Assert.ThrowsException<ArgumentException>(() => XmlDocId.EnumValueId(typeof(MyClass), "notnull"));
         }
     }
 }

@@ -13,6 +13,7 @@ namespace LoxSmoke.DocXmlUnitTests
     {
         public Type TestEnum2_Type;
         public Type TestEnumWithValueComments_Type;
+        public Type TestEnumWNoComments_Type;
 
         [TestInitialize]
         public new void Setup()
@@ -20,6 +21,7 @@ namespace LoxSmoke.DocXmlUnitTests
             base.Setup();
             TestEnum2_Type = typeof(TestEnum2);
             TestEnumWithValueComments_Type = typeof(TestEnumWithValueComments);
+            TestEnumWNoComments_Type = typeof(MyNoCommentClass.TestEnumNoComments);
         }
 
         void AssertEnumComment(int expectedValue, string expectedName, string expectedSummary, EnumValueComment comment)
@@ -40,7 +42,15 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var mm = Reader.GetEnumComments(TestEnum2_Type);
             Assert.AreEqual("Enum 2 type description", mm.Summary);
-            Assert.AreEqual(mm.ValueComments.Count, 0);
+            Assert.AreEqual(0, mm.ValueComments.Count);
+        }
+
+        [TestMethod]
+        public void EnumType_NoComment()
+        {
+            var mm = Reader.GetEnumComments(TestEnumWNoComments_Type);
+            Assert.IsNull(mm.Summary);
+            Assert.AreEqual(0, mm.ValueComments.Count);
         }
 
         [TestMethod]
@@ -48,7 +58,7 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var mm = Reader.GetEnumComments(TestEnum2_Type, true);
             Assert.AreEqual("Enum 2 type description", mm.Summary);
-            Assert.AreEqual(mm.ValueComments.Count, 2);
+            Assert.AreEqual(2, mm.ValueComments.Count);
             AssertEnumComment(0, "Value21", "", mm.ValueComments[0]);
             AssertEnumComment(1, "Value22", "", mm.ValueComments[1]);
         }

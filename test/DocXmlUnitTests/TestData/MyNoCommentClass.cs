@@ -10,5 +10,13 @@ namespace LoxSmoke.DocXmlUnitTests
     {
         public void Method()
         { }
+
+        public enum TestEnumNoComments
+        {
+            Value1,
+            Value2
+        }
+
+        public string field;
     }
 }

@@ -19,6 +19,8 @@ namespace LoxSmoke.DocXmlUnitTests
         public MemberInfo MyClass_eventField;
         public MemberInfo MyClass_genericTypeField;
 
+        public MemberInfo MyNoCommentClass_field;
+
         [TestInitialize]
         public new void Setup()
         {
@@ -29,12 +31,22 @@ namespace LoxSmoke.DocXmlUnitTests
             MyClass_ImportantEnum = MyClass_Type.GetMember(nameof(MyClass.ImportantEnum)).First();
             MyClass_eventField = MyClass_Type.GetMember(nameof(MyClass.eventField)).First();
             MyClass_genericTypeField = MyClass_Type.GetMember(nameof(MyClass.genericTypeField)).First();
+
+            MyNoCommentClass_field = typeof(MyNoCommentClass).GetMember(nameof(MyNoCommentClass.field)).First();
         }
+
         [TestMethod]
         public void SimpleField_Summary()
         {
             var mm = Reader.GetMemberComment(MyClass_stringField);
             Assert.AreEqual("String field description", mm);
+        }
+
+        [TestMethod]
+        public void SimpleField_NoComment()
+        {
+            var mm = Reader.GetMemberComments(MyNoCommentClass_field);
+            Assert.IsNull(mm.Summary);
         }
 
         [TestMethod]

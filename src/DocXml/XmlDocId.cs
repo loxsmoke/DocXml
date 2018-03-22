@@ -64,10 +64,9 @@ namespace LoxSmoke.DocXml
                     return FieldId(memberInfo);
                 case MemberTypes.NestedType:
                     return TypeId(memberInfo as Type);
-                case MemberTypes.TypeInfo:
-                    break;
                 case MemberTypes.Event:
                     return EventId(memberInfo);
+                // case MemberTypes.TypeInfo:
             }
             throw new NotSupportedException($"{memberInfo.MemberType}");
         }

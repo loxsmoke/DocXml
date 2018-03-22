@@ -10,4 +10,4 @@ test_script:
 - ps: ci\test.ps1
 
 on_success:
-  - ps: .\coverage.ps1 -UploadCodecov
+  - ps: ci\coverage.ps1 -UploadCodecov

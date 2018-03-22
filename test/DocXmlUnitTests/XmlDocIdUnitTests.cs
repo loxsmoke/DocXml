@@ -1,5 +1,4 @@
 ﻿using LoxSmoke.DocXml;
-using LoxSmoke.DocXmlUnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Text;
 
 #pragma warning disable CS1591
 
-namespace DocXmlUnitTests
+namespace LoxSmoke.DocXmlUnitTests
 {
     [TestClass]
     public class XmlDocIdUnitTests
@@ -73,6 +72,11 @@ namespace DocXmlUnitTests
         public void XmlDocId_EnumValueIdId_ValueNull()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EnumValueId(typeof(TestEnum), null));
+        }
+        [TestMethod]
+        public void XmlDocId_EnumValueIdId_NonEnum()
+        {
+            Assert.ThrowsException<ArgumentException>(() => XmlDocId.EnumValueId(typeof(MyClass2), "notnull"));
         }
     }
 }

@@ -27,6 +27,14 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual("This is MyClass2", mm.Summary);
         }
 
+
+        [TestMethod]
+        public void Class_Comment_Empty()
+        {
+            var mm = Reader.GetTypeComments(typeof(MyNoCommentClass));
+            Assert.IsNull(mm.Summary);
+        }
+
         [TestMethod]
         public void Reader_From_XPathDocument()
         {
@@ -186,6 +194,15 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual("Return value description", mm.Returns);
             Assert.AreEqual("200", mm.Responses.First().Item1);
             Assert.AreEqual("OK", mm.Responses.First().Item2);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Comments_Empty()
+        {
+            var mm = Reader.GetMethodComments(typeof(MyNoCommentClass).GetMethod(nameof(MyNoCommentClass.Method)));
+            Assert.IsNull(mm.Summary);
+            Assert.AreEqual(0, mm.Parameters.Count);
+            Assert.IsNull(mm.Returns);
         }
 
         [TestMethod]

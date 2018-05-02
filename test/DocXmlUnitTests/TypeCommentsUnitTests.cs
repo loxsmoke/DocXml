@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.XPath;
+using DocXmlUnitTests.TestData;
 
 #pragma warning disable CS1591
 
@@ -55,6 +56,14 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.AreEqual("Delegate type description", mm.Summary);
             Assert.AreEqual(1, mm.Parameters.Count);
             AssertParam(mm, 0, "parameter", "Parameter description");
+        }
+
+        [TestMethod]
+        public void Class_Comments_Inheritdoc()
+        {
+            var comments = Reader.GetTypeComments(typeof(ClassForInheritdoc));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("", comments.Inheritdoc.Cref);
         }
     }
 }

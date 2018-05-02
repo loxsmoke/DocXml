@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
+using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -249,6 +250,15 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var comments = Reader.GetMethodComments(MySubClass_MultilineSummary);
             Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdoc).GetMethod(nameof(ClassForInheritdoc.Method)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.BaseClassForInheritdoc.Method", comments.Inheritdoc.Cref);
         }
     }
 }

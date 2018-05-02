@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,8 +12,9 @@ namespace LoxSmoke.DocXml
 {
     public class DocXmlReader
     {
-        protected readonly XPathDocument document;
         protected readonly XPathNavigator navigator;
+        protected readonly Dictionary<Assembly, XPathNavigator> assemblyNavigators;
+        protected readonly Func<Assembly, string> assemblyXmlPathFunction;
 
         /// <summary>
         /// True if comments from XML should have unnecessary leading spaces removed.
@@ -35,7 +37,7 @@ namespace LoxSmoke.DocXml
         /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
         public DocXmlReader(string fileName, bool unindentText = true)
         {
-            document = new XPathDocument(fileName);
+            var document = new XPathDocument(fileName);
             navigator = document.CreateNavigator();
             UnIndentText = unindentText;
         }
@@ -47,11 +49,26 @@ namespace LoxSmoke.DocXml
         /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
         public DocXmlReader(XPathDocument xPathDocument, bool unindentText = true)
         {
-            document = xPathDocument ?? throw new ArgumentException(nameof(xPathDocument));
+            var document = xPathDocument ?? throw new ArgumentException(nameof(xPathDocument));
             navigator = document.CreateNavigator();
             UnIndentText = unindentText;
         }
 
+        /// <summary>
+        /// Open XML documentation files based on assemblies of types. Comment file names 
+        /// are generated based on assembly location.
+        /// </summary>
+        /// <param name="assemblyXmlPathFunction">Function that returns path to the assembly XML comment file.
+        /// If function is null then comments file is assumed to have the same file name as assembly.
+        /// If function returns null or if comments file does not exist then all comments for types from that 
+        /// assembly would remain empty. </param>
+        /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
+        public DocXmlReader(Func<Assembly, string> assemblyXmlPathFunction = null, bool unindentText = true)
+        {
+            assemblyNavigators = new Dictionary<Assembly, XPathNavigator>();
+            UnIndentText = unindentText;
+            this.assemblyXmlPathFunction = assemblyXmlPathFunction;
+        }
 
         #region Public methods
         /// <summary>
@@ -62,7 +79,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public MethodComments GetMethodComments(MethodBase methodInfo)
         {
-            var methodNode = GetXmlMemberNode(methodInfo.MethodId());
+            var methodNode = GetXmlMemberNode(methodInfo.MethodId(), methodInfo?.ReflectedType);
             var comments = new MethodComments();
             if (methodNode != null)
             {
@@ -71,6 +88,7 @@ namespace LoxSmoke.DocXml
                 comments.TypeParameters = GetNamedComments(methodNode, TypeParamXPath, NameAttribute);
                 comments.Returns = GetReturnsComment(methodNode);
                 comments.Responses = GetNamedComments(methodNode, ResponsesXPath, CodeAttribute);
+                comments.Inheritdoc = GetInheritdocTag(methodNode);
             }
             return comments;
         }
@@ -84,7 +102,7 @@ namespace LoxSmoke.DocXml
         public TypeComments GetTypeComments(Type type)
         {
             var comments = new TypeComments();
-            var typeNode = GetXmlMemberNode(type.TypeId());
+            var typeNode = GetXmlMemberNode(type.TypeId(), type);
             if (typeNode != null)
             {
                 if (type.IsSubclassOf(typeof(Delegate)))
@@ -92,6 +110,7 @@ namespace LoxSmoke.DocXml
                     comments.Parameters = GetParametersComments(typeNode);
                 }
                 GetCommonComments(comments, typeNode);
+                comments.Inheritdoc = GetInheritdocTag(typeNode);
             }
             return comments;
         }
@@ -103,7 +122,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public string GetMemberComment(MemberInfo memberInfo)
         {
-            return GetSummaryComment(GetXmlMemberNode(memberInfo.MemberId()));
+            return GetSummaryComment(GetXmlMemberNode(memberInfo.MemberId(), memberInfo?.ReflectedType));
         }
 
         /// <summary>
@@ -114,7 +133,7 @@ namespace LoxSmoke.DocXml
         public CommonComments GetMemberComments(MemberInfo memberInfo)
         {
             var comments = new CommonComments();
-            var node = GetXmlMemberNode(memberInfo.MemberId());
+            var node = GetXmlMemberNode(memberInfo.MemberId(), memberInfo?.ReflectedType);
             if (node != null) GetCommonComments(comments, node);
             return comments;
         }
@@ -132,7 +151,7 @@ namespace LoxSmoke.DocXml
             if (!enumType.IsEnum) throw new ArgumentException(nameof(enumType));
 
             var comments = new EnumComments();
-            var typeNode = GetXmlMemberNode(enumType.TypeId());
+            var typeNode = GetXmlMemberNode(enumType.TypeId(), enumType?.ReflectedType);
             if (typeNode != null)
             {
                 GetCommonComments(comments, typeNode);
@@ -141,7 +160,7 @@ namespace LoxSmoke.DocXml
             bool valueCommentsExist = false;
             foreach (var enumName in enumType.GetEnumNames())
             {
-                var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName));
+                var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName), enumType?.ReflectedType);
                 valueCommentsExist |= (valueNode != null);
                 var valueComment = new EnumValueComment()
                 {
@@ -166,10 +185,12 @@ namespace LoxSmoke.DocXml
         private const string TypeParamXPath = "typeparam";
         private const string ResponsesXPath = "response";
         private const string ReturnsXPath = "returns";
+        private const string InheritdocXPath = "inheritdoc";
 
         //  XML attribute names
         private const string NameAttribute = "name";
         private const string CodeAttribute = "code";
+        private const string CrefAttribute = "cref";
         #endregion
 
         #region XML helper functions
@@ -181,9 +202,31 @@ namespace LoxSmoke.DocXml
             comments.Example = GetExampleComment(rootNode);
         }
 
-        private XPathNavigator GetXmlMemberNode(string name)
+        private XPathNavigator GetXmlMemberNode(string name, Type typeForAssembly)
         {
-            return navigator.SelectSingleNode(string.Format(MemberXPath, name));
+            if (navigator != null)
+            {
+                return navigator.SelectSingleNode(string.Format(MemberXPath, name));
+            }
+
+            if (typeForAssembly == null) return null;
+            if (assemblyNavigators.TryGetValue(typeForAssembly.Assembly, out var typeNavigator))
+            {
+                return typeNavigator.SelectSingleNode(string.Format(MemberXPath, name));
+            }
+
+            var commentFileName = assemblyXmlPathFunction == null
+                ? Path.ChangeExtension(typeForAssembly.Assembly.Location, ".xml")
+                : assemblyXmlPathFunction(typeForAssembly.Assembly);
+            if (commentFileName == null || !File.Exists(commentFileName))
+            {
+                assemblyNavigators.Add(typeForAssembly.Assembly, null);
+                return null;
+            }
+            var document = new XPathDocument(commentFileName);
+            var docNavigator = document.CreateNavigator();
+            assemblyNavigators.Add(typeForAssembly.Assembly, docNavigator);
+            return docNavigator.SelectSingleNode(string.Format(MemberXPath, name));
         }
 
         private string GetXmlText(XPathNavigator node)
@@ -248,6 +291,14 @@ namespace LoxSmoke.DocXml
                 list.Add(new Tuple<string, string>(code, GetXmlText(childNodes.Current)));
             }
             return list;
+        }
+
+        private InheritdocTag GetInheritdocTag(XPathNavigator rootNode)
+        {
+            if (rootNode == null) return null;
+            var inheritdoc = GetNamedComments(rootNode, InheritdocXPath, CrefAttribute);
+            if (inheritdoc.Count == 0) return null;
+            return new InheritdocTag() {Cref = inheritdoc.First().Item1};
         }
         #endregion
     }

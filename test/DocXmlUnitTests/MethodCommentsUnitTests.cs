@@ -260,5 +260,13 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("M:DocXmlUnitTests.TestData.BaseClassForInheritdoc.Method", comments.Inheritdoc.Cref);
         }
+
+        [TestMethod]
+        public void Property_Inheritdoc()
+        {
+            var comments =
+                Reader.GetMemberComments(typeof(ClassForInheritdoc).GetProperty(nameof(ClassForInheritdoc.Property)));
+            Assert.IsNotNull(comments.Inheritdoc);
+        }
     }
 }

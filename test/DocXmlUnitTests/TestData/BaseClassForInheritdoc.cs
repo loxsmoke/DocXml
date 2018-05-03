@@ -15,5 +15,9 @@ namespace DocXmlUnitTests.TestData
         public virtual void Method()
         {
         }
+        /// <summary>
+        /// Property for Inheritdoc
+        /// </summary>
+        public virtual int Property { get; set; }
     }
 }

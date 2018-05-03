@@ -88,7 +88,6 @@ namespace LoxSmoke.DocXml
                 comments.TypeParameters = GetNamedComments(methodNode, TypeParamXPath, NameAttribute);
                 comments.Returns = GetReturnsComment(methodNode);
                 comments.Responses = GetNamedComments(methodNode, ResponsesXPath, CodeAttribute);
-                comments.Inheritdoc = GetInheritdocTag(methodNode);
             }
             return comments;
         }
@@ -110,7 +109,6 @@ namespace LoxSmoke.DocXml
                     comments.Parameters = GetParametersComments(typeNode);
                 }
                 GetCommonComments(comments, typeNode);
-                comments.Inheritdoc = GetInheritdocTag(typeNode);
             }
             return comments;
         }
@@ -200,6 +198,7 @@ namespace LoxSmoke.DocXml
             comments.Summary = GetSummaryComment(rootNode);
             comments.Remarks = GetRemarksComment(rootNode);
             comments.Example = GetExampleComment(rootNode);
+            comments.Inheritdoc = GetInheritdocTag(rootNode);
         }
 
         private XPathNavigator GetXmlMemberNode(string name, Type typeForAssembly)
@@ -300,6 +299,7 @@ namespace LoxSmoke.DocXml
             if (inheritdoc.Count == 0) return null;
             return new InheritdocTag() {Cref = inheritdoc.First().Item1};
         }
+
         #endregion
     }
 }

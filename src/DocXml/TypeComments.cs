@@ -17,10 +17,5 @@ namespace LoxSmoke.DocXml
         /// Item2 is the body of the comment
         /// </summary>
         public List<Tuple<string, string>> Parameters { get; set; } = new List<Tuple<string, string>>();
-
-        /// <summary>
-        /// Inheritdoc tag for the type. Null if missing in comments.
-        /// </summary>
-        public InheritdocTag Inheritdoc { get; set; }
     }
 }

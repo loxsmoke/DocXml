@@ -11,5 +11,8 @@ namespace DocXmlUnitTests.TestData
         public override void Method()
         {
         }
+
+        /// <inheritdoc/>
+        public override int Property { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Xml.XPath;
 using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 #pragma warning disable CS1591
 
@@ -253,12 +254,47 @@ namespace LoxSmoke.DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Inheritdoc()
+        public void MemberFunction_Inheritdoc_Constructor()
         {
             var comments =
-                Reader.GetMethodComments(typeof(ClassForInheritdoc).GetMethod(nameof(ClassForInheritdoc.Method)));
+                Reader.GetMethodComments(typeof(ClassForInheritdoc)
+                    .GetConstructor(new Type[] { typeof(int) }));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("Constructor2", comments.Summary);
+            Assert.IsNotNull(comments.Parameters);
+            Assert.AreEqual(1, comments.Parameters.Count);
+            Assert.AreEqual("x", comments.Parameters[0].Item1);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_VirtualOverride()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdoc)
+                    .GetMethod(nameof(ClassForInheritdoc.Method)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("Method for Inheritdoc", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_InterfaceImplementation()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdoc)
+                    .GetMethod(nameof(ClassForInheritdoc.InterfaceMethod)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("Interface method", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_Cref()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdocCref)
+                    .GetMethod(nameof(ClassForInheritdocCref.Method)));
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("M:DocXmlUnitTests.TestData.BaseClassForInheritdoc.Method", comments.Inheritdoc.Cref);
+            Assert.AreEqual("Method for Inheritdoc", comments.Summary);
         }
 
         [TestMethod]

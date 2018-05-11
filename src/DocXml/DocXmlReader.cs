@@ -438,12 +438,37 @@ namespace LoxSmoke.DocXml
             if (GetCrefComments(comments.Inheritdoc.Cref, type, comments,
                 (node) => GetComments(type, comments, node))) return comments;
 
-            // todo: implement
             // For types and interfaces:
             // - Inherit documentation from all base classes working backwards up 
             //   the inheritance chain.
             // - Inherit documentation from all interface implementations (if any) 
             //   working through them in the order listed in the reflection information file (usually alphabetically).
+            if (type.BaseType != null && type.BaseType != typeof(object))
+            {
+                var newComments = GetTypeComments(type.BaseType);
+                if (newComments != null)
+                {
+                    newComments.Parameters = comments.Parameters;
+                    newComments.Inheritdoc = comments.Inheritdoc;
+                    return newComments;
+                }
+            }
+
+            var interfaces = type.GetInterfaces();
+            if (interfaces?.Length > 0)
+            {
+                foreach (var intf in interfaces.OrderBy(i => i.FullName))
+                {
+                    var newComments = GetTypeComments(intf);
+                    if (newComments != null)
+                    {
+                        newComments.Parameters = comments.Parameters;
+                        newComments.Inheritdoc = comments.Inheritdoc;
+                        return newComments;
+                    }
+                }
+            }
+
             return comments;
         }
 

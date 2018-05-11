@@ -64,6 +64,16 @@ namespace LoxSmoke.DocXmlUnitTests
             var comments = Reader.GetTypeComments(typeof(ClassForInheritdoc));
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("", comments.Inheritdoc.Cref);
+            Assert.AreEqual("Base Inheritdoc", comments.Summary);
+        }
+
+        [TestMethod]
+        public void Class_Comments_InterfaceInheritdoc()
+        {
+            var comments = Reader.GetTypeComments(typeof(InterfaceImplInheritdoc));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("", comments.Inheritdoc.Cref);
+            Assert.AreEqual("Interface summary", comments.Summary);
         }
     }
 }

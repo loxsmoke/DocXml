@@ -4,6 +4,9 @@ using System.Text;
 
 namespace DocXmlUnitTests.TestData
 {
+    /// <summary>
+    /// Interface summary
+    /// </summary>
     public interface InterfaceForInheritdoc
     {
         /// <summary>

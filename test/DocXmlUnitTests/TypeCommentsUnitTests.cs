@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.XPath;
+using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
 
 #pragma warning disable CS1591
@@ -25,6 +26,13 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var mm = Reader.GetTypeComments(MyClass_Type);
             Assert.AreEqual("This is MyClass", mm.Summary);
+        }
+
+        [TestMethod]
+        public void Class_Comment_OtherAssembly()
+        {
+            var mm = MultiAssemblyReader.GetTypeComments(typeof(OtherClass));
+            Assert.AreEqual("Other class", mm.Summary);
         }
 
         [TestMethod]

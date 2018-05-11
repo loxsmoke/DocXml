@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 #pragma warning disable CS1591
@@ -11,11 +12,13 @@ namespace LoxSmoke.DocXmlUnitTests
     public class BaseTestClass
     {
         public DocXmlReader Reader { get; set; }
+        public DocXmlReader MultiAssemblyReader { get; set; }
         public Type MyClass_Type;
 
         public void Setup()
         {
             Reader = new DocXmlReader("DocXmlUnitTests.xml");
+            MultiAssemblyReader = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
             MyClass_Type = typeof(MyClass);
         }
 

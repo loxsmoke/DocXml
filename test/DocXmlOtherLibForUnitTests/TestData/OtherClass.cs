@@ -7,5 +7,11 @@ namespace DocXmlOtherLibForUnitTests
     /// </summary>
     public class OtherClass
     {
+        /// <summary>
+        /// OtherLibMethod summary
+        /// </summary>
+        public void OtherLibMethod()
+        {
+        }
     }
 }

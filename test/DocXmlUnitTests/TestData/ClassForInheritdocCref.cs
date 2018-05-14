@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DocXmlOtherLibForUnitTests;
 
 namespace DocXmlUnitTests.TestData
 {
@@ -14,5 +15,10 @@ namespace DocXmlUnitTests.TestData
 
         /// <inheritdoc cref="BaseClassForInheritdoc.Property"/>
         public override int Property { get; set; }
+
+        /// <inheritdoc cref="OtherClass.OtherLibMethod"/>
+        public void OtherLibMethod()
+        {
+        }
     }
 }

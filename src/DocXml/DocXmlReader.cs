@@ -70,6 +70,28 @@ namespace LoxSmoke.DocXml
             this.assemblyXmlPathFunction = assemblyXmlPathFunction;
         }
 
+        /// <summary>
+        /// Open XML documentation files based on assemblies of types. Comment file names 
+        /// are generated based on assembly location.
+        /// </summary>
+        /// <param name="assemblies">The list of assemblies for XML documentation</param>
+        /// <param name="assemblyXmlPathFunction">Function that returns path to the assembly XML comment file.
+        /// If function is null then comments file is assumed to have the same file name as assembly.
+        /// If function returns null or if comments file does not exist then all comments for types from that 
+        /// assembly would remain empty. </param>
+        /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
+        public DocXmlReader(IEnumerable<Assembly> assemblies,
+            Func<Assembly, string> assemblyXmlPathFunction = null, bool unindentText = true)
+        {
+            assemblyNavigators = new Dictionary<Assembly, XPathNavigator>();
+            UnIndentText = unindentText;
+            this.assemblyXmlPathFunction = assemblyXmlPathFunction;
+            foreach (var assembly in assemblies)
+            {
+                GetNavigatorForAssembly(assembly);
+            }
+        }
+
         #region Public methods
         /// <summary>
         /// Returns the following comments for class method:
@@ -239,24 +261,30 @@ namespace LoxSmoke.DocXml
 
         private XPathNavigator GetXmlMemberNodeFromDictionary(string name, Type typeForAssembly)
         {
-            if (typeForAssembly == null) return null;
-            if (assemblyNavigators.TryGetValue(typeForAssembly.Assembly, out var typeNavigator))
+            var typeNavigator = GetNavigatorForAssembly(typeForAssembly?.Assembly);
+            return typeNavigator?.SelectSingleNode(string.Format(MemberXPath, name));
+        }
+
+        private XPathNavigator GetNavigatorForAssembly(Assembly assembly)
+        {
+            if (assembly == null) return null;
+            if (assemblyNavigators.TryGetValue(assembly, out var typeNavigator))
             {
-                return typeNavigator.SelectSingleNode(string.Format(MemberXPath, name));
+                return typeNavigator;
             }
 
             var commentFileName = assemblyXmlPathFunction == null
-                ? Path.ChangeExtension(typeForAssembly.Assembly.Location, ".xml")
-                : assemblyXmlPathFunction(typeForAssembly.Assembly);
+                ? Path.ChangeExtension(assembly.Location, ".xml")
+                : assemblyXmlPathFunction(assembly);
             if (commentFileName == null || !File.Exists(commentFileName))
             {
-                assemblyNavigators.Add(typeForAssembly.Assembly, null);
+                assemblyNavigators.Add(assembly, null);
                 return null;
             }
             var document = new XPathDocument(commentFileName);
             var docNavigator = document.CreateNavigator();
-            assemblyNavigators.Add(typeForAssembly.Assembly, docNavigator);
-            return docNavigator.SelectSingleNode(string.Format(MemberXPath, name));
+            assemblyNavigators.Add(assembly, docNavigator);
+            return docNavigator;
         }
 
         private string GetXmlText(XPathNavigator node)

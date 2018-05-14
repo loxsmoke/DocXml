@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
+using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -295,6 +297,20 @@ namespace LoxSmoke.DocXmlUnitTests
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("M:DocXmlUnitTests.TestData.BaseClassForInheritdoc.Method", comments.Inheritdoc.Cref);
             Assert.AreEqual("Method for Inheritdoc", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_Cref_OtherAssembly()
+        {
+            var docReader = new DocXmlReader(
+                new Assembly[] { typeof(MyClass).Assembly, typeof(OtherClass).Assembly},
+                (a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
+
+            var comments =
+                docReader.GetMethodComments(typeof(ClassForInheritdocCref)
+                    .GetMethod(nameof(ClassForInheritdocCref.OtherLibMethod)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("OtherLibMethod summary", comments.Summary);
         }
 
         [TestMethod]

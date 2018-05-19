@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocXml", "src\DocXml\DocXml
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocXmlUnitTests", "test\DocXmlUnitTests\DocXmlUnitTests.csproj", "{29BC43DB-4121-43EA-8AA7-AE636B295A38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocXmlOtherLibForUnitTests", "test\DocXmlOtherLibForUnitTests\DocXmlOtherLibForUnitTests.csproj", "{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Coverage|Any CPU = Coverage|Any CPU
@@ -26,6 +28,12 @@ Global
 		{29BC43DB-4121-43EA-8AA7-AE636B295A38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29BC43DB-4121-43EA-8AA7-AE636B295A38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29BC43DB-4121-43EA-8AA7-AE636B295A38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}.Coverage|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}.Coverage|Any CPU.Build.0 = Debug|Any CPU
+		{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E24C8F-0FB5-4A4C-94FE-B89B3CC7EAA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,13 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
+using DocXmlOtherLibForUnitTests;
+using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 #pragma warning disable CS1591
 
@@ -249,6 +253,72 @@ namespace LoxSmoke.DocXmlUnitTests
         {
             var comments = Reader.GetMethodComments(MySubClass_MultilineSummary);
             Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_Constructor()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdoc)
+                    .GetConstructor(new Type[] { typeof(int) }));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("Constructor2", comments.Summary);
+            Assert.IsNotNull(comments.Parameters);
+            Assert.AreEqual(1, comments.Parameters.Count);
+            Assert.AreEqual("x", comments.Parameters[0].Item1);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_VirtualOverride()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdoc)
+                    .GetMethod(nameof(ClassForInheritdoc.Method)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("Method for Inheritdoc", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_InterfaceImplementation()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdoc)
+                    .GetMethod(nameof(ClassForInheritdoc.InterfaceMethod)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("Interface method", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_Cref()
+        {
+            var comments =
+                Reader.GetMethodComments(typeof(ClassForInheritdocCref)
+                    .GetMethod(nameof(ClassForInheritdocCref.Method)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.BaseClassForInheritdoc.Method", comments.Inheritdoc.Cref);
+            Assert.AreEqual("Method for Inheritdoc", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_Inheritdoc_Cref_OtherAssembly()
+        {
+            var docReader = new DocXmlReader(
+                new Assembly[] { typeof(MyClass).Assembly, typeof(OtherClass).Assembly},
+                (a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
+
+            var comments =
+                docReader.GetMethodComments(typeof(ClassForInheritdocCref)
+                    .GetMethod(nameof(ClassForInheritdocCref.OtherLibMethod)));
+            Assert.IsNotNull(comments.Inheritdoc);
+            Assert.AreEqual("OtherLibMethod summary", comments.Summary);
+        }
+
+        [TestMethod]
+        public void Property_Inheritdoc()
+        {
+            var comments =
+                Reader.GetMemberComments(typeof(ClassForInheritdoc).GetProperty(nameof(ClassForInheritdoc.Property)));
+            Assert.IsNotNull(comments.Inheritdoc);
         }
     }
 }

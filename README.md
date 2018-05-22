@@ -48,7 +48,7 @@ Console.WriteLine(comments.Summary);
 Console.WriteLine(comments.Returns);
 ```
 
-A bit more interesting example uses **JsonObjectContract** from popular **Newtonsoft.Json** nuget package. Here code retrieves summary comments for each property.
+A bit more interesting example uses **JsonObjectContract** from **Newtonsoft.Json** nuget package. Here code retrieves summary comments for each property.
 ```csharp
 // Just for the sake of this example create JsonObjectContract
 var jsonContract = new DefaultContractResolver().ResolveContract(typeof(MyClass2)) as JsonObjectContract;
@@ -66,7 +66,7 @@ foreach (var jsonContractProperty in jsonContract.Properties)
 
 ## Classes and methods
 
-The main class is **DocXmlReader**. It reads XML file and returns documentation/comments objects.
+The main class is **DocXmlReader**. It reads XML file and returns documentation/comments objects. 
 
 Comment classes represent one or more comments associated with each item in the source code. Simple summary 
 comments are returned as strings and more complex comments are returned as comments objects. Here is the list of 
@@ -79,6 +79,35 @@ comments classes:
 
 Static **XmlDocId** class is a set of static methods that generates IDs used for retrieval of documentation from 
 XML file. This class is used by **DocXmlReader**.   
+
+### DocXmlReader class
+
+#### Constructors
+There are few constructors that can be used to create **DocXmlReader**:
+```csharp
+public DocXmlReader(string fileName, bool unindentText = true)
+public DocXmlReader(XPathDocument xPathDocument, bool unindentText = true)
+```
+Two simplest constructors take the name of XML documentation file or constructed XPathDocument and optional indentation handling parameter. By default **DocXmlReader** "un-indents" comments from XML file by removing extra spaces and newline characters added by C# compiler. 
+```csharp
+public DocXmlReader(Func<Assembly, string> assemblyXmlPathFunction = null, bool unindentText = true)
+```
+This constructor should be used for retrieval of documentation for multiple assemblies. If **assemblyXmlPathFunction** is not specified then by default it generates XML file names by taking the assembly name and replacing it's extension with .xml. If file does not exist then empty comments object is returned by **DocXmlReader**. When **assemblyXmlPathFunction** is specified it should return the name of the XML documentation file for specified assembly. Returning null or invalid path is OK as it means that documentation for that assembly should not be loaded.   
+
+```csharp
+public DocXmlReader(IEnumerable<Assembly> assemblies, Func<Assembly, string> assemblyXmlPathFunction = null, bool unindentText = true)
+```
+Similar to previous constructor but here the list of assemblies can be specified during construction. In most cases **DocXmlReader** can find assembly documentation files automatically but in case of **\<inheritdoc\>** tag with **cref** there could be not enough information as to which assembly is being referred.
+#### Documentation reading functions
+There are only few functions that read documentation of types, methods and properties. Most of them do what their names say:
+```csharp
+public MethodComments GetMethodComments(MethodBase methodInfo)
+public TypeComments GetTypeComments(Type type)
+public string GetMemberComment(MemberInfo memberInfo)
+public CommonComments GetMemberComments(MemberInfo memberInfo)
+public EnumComments GetEnumComments(Type enumType, bool fillValues = false)
+```
+Enum comment function may need some explanation though. It can return documentation for enum type and also the list of values with their names and documentation. If **fillValues** is false and no comments exist for any enum values then returned **EnumComments.ValueComments** list is empty. In other cases this list contains all values, names and value comments. 
 
 ## Supported documentation tags
  

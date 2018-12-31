@@ -1,5 +1,5 @@
 function dotnet-test {
-  Get-ChildItem -Path "test\**\*.csproj" | ForEach-Object {
+  Get-ChildItem -Path "test\DocXmlUnitTests\*.csproj" | ForEach-Object {
     dotnet test $_ -c Release --no-build -l "trx;LogFileName=tests.xml"
     # upload results to AppVeyor
     $wc = New-Object 'System.Net.WebClient'

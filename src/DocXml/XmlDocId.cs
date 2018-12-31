@@ -80,6 +80,25 @@ namespace LoxSmoke.DocXml
         {
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
             if ((propertyInfo.MemberType & MemberTypes.Property) == 0) throw new ArgumentException(nameof(propertyInfo));
+
+            if (propertyInfo.Name == "Item")
+            {
+                var getParameters = (propertyInfo as PropertyInfo)?.GetMethod?.GetParameters();
+                if (getParameters?.Length > 0)
+                {
+                    return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." +
+                           propertyInfo.Name +
+                           GetParametersXmlId(getParameters);
+                }
+
+                var setParameters = (propertyInfo as PropertyInfo)?.SetMethod?.GetParameters();
+                if (setParameters?.Length > 1)
+                {
+                    return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." +
+                           propertyInfo.Name +
+                           GetParametersXmlId(setParameters.Skip(1));
+                }
+            }
             return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;
         }
 
@@ -176,15 +195,18 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         static string GetMethodXmlId(MethodBase methodInfo)
         {
-            // Calculate the parameter string as this is in the member name in the XML
-            var parameters = new List<string>();
-            foreach (var parameterInfo in methodInfo.GetParameters())
-            {
-                parameters.Add(GetTypeXmlId(parameterInfo.ParameterType, parameterInfo.IsOut | parameterInfo.ParameterType.IsByRef, true));
-            }
             return $"{ShortMethodName(methodInfo)}" +
-                   ((parameters.Count > 0) ? $"({string.Join(",", parameters)})" : "") + 
+                   GetParametersXmlId(methodInfo.GetParameters()) +
                    ExplicitImplicitPostfix(methodInfo);
+        }
+
+        static string GetParametersXmlId(IEnumerable<ParameterInfo> parameters)
+        {
+            // Calculate the parameter string as this is in the member name in the XML
+            var parameterStrings = parameters.Select(parameterInfo =>
+                GetTypeXmlId(parameterInfo.ParameterType, parameterInfo.IsOut | parameterInfo.ParameterType.IsByRef, true))
+                .ToList();
+            return ((parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : "");
         }
 
         /// <summary>

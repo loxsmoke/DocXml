@@ -135,6 +135,17 @@ namespace LoxSmoke.DocXmlUnitTests
         public int this[string parameter] { get { return 1; } }
 
         /// <summary>
+        /// ItemGetSetProperty description
+        /// </summary>
+        /// <param name="parameter">Parameter description</param>
+        /// <returns>Return value description</returns>
+        public int this[int parameter]
+        {
+            get { return 1; }
+            set { }
+        }
+
+        /// <summary>
         /// Operator description
         /// </summary>
         /// <param name="parameter">Parameter description</param>
@@ -175,6 +186,15 @@ namespace LoxSmoke.DocXmlUnitTests
             return null;
         }
 
+        /// <summary>
+        /// GetSetProperty comment
+        /// </summary>
+        /// <returns>prop return</returns>
+        public string GetSetProperty
+        {
+            get => "test";
+            set { }
+        }
     }
 }
 

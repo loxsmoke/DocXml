@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
 
     <Configurations>Debug;Release;Coverage</Configurations>
+
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

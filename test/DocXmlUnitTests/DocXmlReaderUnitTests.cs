@@ -7,6 +7,8 @@ using LoxSmoke.DocXml;
 using LoxSmoke.DocXmlUnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+#pragma warning disable CS1591
+
 namespace DocXmlUnitTests
 {
     [TestClass]

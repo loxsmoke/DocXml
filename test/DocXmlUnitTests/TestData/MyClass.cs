@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LoxSmoke.DocXmlUnitTests
+namespace DocXmlUnitTests
 {
     /// <summary>
     /// Enum type description

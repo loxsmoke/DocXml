@@ -95,7 +95,7 @@ namespace LoxSmoke.DocXml
         #region Public methods
         /// <summary>
         /// Returns the following comments for class method:
-        /// Summary, Remarks, Paramters (if present), Responses (if present), Returns
+        /// Summary, Remarks, Parameters (if present), Responses (if present), Returns
         /// </summary>
         /// <param name="methodInfo"></param>
         /// <returns></returns>
@@ -332,21 +332,21 @@ namespace LoxSmoke.DocXml
             return "";
         }
 
-        private List<Tuple<string, string>> GetParametersComments(XPathNavigator rootNode)
+        private List<(string Name, string Text)> GetParametersComments(XPathNavigator rootNode)
         {
             return GetNamedComments(rootNode, ParamXPath, NameAttribute);
         }
 
-        private List<Tuple<string, string>> GetNamedComments(XPathNavigator rootNode, string path, string attributeName)
+        private List<(string Name, string Text)> GetNamedComments(XPathNavigator rootNode, string path, string attributeName)
         {
-            var list = new List<Tuple<string, string>>();
+            var list = new List<(string Name, string Text)>();
             var childNodes = rootNode?.Select(path);
             if (childNodes == null) return list;
 
             while (childNodes.MoveNext())
             {
                 var code = childNodes.Current.GetAttribute(attributeName, "");
-                list.Add(new Tuple<string, string>(code, GetXmlText(childNodes.Current)));
+                list.Add((code, GetXmlText(childNodes.Current)));
             }
             return list;
         }

@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #pragma warning disable CS1591
 
-namespace LoxSmoke.DocXmlUnitTests
+namespace DocXmlUnitTests
 {
     [TestClass]
     public class MemberInfoUnitTests : BaseTestClass

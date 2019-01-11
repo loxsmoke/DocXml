@@ -16,6 +16,6 @@ namespace LoxSmoke.DocXml
         /// Item1 is the "param" item "name" attribute and
         /// Item2 is the body of the comment
         /// </summary>
-        public List<Tuple<string, string>> Parameters { get; set; } = new List<Tuple<string, string>>();
+        public List<(string Name, string Text)> Parameters { get; set; } = new List<(string Name, string Text)>();
     }
 }

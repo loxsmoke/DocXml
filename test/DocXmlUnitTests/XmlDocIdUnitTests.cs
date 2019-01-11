@@ -7,7 +7,7 @@ using System.Text;
 
 #pragma warning disable CS1591
 
-namespace LoxSmoke.DocXmlUnitTests
+namespace DocXmlUnitTests
 {
     [TestClass]
     public class XmlDocIdUnitTests

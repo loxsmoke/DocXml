@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using DocXmlOtherLibForUnitTests;
+using DocXmlUnitTests.TestData.Reflection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static LoxSmoke.DocXml.Reflection.DocXmlReaderExtensions;
+
+#pragma warning disable CS1591
+
+namespace DocXmlUnitTests
+{
+    [TestClass]
+    public class DocXmlReaderExtensionsUnitTests : BaseTestClass
+    {
+        [TestInitialize]
+        public new void Setup()
+        {
+            base.Setup();
+        }
+
+        [TestMethod]
+        public void DocXmlReaderExtensions_PropertyComments()
+        {
+            var props = Reader.PropertyComments(typeof(PropertiesReflectionClass))
+                .ToDictionary(d => d.Info.Name, d => d.Comments);
+            Assert.AreEqual(7, props.Count);
+            Assert.AreEqual("PublicGetProp", props["PublicGetProp"].Summary);
+            Assert.AreEqual("PublicSetProp", props["PublicSetProp"].Summary);
+            Assert.AreEqual("PublicGetSetProp", props["PublicGetSetProp"].Summary);
+            Assert.AreEqual("ProtectedGetSetProp", props["ProtectedGetSetProp"].Summary);
+            Assert.AreEqual("PrivateGetSetProp", props["PrivateGetSetProp"].Summary);
+            Assert.AreEqual("InternalGetSetProp", props["InternalGetSetProp"].Summary);
+            Assert.AreEqual("PublicStaticGetSetProp", props["PublicStaticGetSetProp"].Summary);
+        }
+
+        [TestMethod]
+        public void DocXmlReaderExtensions_MethodComments()
+        {
+            var methods = Reader.MethodComments(typeof(MethodsReflectionClass))
+                .ToDictionary(d => d.Info.Name, d => d.Comments);
+            Assert.AreEqual(5, methods.Count);
+            Assert.AreEqual("PublicMethod", methods["PublicMethod"].Summary);
+            Assert.AreEqual("ProtectedMethod", methods["ProtectedMethod"].Summary);
+            Assert.AreEqual("PrivateMethod", methods["PrivateMethod"].Summary);
+            Assert.AreEqual("InternalMethod", methods["InternalMethod"].Summary);
+            Assert.AreEqual("PublicStaticMethod", methods["PublicStaticMethod"].Summary);
+        }
+        [TestMethod]
+        public void DocXmlReaderExtensions_FieldComments()
+        {
+            var fields = Reader.FieldComments(typeof(FieldsReflectionClass))
+                .ToDictionary(d => d.Info.Name, d => d.Comments);
+            Assert.AreEqual(5, fields.Count);
+            Assert.AreEqual("PublicField", fields["PublicField"].Summary);
+            Assert.AreEqual("ProtectedField", fields["ProtectedField"].Summary);
+            Assert.AreEqual("PrivateField", fields["PrivateField"].Summary);
+            Assert.AreEqual("InternalField", fields["InternalField"].Summary);
+            Assert.AreEqual("PublicStaticField", fields["PublicStaticField"].Summary);
+        }
+
+    }
+}

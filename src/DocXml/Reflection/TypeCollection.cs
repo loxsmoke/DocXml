@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace LoxSmoke.DocXml.Reflection
 {
+    /// <summary>
+    /// Collection of type information objects.
+    /// </summary>
     public class TypeCollection
     {
-        public class References
+        /// <summary>
+        /// Reflection information for the class, its methods, properties and fields. 
+        /// </summary>
+        public class TypeInformation
         {
             /// <summary>
             /// The type that this class describes
@@ -17,24 +25,23 @@ namespace LoxSmoke.DocXml.Reflection
             /// <summary>
             /// Other types referencing this type.
             /// </summary>
-            public HashSet<Type> ReferencesIn { get; set; }
+            public HashSet<Type> ReferencesIn { get; set; } = new HashSet<Type>();
             /// <summary>
             /// Other types referenced by this type.
             /// </summary>
-            public HashSet<Type> ReferencesOut { get; set; }
-
-            public void AddReferenceIn(Type type)
-            {
-                if (type == null) return;
-                if (ReferencesIn == null) ReferencesIn = new HashSet<Type>();
-                ReferencesIn.Add(type);
-            }
-            public void AddReferenceOut(Type type)
-            {
-                if (type == null) return;
-                if (ReferencesOut == null) ReferencesOut = new HashSet<Type>();
-                ReferencesOut.Add(type);
-            }
+            public HashSet<Type> ReferencesOut { get; set; } = new HashSet<Type>();
+            /// <summary>
+            /// The list of property inforation of the class.
+            /// </summary>
+            public List<PropertyInfo> Properties { get; set; } = new List<PropertyInfo>();
+            /// <summary>
+            /// The list of method inforation of the class.
+            /// </summary>
+            public List<MethodBase> Methods { get; set; } = new List<MethodBase>();
+            /// <summary>
+            /// The list of field inforation of the class.
+            /// </summary>
+            public List<FieldInfo> Fields { get; set; } = new List<FieldInfo>();
         }
 
         /// <summary>
@@ -45,8 +52,8 @@ namespace LoxSmoke.DocXml.Reflection
         /// <summary>
         /// All referenced types.
         /// </summary>
-        public Dictionary<Type, References> ReferencedTypes { get; set; } 
-            = new Dictionary<Type, References>();
+        public Dictionary<Type, TypeInformation> ReferencedTypes { get; set; } 
+            = new Dictionary<Type, TypeInformation>();
         
         /// <summary>
         /// Types that had their data and functions examined.
@@ -68,21 +75,98 @@ namespace LoxSmoke.DocXml.Reflection
         /// </summary>
         protected HashSet<Type> IgnoreTypes { get; set; } = new HashSet<Type>();
 
+        /// <summary>
+        /// Get all types referenced by the specified type.
+        /// Reflection information for the specified type is also returned.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static TypeCollection ForReferencedTypes(Type type, ReflectionSettings settings = null)
+        {
+            var typeCollection = new TypeCollection();
+            typeCollection.GetReferencedTypes(type, settings);
+            return typeCollection;
+        }
+
+        /// <summary>
+        /// Get all types referenced by the types from specified assembly.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static TypeCollection ForReferencedTypes(Assembly assembly, ReflectionSettings settings = null)
+        {
+            var typeCollection = new TypeCollection();
+            typeCollection.GetReferencedTypes(assembly, settings);
+            return typeCollection;
+        }
+
+        /// <summary>
+        /// Get all types referenced by the specified type.
+        /// Reflection information for the specified type is also returned.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="settings"></param>
         public void GetReferencedTypes(Type type, ReflectionSettings settings = null)
         {
+            Init(settings);
+            PendingPropTypes.Enqueue(type);
+            ProcessTypeQueue();
+        }
+
+        /// <summary>
+        /// Get all types referenced by the types from specified assembly.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="settings"></param>
+        public void GetReferencedTypes(Assembly assembly, ReflectionSettings settings = null)
+        {
+            Init(settings);
+            foreach (var type in assembly.GetTypes())
+            {
+                PendingPropTypes.Enqueue(type);
+            }
+            ProcessTypeQueue();
+        }
+
+        /// <summary>
+        /// Get all types referenced by the types from specified assemblies.
+        /// Reflection information for the specified type is also returned.
+        /// </summary>
+        /// <param name="assemblies"></param>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public void GetReferencedTypes(IEnumerable<Assembly> assemblies, ReflectionSettings settings = null)
+        {
+            Init(settings);
+            foreach (var assembly in assemblies)
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    PendingPropTypes.Enqueue(type);
+                }
+            }
+            ProcessTypeQueue();
+        }
+
+        protected void Init(ReflectionSettings settings)
+        {
             Settings = settings ?? ReflectionSettings.Default;
-            ReferencedTypes = new Dictionary<Type, References>();
+            ReferencedTypes = new Dictionary<Type, TypeInformation>();
             VisitedPropTypes = new HashSet<Type>();
             PendingPropTypes = new Queue<Type>();
-            PendingPropTypes.Enqueue(type);
             CheckAssemblies = new Dictionary<Assembly, bool>();
             IgnoreTypes = new HashSet<Type>();
+        }
 
+        protected void ProcessTypeQueue()
+        {
             while (PendingPropTypes.Count > 0)
             {
                 var theType = PendingPropTypes.Dequeue();
                 UnwrapType(null, theType);
-                GetReferencedTypes(theType);
+                GetReferencedBy(theType);
             }
         }
 
@@ -95,22 +179,24 @@ namespace LoxSmoke.DocXml.Reflection
         {
             if (IgnoreTypes.Contains(type)) return false;
             // Check if type assembly should be checked or ignored
-            if (Settings.ExamineAssemblies != null)
+            if (Settings.AssemblyFilter != null)
             {
                 if (!CheckAssemblies.ContainsKey(type.Assembly))
                 {
-                    CheckAssemblies.Add(type.Assembly, Settings.ExamineAssemblies(type.Assembly));
+                    CheckAssemblies.Add(type.Assembly, Settings.AssemblyFilter(type.Assembly));
                 }
                 if (!CheckAssemblies[type.Assembly]) return false;
             }
+            // Ignore compiler-generated types
             // If we have filtering function then ask if type is OK
-            if (Settings.ExamineTypes == null ||
-                Settings.ExamineTypes(type)) return true;
+            if (!IsCompilerGenerated(type.CustomAttributes) &&
+                (Settings.TypeFilter == null ||
+                Settings.TypeFilter(type))) return true;
             IgnoreTypes.Add(type);
             return false;
         }
 
-        protected void GetReferencedTypes(Type type)
+        protected void GetReferencedBy(Type type)
         {
             if (VisitedPropTypes.Contains(type))
             {
@@ -119,8 +205,11 @@ namespace LoxSmoke.DocXml.Reflection
             }
             if (!CheckType(type)) return;
             VisitedPropTypes.Add(type);
+            var thisTypeInfo = ReferencedTypes[type];
             foreach (var info in type.GetProperties(Settings.PropertyFlags))
             {
+                if (Settings.PropertyFilter != null && !Settings.PropertyFilter(info)) continue;
+                thisTypeInfo.Properties.Add(info);
                 UnwrapType(type, info.PropertyType);
                 if (info.GetMethod?.GetParameters()?.Length > 0)
                 {
@@ -133,15 +222,27 @@ namespace LoxSmoke.DocXml.Reflection
             }
             foreach (var info in type.GetMethods(Settings.MethodFlags))
             {
+                if (info.IsSpecialName) continue;
+                if (Settings.MethodFilter != null && !Settings.MethodFilter(info)) continue;
+                thisTypeInfo.Methods.Add(info);
                 UnwrapType(type, info.ReturnType);
                 if (!(info.GetParameters()?.Length > 0)) continue;
                 foreach(var parameter in info.GetParameters()) UnwrapType(type, parameter.ParameterType);
             }
+            foreach (var info in type.GetConstructors(Settings.MethodFlags))
+            {
+                if (Settings.MethodFilter != null && !Settings.MethodFilter(info)) continue;
+                thisTypeInfo.Methods.Add(info);
+                if (!(info.GetParameters()?.Length > 0)) continue;
+                foreach (var parameter in info.GetParameters()) UnwrapType(type, parameter.ParameterType);
+            }
             foreach (var info in type.GetFields(Settings.FieldFlags))
             {
+                if (IsCompilerGenerated(info.CustomAttributes)) continue;
+                if (Settings.FieldFilter != null && !Settings.FieldFilter(info)) continue;
+                thisTypeInfo.Fields.Add(info);
                 UnwrapType(type, info.FieldType);
             }
-
             foreach (var info in type.GetNestedTypes(Settings.NestedTypeFlags))
             {
                 UnwrapType(type, info);
@@ -149,7 +250,8 @@ namespace LoxSmoke.DocXml.Reflection
         }
 
         /// <summary>
-        /// Recursivelly "unwrap" the type.
+        /// Recursively "unwrap" the generic type or array. If type is not generic and not an array
+        /// then do nothing.
         /// </summary>
         /// <param name="type"></param>
         public void UnwrapType(Type parentType, Type type)
@@ -158,8 +260,8 @@ namespace LoxSmoke.DocXml.Reflection
             {
                 if (parentType != null)
                 {
-                    ReferencedTypes[type].AddReferenceIn(parentType);
-                    ReferencedTypes[parentType].AddReferenceOut(type);
+                    ReferencedTypes[type].ReferencesIn.Add(parentType);
+                    ReferencedTypes[parentType].ReferencesOut.Add(type);
                 }
                 return;
             }
@@ -200,11 +302,16 @@ namespace LoxSmoke.DocXml.Reflection
 
         void AddTypeToCheckProps(Type parentType, Type type)
         {
-            var newRef = new References() { Type = type };
-            newRef.AddReferenceIn(parentType);
-            if (parentType != null) ReferencedTypes[parentType].AddReferenceOut(type);
+            var newRef = new TypeInformation() { Type = type };
+            newRef.ReferencesIn.Add(parentType);
+            if (parentType != null) ReferencedTypes[parentType].ReferencesOut.Add(type);
             ReferencedTypes.Add(type, newRef);
             PendingPropTypes.Enqueue(type);
+        }
+
+        bool IsCompilerGenerated(IEnumerable<System.Reflection.CustomAttributeData> attrs)
+        {
+            return attrs.Any(attr => attr.AttributeType == typeof(CompilerGeneratedAttribute));
         }
     }
 }

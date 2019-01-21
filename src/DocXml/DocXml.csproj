@@ -21,16 +21,19 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>7.2</LangVersion>
+    <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>7.2</LangVersion>
+    <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Coverage|AnyCPU'">
     <LangVersion>7.2</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

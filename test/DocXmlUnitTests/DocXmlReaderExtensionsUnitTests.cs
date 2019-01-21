@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData.Reflection;
+using LoxSmoke.DocXml.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static LoxSmoke.DocXml.Reflection.DocXmlReaderExtensions;
 
@@ -24,7 +25,8 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void DocXmlReaderExtensions_PropertyComments()
         {
-            var props = Reader.PropertyComments(typeof(PropertiesReflectionClass))
+            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass));
+            var props = Reader.Comments(tc.ReferencedTypes[typeof(PropertiesReflectionClass)].Properties)
                 .ToDictionary(d => d.Info.Name, d => d.Comments);
             Assert.AreEqual(7, props.Count);
             Assert.AreEqual("PublicGetProp", props["PublicGetProp"].Summary);
@@ -39,7 +41,8 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void DocXmlReaderExtensions_MethodComments()
         {
-            var methods = Reader.MethodComments(typeof(MethodsReflectionClass))
+            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass));
+            var methods = Reader.Comments(tc.ReferencedTypes[typeof(PropertiesReflectionClass)].Methods)
                 .ToDictionary(d => d.Info.Name, d => d.Comments);
             Assert.AreEqual(5, methods.Count);
             Assert.AreEqual("PublicMethod", methods["PublicMethod"].Summary);
@@ -51,7 +54,8 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void DocXmlReaderExtensions_FieldComments()
         {
-            var fields = Reader.FieldComments(typeof(FieldsReflectionClass))
+            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass));
+            var fields = Reader.Comments(tc.ReferencedTypes[typeof(PropertiesReflectionClass)].Fields)
                 .ToDictionary(d => d.Info.Name, d => d.Comments);
             Assert.AreEqual(5, fields.Count);
             Assert.AreEqual("PublicField", fields["PublicField"].Summary);
@@ -60,6 +64,5 @@ namespace DocXmlUnitTests
             Assert.AreEqual("InternalField", fields["InternalField"].Summary);
             Assert.AreEqual("PublicStaticField", fields["PublicStaticField"].Summary);
         }
-
     }
 }

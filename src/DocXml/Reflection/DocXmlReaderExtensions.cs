@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -12,34 +13,41 @@ namespace LoxSmoke.DocXml.Reflection
     /// </summary>
     public static class DocXmlReaderExtensions
     {
+        /// <summary>
+        /// Get comments for the collection of properties.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="propInfos"></param>
+        /// <returns></returns>
         public static IEnumerable<(PropertyInfo Info, CommonComments Comments)>
-            PropertyComments(this DocXmlReader reader, Type type, ReflectionSettings settings = null)
+            Comments(this DocXmlReader reader, IEnumerable<PropertyInfo> propInfos)
         {
-            settings = settings ?? ReflectionSettings.Default;
-            foreach (var info in type.GetProperties(settings.PropertyFlags))
-            {
-                yield return (info, reader.GetMemberComments(info));
-            }
+            return propInfos.Select(info => (info, reader.GetMemberComments(info)));
         }
-
+        /// <summary>
+        /// Get comments for the collection of methods.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="methodInfos"></param>
+        /// <returns></returns>
         public static IEnumerable<(MethodBase Info, MethodComments Comments)>
-            MethodComments(this DocXmlReader reader, Type type, ReflectionSettings settings = null)
+            Comments(this DocXmlReader reader, IEnumerable<MethodBase> methodInfos)
         {
-            settings = settings ?? ReflectionSettings.Default;
-            foreach (var info in type.GetMethods(settings.MethodFlags))
-            {
-                yield return (info, reader.GetMethodComments(info));
-            }
+            return methodInfos
+                .Select(info => 
+                    (Info: info, Comments: reader.GetMethodComments(info, info.IsConstructor && info.GetParameters().Length == 0)))
+                .Where(data => data.Comments != null);
         }
-
+        /// <summary>
+        /// Get comments for the collection of fields.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="fieldInfos"></param>
+        /// <returns></returns>
         public static IEnumerable<(FieldInfo Info, CommonComments Comments)>
-            FieldComments(this DocXmlReader reader, Type type, ReflectionSettings settings = null)
+            Comments(this DocXmlReader reader, IEnumerable<FieldInfo> fieldInfos)
         {
-            settings = settings ?? ReflectionSettings.Default;
-            foreach (var info in type.GetFields(settings.FieldFlags))
-            {
-                yield return (info, reader.GetMemberComments(info));
-            }
+            return fieldInfos.Select(info => (info, reader.GetMemberComments(info)));
         }
     }
 }

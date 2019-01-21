@@ -9,21 +9,38 @@ namespace LoxSmoke.DocXml
 {
     /// <summary>
     /// Class that constructs IDs for XML documentation comments.
+    /// IDs uniquely identify comments in the XML documentation file.
     /// </summary>
     public static class XmlDocId
     {
-        // Element prefixes in XML documentation
+        /// <summary>
+        /// Type member XML ID prefix.
+        /// </summary>
         public const char MemberPrefix = 'M';
+        /// <summary>
+        /// Field name XML ID prefix.
+        /// </summary>
         public const char FieldPrefix = 'F';
+        /// <summary>
+        /// Property name XML ID prefix.
+        /// </summary>
         public const char PropertyPrefix = 'P';
+        /// <summary>
+        /// Event XML ID prefix.
+        /// </summary>
         public const char EventPrefix = 'E';
+        /// <summary>
+        /// Type name XML ID prefix.
+        /// </summary>
         public const char TypePrefix = 'T';
 
-        // Reserved constructor name in XML
+        /// <summary>
+        /// Part of the constructor XML tag in XML document.
+        /// </summary>
         public const string ConstructorNameID = "#ctor";
 
         /// <summary>
-        /// Get XML Id of type definition.
+        /// Get XML Id of the type definition.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

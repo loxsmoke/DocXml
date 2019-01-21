@@ -40,7 +40,7 @@ namespace DocXmlUnitTests
             var tc = new TypeCollection();
 
             var settings = ReflectionSettings.Default;
-            settings.ExamineAssemblies = (a) => a.FullName.Contains("DocXml");
+            settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
 
             tc.GetReferencedTypes(typeof(TCTestClass), settings);
             Assert.AreEqual(5, tc.ReferencedTypes.Count);

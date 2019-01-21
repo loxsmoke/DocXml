@@ -20,6 +20,10 @@ namespace LoxSmoke.DocXml
         /// </summary>
         public int Value { get; set; }
 
+        /// <summary>
+        /// Debugging-friendly text.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{(Name??"")}={Value}" + (Summary != null ? $" {Summary}" : "");

@@ -5,7 +5,7 @@ using System.Text;
 namespace LoxSmoke.DocXml
 {
     /// <summary>
-    /// Class, Struct and delegate comments
+    /// Class, Struct or  delegate comments
     /// </summary>
     public class TypeComments : CommonComments
     {

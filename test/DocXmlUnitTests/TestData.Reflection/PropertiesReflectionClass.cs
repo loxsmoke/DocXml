@@ -43,5 +43,65 @@ namespace DocXmlUnitTests.TestData.Reflection
         /// PublicStaticGetSetProp
         /// </summary>
         public static int PublicStaticGetSetProp { get; set; }
+
+        /// <summary>
+        /// PublicMethod
+        /// </summary>
+        public void PublicMethod()
+        {
+        }
+
+        /// <summary>
+        /// ProtectedMethod
+        /// </summary>
+        protected void ProtectedMethod()
+        {
+        }
+
+        /// <summary>
+        /// PrivateMethod
+        /// </summary>
+        private void PrivateMethod()
+        {
+        }
+
+        /// <summary>
+        /// InternalMethod
+        /// </summary>
+        internal void InternalMethod()
+        {
+        }
+
+        /// <summary>
+        /// PublicStaticMethod
+        /// </summary>
+        public static void PublicStaticMethod()
+        {
+        }
+
+        /// <summary>
+        /// PublicField
+        /// </summary>
+        public int PublicField;
+
+        /// <summary>
+        /// ProtectedField
+        /// </summary>
+        protected int ProtectedField;
+
+        /// <summary>
+        /// PrivateField
+        /// </summary>
+        private int PrivateField;
+
+        /// <summary>
+        /// InternalField
+        /// </summary>
+        internal int InternalField;
+
+        /// <summary>
+        /// PublicStaticField
+        /// </summary>
+        public static int PublicStaticField;
     }
 }

@@ -16,6 +16,8 @@ namespace DocXmlUnitTests
         public void CrackType_SimpleValue()
         {
             var tc = new TypeCollection();
+            tc.Settings = ReflectionSettings.Default;
+            tc.Settings.AssemblyFilter = (c) => true;
             tc.UnwrapType(null, typeof(string));
             tc.UnwrapType(null, typeof(string));
             Assert.AreEqual(1, tc.ReferencedTypes.Count);
@@ -26,6 +28,8 @@ namespace DocXmlUnitTests
         public void CrackType_GenericType()
         {
             var tc = new TypeCollection();
+            tc.Settings = ReflectionSettings.Default;
+            tc.Settings.AssemblyFilter = (c) => true;
             tc.UnwrapType(null, typeof(List<Tuple<string, List<double[]>>>));
             Assert.AreEqual(4, tc.ReferencedTypes.Count);
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(string)));

@@ -8,6 +8,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 
+// Disable warning for missing XML comments 
+#pragma warning disable CS1591
+
 namespace LoxSmoke.DocXml
 {
     /// <summary>
@@ -15,8 +18,18 @@ namespace LoxSmoke.DocXml
     /// </summary>
     public class DocXmlReader
     {
+        /// <summary>
+        /// XML navigator object in case of only one XML file.
+        /// Null if more than one XML file and assemblyNavigators dictionary is in use. 
+        /// </summary>
         protected readonly XPathNavigator navigator;
+        /// <summary>
+        /// Dictionary of XML navigators for multiple assemblies.
+        /// </summary>
         protected readonly Dictionary<Assembly, XPathNavigator> assemblyNavigators;
+        /// <summary>
+        /// Function that returns path to XML documentation file for specified assembly.
+        /// </summary>
         protected readonly Func<Assembly, string> assemblyXmlPathFunction;
 
         /// <summary>

@@ -11,9 +11,30 @@ namespace DocXml.MarkdownGenerator
 {
     class Program
     {
-        public class QQ
+        public class SimpleMarkdownWriter
         {
             public StringBuilder sb = new StringBuilder();
+
+            public void WriteH1(string text)
+            {
+                WriteLine("# " + text);
+            }
+            public void WriteH2(string text)
+            {
+                WriteLine("## " + text);
+            }
+
+            public void WriteTableTitle(params string[] text)
+            {
+                Write("| " + string.Join(" | ", text) + " |");
+                Write("|" + string.Join("|", text.Select(x => "---")) + "|");
+            }
+
+            public void WriteTableRow(params string[] text)
+            {
+                Write("| " + string.Join(" | ", text) + " |");
+            }
+
             public void WriteLine(string text)
             {
                 if (string.IsNullOrEmpty(text)) return;
@@ -21,6 +42,7 @@ namespace DocXml.MarkdownGenerator
                 sb.AppendLine();
                 Console.WriteLine(text);
             }
+
             public void Write(string text)
             {
                 if (string.IsNullOrEmpty(text)) return;
@@ -29,7 +51,12 @@ namespace DocXml.MarkdownGenerator
             }
         }
 
-        static string Endlines(string text)
+        static string Bold(string text)
+        {
+            return "**" + text + "**";
+        }
+
+        static string EscapeSpecialChars(string text)
         {
             if (text == null) return "";
             text = text.Replace("<", "\\<");
@@ -63,61 +90,52 @@ namespace DocXml.MarkdownGenerator
 
         static void Main(string[] args)
         {
-            var q = new QQ();
-            var doc = new DocXmlReader();
-            var s = ReflectionSettings.Default;
-            s.FieldFlags = BindingFlags.DeclaredOnly |
-                           BindingFlags.Instance |
-                           BindingFlags.Public |
-                           BindingFlags.Static;
-            s.MethodFlags = BindingFlags.DeclaredOnly |
-                           BindingFlags.Instance |
-                           BindingFlags.Public |
-                           BindingFlags.Static;
+            var markdownWriter = new SimpleMarkdownWriter();
+            var docXmlReader = new DocXmlReader();
+            var reflectionSettings = ReflectionSettings.Default;
             var myAssembly = Assembly.GetAssembly(typeof(DocXmlReader));
-            q.WriteLine($"# {Path.GetFileName(myAssembly.ManifestModule.Name)} v.{myAssembly.GetName().Version} API documentation");
-            var tc = TypeCollection.ForReferencedTypes(myAssembly, s);
-            foreach (var t in tc.ReferencedTypes.Values
-                .OrderBy(tt => tt.Type.Namespace)
-                .ThenByDescending(tt => tt.ReferencesOut.Count)
-                .ThenBy(tt => tt.Type.Name))
+            markdownWriter.WriteH1($"{Path.GetFileName(myAssembly.ManifestModule.Name)} v.{myAssembly.GetName().Version} API documentation");
+            var typeCollection = TypeCollection.ForReferencedTypes(myAssembly, reflectionSettings);
+            foreach (var typeData in typeCollection.ReferencedTypes.Values
+                .OrderBy(t => t.Type.Namespace)
+                .ThenByDescending(t => t.ReferencesOut.Count)
+                .ThenBy(t => t.Type.Name))
             {
-                q.WriteLine("# " + t.Type.Name + " Class");
-                q.WriteLine("Namespace: " + t.Type.Namespace);
-                if (t.Type.BaseType != null && t.Type.BaseType != typeof(Object))
+                markdownWriter.WriteH1(typeData.Type.Name + " Class");
+                markdownWriter.WriteLine("Namespace: " + typeData.Type.Namespace);
+                if (typeData.Type.BaseType != null && typeData.Type.BaseType != typeof(Object))
                 {
-                    q.WriteLine("Base class: " + t.Type.BaseType.Name);
+                    markdownWriter.WriteLine("Base class: " + typeData.Type.BaseType.Name);
                 }
 
-                var tcc = doc.GetTypeComments(t.Type);
-                q.WriteLine(tcc.Summary);
+                var typeComments = docXmlReader.GetTypeComments(typeData.Type);
+                markdownWriter.WriteLine(typeComments.Summary);
 
-                if (!string.IsNullOrEmpty(tcc.Example))
+                if (!string.IsNullOrEmpty(typeComments.Example))
                 {
-                    q.WriteLine("## Examples");
-                    q.WriteLine(tcc.Example);
+                    markdownWriter.WriteH2("Examples");
+                    markdownWriter.WriteLine(typeComments.Example);
                 }
 
-                if (!string.IsNullOrEmpty(tcc.Remarks))
+                if (!string.IsNullOrEmpty(typeComments.Remarks))
                 {
-                    q.WriteLine("## Remarks");
-                    q.WriteLine(tcc.Remarks);
+                    markdownWriter.WriteH2("Remarks");
+                    markdownWriter.WriteLine(typeComments.Remarks);
                 }
 
-                var allProperties = doc.Comments(t.Properties).ToList();
-                var allMethods = doc.Comments(t.Methods).ToList();
-                var allFields = doc.Comments(t.Fields).ToList();
+                var allProperties = docXmlReader.Comments(typeData.Properties).ToList();
+                var allMethods = docXmlReader.Comments(typeData.Methods).ToList();
+                var allFields = docXmlReader.Comments(typeData.Fields).ToList();
 
                 if (allProperties.Count > 0)
                 {
-                    q.WriteLine("## Properties");
-                    q.Write("| Name | Type | Summary |");
-                    q.Write("|---|---|---|");
+                    markdownWriter.WriteH2("Properties");
+                    markdownWriter.WriteTableTitle("Name", "Type", "Summary");
                     foreach (var prop in allProperties)
                     {
-                        q.Write("| **" + prop.Info.Name + "** | " + 
-                                ToString(prop.Info.PropertyType)+ " | " +
-                                Endlines(prop.Comments.Summary) + " |");
+                        markdownWriter.WriteTableRow(Bold(prop.Info.Name), 
+                                ToString(prop.Info.PropertyType),
+                                EscapeSpecialChars(prop.Comments.Summary));
                         //WriteLine("Property: " + prop.Info.PropertyType.Name + " " + prop.Info.Name);
                         //WriteLine(prop.Comments.Remarks);
                         //WriteLine(prop.Comments.Example);
@@ -126,49 +144,49 @@ namespace DocXml.MarkdownGenerator
 
                 if (allMethods.Count > 0 && allMethods.Any(m => m.Info is ConstructorInfo))
                 {
-                    q.WriteLine("## Constructors");
-                    q.Write("| Name | Summary |");
-                    q.Write("|---|---|");
+                    markdownWriter.WriteH2("Constructors");
+                    markdownWriter.WriteTableTitle("Name", "Summary");
                     foreach (var prop in allMethods
                         .Where(m => m.Info is ConstructorInfo)
                         .OrderBy(p => p.Info.GetParameters().Length))
                     {
-                        q.Write("| **" + ToString(t.Type) + ToString((prop.Info as ConstructorInfo).GetParameters()) + "** | " +
-                                Endlines(prop.Comments.Summary) + " |");
+                        markdownWriter.WriteTableRow(
+                            Bold(ToString(typeData.Type) + ToString((prop.Info as ConstructorInfo).GetParameters())),
+                            EscapeSpecialChars(prop.Comments.Summary));
                     }
                 }
 
                 if (allMethods.Count > 0 && allMethods.Any(m => m.Info is MethodInfo))
                 {
-                    q.WriteLine("## Methods");
-                    q.Write("| Name | Returns | Summary |");
-                    q.Write("|---|---|---|");
-                    foreach (var prop in allMethods
+                    markdownWriter.WriteH2("Methods");
+                    markdownWriter.WriteTableTitle("Name", "Returns", "Summary");
+                    foreach (var method in allMethods
                         .Where(m => !(m.Info is ConstructorInfo))
                         .OrderBy(p => p.Info.Name)
                         .ThenBy(p => p.Info.GetParameters().Length))
                     {
-                        var methodInfo = prop.Info as MethodInfo;
-                        //todo: method name with params
-                        q.Write("| **" + methodInfo.Name + ToString(methodInfo.GetParameters()) + "** | " +
-                                ToString(methodInfo.ReturnType) + " | " +
-                                Endlines(prop.Comments.Summary) + " |");
+                        var methodInfo = method.Info as MethodInfo;
+                        markdownWriter.WriteTableRow(
+                            Bold(methodInfo.Name + ToString(methodInfo.GetParameters())),
+                            ToString(methodInfo.ReturnType),
+                            EscapeSpecialChars(method.Comments.Summary));
                     }
                 }
 
                 if (allFields.Count > 0)
                 {
-                    q.WriteLine("## Fields");
-                    q.Write("| Name | Type |  Summary |");
-                    q.Write("|---|---|---|");
+                    markdownWriter.WriteH2("Fields");
+                    markdownWriter.WriteTableTitle("Name", "Type", "Summary");
                     foreach (var field in allFields)
                     {
-                        q.Write("| **" + field.Info.Name + "** | " + 
-                                ToString(field.Info.FieldType) + " | " +
-                                Endlines(field.Comments.Summary) + " |");
+                        markdownWriter.WriteTableRow(
+                            Bold(field.Info.Name), 
+                            ToString(field.Info.FieldType),
+                            EscapeSpecialChars(field.Comments.Summary));
                     }
                 }
-                File.WriteAllText("text.md", q.sb.ToString());
+                File.WriteAllText((args.Length == 0 ? "api-reference.md" : args[0]), 
+                    markdownWriter.sb.ToString());
             }
         }
     }

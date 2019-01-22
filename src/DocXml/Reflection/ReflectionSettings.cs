@@ -26,21 +26,18 @@ namespace LoxSmoke.DocXml.Reflection
                 BindingFlags.DeclaredOnly |
                 BindingFlags.Instance |
                 BindingFlags.Public |
-                BindingFlags.NonPublic |
                 BindingFlags.Static,
 
             FieldFlags =
                 BindingFlags.DeclaredOnly |
                 BindingFlags.Instance |
                 BindingFlags.Public |
-                BindingFlags.NonPublic |
                 BindingFlags.Static,
 
             NestedTypeFlags =
                 BindingFlags.DeclaredOnly |
                 BindingFlags.Instance |
                 BindingFlags.Public |
-                BindingFlags.NonPublic |
                 BindingFlags.Static
         };
 

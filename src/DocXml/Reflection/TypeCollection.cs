@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
+
+// Disable warning for missing XML comments 
+#pragma warning disable CS1591
 
 namespace LoxSmoke.DocXml.Reflection
 {
@@ -198,12 +199,7 @@ namespace LoxSmoke.DocXml.Reflection
 
         protected void GetReferencedBy(Type type)
         {
-            if (VisitedPropTypes.Contains(type))
-            {
-                // todo: add referenced by
-                return;
-            }
-            if (!CheckType(type)) return;
+            if (VisitedPropTypes.Contains(type) || !CheckType(type)) return;
             VisitedPropTypes.Add(type);
             var thisTypeInfo = ReferencedTypes[type];
             foreach (var info in type.GetProperties(Settings.PropertyFlags))
@@ -253,16 +249,15 @@ namespace LoxSmoke.DocXml.Reflection
         /// Recursively "unwrap" the generic type or array. If type is not generic and not an array
         /// then do nothing.
         /// </summary>
+        /// <param name="parentType"></param>
         /// <param name="type"></param>
         public void UnwrapType(Type parentType, Type type)
         {
             if (ReferencedTypes.ContainsKey(type))
             {
-                if (parentType != null)
-                {
-                    ReferencedTypes[type].ReferencesIn.Add(parentType);
-                    ReferencedTypes[parentType].ReferencesOut.Add(type);
-                }
+                if (parentType == null) return;
+                ReferencedTypes[type].ReferencesIn.Add(parentType);
+                ReferencedTypes[parentType].ReferencesOut.Add(type);
                 return;
             }
             // Some types could be wrapped in generic types that should not be checked

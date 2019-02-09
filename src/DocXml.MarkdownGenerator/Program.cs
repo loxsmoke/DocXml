@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using DocXml.Reflection;
 using LoxSmoke.DocXml;
 using LoxSmoke.DocXml.Reflection;
 using static LoxSmoke.DocXml.Reflection.DocXmlReaderExtensions;
@@ -32,7 +33,7 @@ namespace DocXml.MarkdownGenerator
 
             public void WriteTableRow(params string[] text)
             {
-                Write("| " + string.Join(" | ", text) + " |");
+                Write("| " + string.Join(" | ", text.Select(EscapeSpecialChars)) + " |");
             }
 
             public void WriteLine(string text)
@@ -67,25 +68,7 @@ namespace DocXml.MarkdownGenerator
         static string ToString(ParameterInfo[] parameters)
         {
             if (parameters == null || parameters.Length == 0) return "()";
-            return "(" + string.Join(", ", parameters.Select(s => ToString(s.ParameterType))) + ")";
-        }
-
-        static string ToString(Type type)
-        {
-            if (type.IsValueType)
-            {
-                if (type == typeof(int)) return "int";
-                if (type == typeof(bool)) return "bool";
-                if (type == typeof(char)) return "char";
-                if (type == typeof(long)) return "long";
-            }
-            if (type == typeof(string)) return "string";
-            if (type.IsGenericType)
-            {
-                return type.Name.Substring(0, type.Name.IndexOf('`')) + "\\<" + 
-                       string.Join(", ", type.GetGenericArguments().Select(ToString)) + "\\>";
-            }
-            return type.Name;
+            return "(" + string.Join(", ", parameters.Select(s => s.ParameterType.ToNameString())) + ")";
         }
 
         static void Main(string[] args)
@@ -98,7 +81,6 @@ namespace DocXml.MarkdownGenerator
             var typeCollection = TypeCollection.ForReferencedTypes(myAssembly, reflectionSettings);
             foreach (var typeData in typeCollection.ReferencedTypes.Values
                 .OrderBy(t => t.Type.Namespace)
-                .ThenByDescending(t => t.ReferencesOut.Count)
                 .ThenBy(t => t.Type.Name))
             {
                 markdownWriter.WriteH1(typeData.Type.Name + " Class");
@@ -133,12 +115,10 @@ namespace DocXml.MarkdownGenerator
                     markdownWriter.WriteTableTitle("Name", "Type", "Summary");
                     foreach (var prop in allProperties)
                     {
-                        markdownWriter.WriteTableRow(Bold(prop.Info.Name), 
-                                ToString(prop.Info.PropertyType),
-                                EscapeSpecialChars(prop.Comments.Summary));
-                        //WriteLine("Property: " + prop.Info.PropertyType.Name + " " + prop.Info.Name);
-                        //WriteLine(prop.Comments.Remarks);
-                        //WriteLine(prop.Comments.Example);
+                        markdownWriter.WriteTableRow(
+                            Bold(prop.Info.Name),
+                            prop.Info.PropertyType.ToNameString(),
+                            prop.Comments.Summary);
                     }
                 }
 
@@ -151,8 +131,9 @@ namespace DocXml.MarkdownGenerator
                         .OrderBy(p => p.Info.GetParameters().Length))
                     {
                         markdownWriter.WriteTableRow(
-                            Bold(ToString(typeData.Type) + ToString((prop.Info as ConstructorInfo).GetParameters())),
-                            EscapeSpecialChars(prop.Comments.Summary));
+                            Bold(typeData.Type.ToNameString() + 
+                                 ToString((prop.Info as ConstructorInfo).GetParameters())),
+                            prop.Comments.Summary);
                     }
                 }
 
@@ -161,15 +142,15 @@ namespace DocXml.MarkdownGenerator
                     markdownWriter.WriteH2("Methods");
                     markdownWriter.WriteTableTitle("Name", "Returns", "Summary");
                     foreach (var method in allMethods
-                        .Where(m => !(m.Info is ConstructorInfo))
+                        .Where(m => m.Info != null && !(m.Info is ConstructorInfo) && (m.Info is MethodInfo))
                         .OrderBy(p => p.Info.Name)
                         .ThenBy(p => p.Info.GetParameters().Length))
                     {
                         var methodInfo = method.Info as MethodInfo;
                         markdownWriter.WriteTableRow(
                             Bold(methodInfo.Name + ToString(methodInfo.GetParameters())),
-                            ToString(methodInfo.ReturnType),
-                            EscapeSpecialChars(method.Comments.Summary));
+                            methodInfo.ReturnType.ToNameString(),
+                            method.Comments.Summary);
                     }
                 }
 
@@ -180,9 +161,9 @@ namespace DocXml.MarkdownGenerator
                     foreach (var field in allFields)
                     {
                         markdownWriter.WriteTableRow(
-                            Bold(field.Info.Name), 
-                            ToString(field.Info.FieldType),
-                            EscapeSpecialChars(field.Comments.Summary));
+                            Bold(field.Info.Name),
+                            field.Info.FieldType.ToNameString(),
+                            field.Comments.Summary);
                     }
                 }
                 File.WriteAllText((args.Length == 0 ? "api-reference.md" : args[0]), 

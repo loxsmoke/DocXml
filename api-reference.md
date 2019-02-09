@@ -1,5 +1,35 @@
-# DocXml.dll v.3.1.1.0 API documentation
+# DocXml.dll v.3.1.2.0 API documentation
 
+# ReflectionExtensions Class
+
+Namespace: DocXml.Reflection
+
+## Properties
+
+| Name | Type | Summary |
+|---|---|---|
+| **KnownTypeNames** | Dictionary\<Type, string\> | Dictionary containing mapping of type to type names. |
+## Methods
+
+| Name | Returns | Summary |
+|---|---|---|
+| **CreateKnownTypeNamesDictionary()** | Dictionary\<Type, string\> | Creates default dictionary of standard value types plus string type.  |
+| **IsNullable(Type)** | bool | Check if this is nullable type.  |
+| **ToNameString(Type)** | string | Convert type to the proper type name. |
+# CommonComments Class
+
+Namespace: LoxSmoke.DocXml
+
+Base class for comments classes
+
+## Properties
+
+| Name | Type | Summary |
+|---|---|---|
+| **Summary** | string | "summary" comment |
+| **Remarks** | string | "remarks" comment |
+| **Example** | string | "example" comment |
+| **Inheritdoc** | InheritdocTag | Inheritdoc tag. Null if missing in comments. |
 # DocXmlReader Class
 
 Namespace: LoxSmoke.DocXml
@@ -46,20 +76,6 @@ Enum type comments
 | **Remarks** | string | "remarks" comment |
 | **Example** | string | "example" comment |
 | **Inheritdoc** | InheritdocTag | Inheritdoc tag. Null if missing in comments. |
-# CommonComments Class
-
-Namespace: LoxSmoke.DocXml
-
-Base class for comments classes
-
-## Properties
-
-| Name | Type | Summary |
-|---|---|---|
-| **Summary** | string | "summary" comment |
-| **Remarks** | string | "remarks" comment |
-| **Example** | string | "example" comment |
-| **Inheritdoc** | InheritdocTag | Inheritdoc tag. Null if missing in comments. |
 # EnumValueComment Class
 
 Namespace: LoxSmoke.DocXml
@@ -83,6 +99,17 @@ Comment of one enum value
 | Name | Returns | Summary |
 |---|---|---|
 | **ToString()** | string | Debugging-friendly text. |
+# InheritdocTag Class
+
+Namespace: LoxSmoke.DocXml
+
+Inheritdoc tag with optional cref attribute.
+
+## Properties
+
+| Name | Type | Summary |
+|---|---|---|
+| **Cref** | string | Cref attribute value. This value is optional. |
 # MethodComments Class
 
 Namespace: LoxSmoke.DocXml
@@ -120,17 +147,6 @@ Class, Struct or  delegate comments
 | **Remarks** | string | "remarks" comment |
 | **Example** | string | "example" comment |
 | **Inheritdoc** | InheritdocTag | Inheritdoc tag. Null if missing in comments. |
-# InheritdocTag Class
-
-Namespace: LoxSmoke.DocXml
-
-Inheritdoc tag with optional cref attribute.
-
-## Properties
-
-| Name | Type | Summary |
-|---|---|---|
-| **Cref** | string | Cref attribute value. This value is optional. |
 # XmlDocId Class
 
 Namespace: LoxSmoke.DocXml
@@ -173,6 +189,26 @@ using reflection information.
 | **Comments(DocXmlReader, IEnumerable\<PropertyInfo\>)** | IEnumerable\<ValueTuple\<PropertyInfo, CommonComments\>\> | Get comments for the collection of properties. |
 | **Comments(DocXmlReader, IEnumerable\<MethodBase\>)** | IEnumerable\<ValueTuple\<MethodBase, MethodComments\>\> | Get comments for the collection of methods. |
 | **Comments(DocXmlReader, IEnumerable\<FieldInfo\>)** | IEnumerable\<ValueTuple\<FieldInfo, CommonComments\>\> | Get comments for the collection of fields. |
+# ReflectionSettings Class
+
+Namespace: LoxSmoke.DocXml.Reflection
+
+Settings used by TypeCollection to retrieve reflection info.
+
+## Properties
+
+| Name | Type | Summary |
+|---|---|---|
+| **Default** | ReflectionSettings | Default reflection settings. |
+| **PropertyFlags** | BindingFlags | Binding flags to use when retrieving properties of the type. |
+| **MethodFlags** | BindingFlags | Binding flags to use when retrieving methods of the type. |
+| **FieldFlags** | BindingFlags | Binding flags to use when retrieving fields of the type. |
+| **NestedTypeFlags** | BindingFlags | Binding flags to use when retrieving nested types of the type. |
+| **AssemblyFilter** | Func\<Assembly, bool\> | Function that checks if specified types of assembly should be added to the set of the <br>referenced types.<br>Return true if referenced types of the assembly should be examined.<br>Return false if assembly types should be ignored.<br>Default implementation checks if documentation XML file exists for the assembly and if<br>it does then returns true. |
+| **TypeFilter** | Func\<Type, bool\> | Checks if specified type should be added to the set of referenced types.<br>Return true if type and types referenced by it should be examined.<br>Function should return false if type should be ignored.<br>Default implementation returns true for all types. |
+| **PropertyFilter** | Func\<PropertyInfo, bool\> | Checks if specified property should be added to the list of properties and the<br>set of referenced types.<br>Return true if property and types referenced by it should be examined.<br>Function should return false if property should be ignored.<br>Default implementation returns true for all properties. |
+| **MethodFilter** | Func\<MethodBase, bool\> | Checks if specified method should be added to the list of methods and the<br>set of referenced types.<br>Return true if the method and types referenced by it should be examined.<br>Function should return false if method should be ignored.<br>Default implementation returns true for all methods. |
+| **FieldFilter** | Func\<FieldInfo, bool\> | Checks if specified field should be added to the list of fields and the<br>set of referenced types.<br>Return true if field and types referenced by it should be examined.<br>Function should return false if field should be ignored.<br>Default implementation returns true for all fields. |
 # TypeCollection Class
 
 Namespace: LoxSmoke.DocXml.Reflection
@@ -195,30 +231,10 @@ Collection of type information objects.
 |---|---|---|
 | **ForReferencedTypes(Type, ReflectionSettings)** | TypeCollection | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
 | **ForReferencedTypes(Assembly, ReflectionSettings)** | TypeCollection | Get all types referenced by the types from specified assembly. |
-| **GetReferencedTypes(Type, ReflectionSettings)** | Void | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
-| **GetReferencedTypes(Assembly, ReflectionSettings)** | Void | Get all types referenced by the types from specified assembly. |
-| **GetReferencedTypes(IEnumerable\<Assembly\>, ReflectionSettings)** | Void | Get all types referenced by the types from specified assemblies.<br>Reflection information for the specified type is also returned. |
-| **UnwrapType(Type, Type)** | Void | Recursively "unwrap" the generic type or array. If type is not generic and not an array<br>then do nothing. |
-# ReflectionSettings Class
-
-Namespace: LoxSmoke.DocXml.Reflection
-
-Settings used by TypeCollection to retrieve reflection info.
-
-## Properties
-
-| Name | Type | Summary |
-|---|---|---|
-| **Default** | ReflectionSettings | Default reflection settings. |
-| **PropertyFlags** | BindingFlags | Binding flags to use when retrieving properties of the type. |
-| **MethodFlags** | BindingFlags | Binding flags to use when retrieving methods of the type. |
-| **FieldFlags** | BindingFlags | Binding flags to use when retrieving fields of the type. |
-| **NestedTypeFlags** | BindingFlags | Binding flags to use when retrieving nested types of the type. |
-| **AssemblyFilter** | Func\<Assembly, bool\> | Function that checks if specified types of assembly should be added to the set of the <br>referenced types.<br>Return true if referenced types of the assembly should be examined.<br>Return false if assembly types should be ignored.<br>Default implementation checks if documentation XML file exists for the assembly and if<br>it does then returns true. |
-| **TypeFilter** | Func\<Type, bool\> | Checks if specified type should be added to the set of referenced types.<br>Return true if type and types referenced by it should be examined.<br>Function should return false if type should be ignored.<br>Default implementation returns true for all types. |
-| **PropertyFilter** | Func\<PropertyInfo, bool\> | Checks if specified property should be added to the list of properties and the<br>set of referenced types.<br>Return true if property and types referenced by it should be examined.<br>Function should return false if property should be ignored.<br>Default implementation returns true for all properties. |
-| **MethodFilter** | Func\<MethodBase, bool\> | Checks if specified method should be added to the list of methods and the<br>set of referenced types.<br>Return true if the method and types referenced by it should be examined.<br>Function should return false if method should be ignored.<br>Default implementation returns true for all methods. |
-| **FieldFilter** | Func\<FieldInfo, bool\> | Checks if specified field should be added to the list of fields and the<br>set of referenced types.<br>Return true if field and types referenced by it should be examined.<br>Function should return false if field should be ignored.<br>Default implementation returns true for all fields. |
+| **GetReferencedTypes(Type, ReflectionSettings)** | void | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
+| **GetReferencedTypes(Assembly, ReflectionSettings)** | void | Get all types referenced by the types from specified assembly. |
+| **GetReferencedTypes(IEnumerable\<Assembly\>, ReflectionSettings)** | void | Get all types referenced by the types from specified assemblies.<br>Reflection information for the specified type is also returned. |
+| **UnwrapType(Type, Type)** | void | Recursively "unwrap" the generic type or array. If type is not generic and not an array<br>then do nothing. |
 # TypeInformation Class
 
 Namespace: LoxSmoke.DocXml.Reflection

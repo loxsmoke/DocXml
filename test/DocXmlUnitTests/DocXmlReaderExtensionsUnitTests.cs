@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData.Reflection;
@@ -41,7 +42,10 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void DocXmlReaderExtensions_MethodComments()
         {
-            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass));
+            var settings = ReflectionSettings.Default;
+            settings.MethodFlags |= BindingFlags.NonPublic;
+
+            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass), settings);
             var methods = Reader.Comments(tc.ReferencedTypes[typeof(PropertiesReflectionClass)].Methods)
                 .ToDictionary(d => d.Info.Name, d => d.Comments);
             Assert.AreEqual(5, methods.Count);
@@ -54,7 +58,9 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void DocXmlReaderExtensions_FieldComments()
         {
-            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass));
+            var settings = ReflectionSettings.Default;
+            settings.FieldFlags |= BindingFlags.NonPublic; 
+            var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass),settings);
             var fields = Reader.Comments(tc.ReferencedTypes[typeof(PropertiesReflectionClass)].Fields)
                 .ToDictionary(d => d.Info.Name, d => d.Comments);
             Assert.AreEqual(5, fields.Count);

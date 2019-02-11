@@ -12,59 +12,6 @@ namespace DocXml.MarkdownGenerator
 {
     class Program
     {
-        public class SimpleMarkdownWriter
-        {
-            public StringBuilder sb = new StringBuilder();
-
-            public void WriteH1(string text)
-            {
-                WriteLine("# " + text);
-            }
-            public void WriteH2(string text)
-            {
-                WriteLine("## " + text);
-            }
-
-            public void WriteTableTitle(params string[] text)
-            {
-                Write("| " + string.Join(" | ", text) + " |");
-                Write("|" + string.Join("|", text.Select(x => "---")) + "|");
-            }
-
-            public void WriteTableRow(params string[] text)
-            {
-                Write("| " + string.Join(" | ", text.Select(EscapeSpecialChars)) + " |");
-            }
-
-            public void WriteLine(string text)
-            {
-                if (string.IsNullOrEmpty(text)) return;
-                sb.AppendLine(text);
-                sb.AppendLine();
-                Console.WriteLine(text);
-            }
-
-            public void Write(string text)
-            {
-                if (string.IsNullOrEmpty(text)) return;
-                sb.AppendLine(text);
-                Console.WriteLine(text);
-            }
-        }
-
-        static string Bold(string text)
-        {
-            return "**" + text + "**";
-        }
-
-        static string EscapeSpecialChars(string text)
-        {
-            if (text == null) return "";
-            text = text.Replace("<", "\\<");
-            text = text.Replace(">", "\\>");
-            return text.Replace("\r\n", "<br>");
-        }
-
         static string ToString(ParameterInfo[] parameters)
         {
             if (parameters == null || parameters.Length == 0) return "()";
@@ -73,17 +20,32 @@ namespace DocXml.MarkdownGenerator
 
         static void Main(string[] args)
         {
-            var markdownWriter = new SimpleMarkdownWriter();
+            var markdownWriter = new MarkdownWriter();
             var docXmlReader = new DocXmlReader();
             var reflectionSettings = ReflectionSettings.Default;
             var myAssembly = Assembly.GetAssembly(typeof(DocXmlReader));
             markdownWriter.WriteH1($"{Path.GetFileName(myAssembly.ManifestModule.Name)} v.{myAssembly.GetName().Version} API documentation");
             var typeCollection = TypeCollection.ForReferencedTypes(myAssembly, reflectionSettings);
-            foreach (var typeData in typeCollection.ReferencedTypes.Values
+
+            var typesToDocument = typeCollection.ReferencedTypes.Values
                 .OrderBy(t => t.Type.Namespace)
-                .ThenBy(t => t.Type.Name))
+                .ThenBy(t => t.Type.Name).ToList();
+
+            if (typesToDocument.Count > 0)
+            {
+                markdownWriter.WriteH1("All types");
+                foreach (var typeData in typesToDocument.OrderBy(t => t.Type.Name))
+                {
+                    markdownWriter.WriteLink($"#{typeData.Type.Name}", typeData.Type.Name);
+                    markdownWriter.WriteLine("");
+                }
+                markdownWriter.WriteLine("");
+            }
+
+            foreach (var typeData in typesToDocument)
             {
                 markdownWriter.WriteH1(typeData.Type.Name + " Class");
+                markdownWriter.WriteAnchor(typeData.Type.Name);
                 markdownWriter.WriteLine("Namespace: " + typeData.Type.Namespace);
                 if (typeData.Type.BaseType != null && typeData.Type.BaseType != typeof(Object))
                 {
@@ -116,7 +78,7 @@ namespace DocXml.MarkdownGenerator
                     foreach (var prop in allProperties)
                     {
                         markdownWriter.WriteTableRow(
-                            Bold(prop.Info.Name),
+                            markdownWriter.Bold(prop.Info.Name),
                             prop.Info.PropertyType.ToNameString(),
                             prop.Comments.Summary);
                     }
@@ -131,7 +93,7 @@ namespace DocXml.MarkdownGenerator
                         .OrderBy(p => p.Info.GetParameters().Length))
                     {
                         markdownWriter.WriteTableRow(
-                            Bold(typeData.Type.ToNameString() + 
+                            markdownWriter.Bold(typeData.Type.ToNameString() + 
                                  ToString((prop.Info as ConstructorInfo).GetParameters())),
                             prop.Comments.Summary);
                     }
@@ -148,7 +110,7 @@ namespace DocXml.MarkdownGenerator
                     {
                         var methodInfo = method.Info as MethodInfo;
                         markdownWriter.WriteTableRow(
-                            Bold(methodInfo.Name + ToString(methodInfo.GetParameters())),
+                            markdownWriter.Bold(methodInfo.Name + ToString(methodInfo.GetParameters())),
                             methodInfo.ReturnType.ToNameString(),
                             method.Comments.Summary);
                     }
@@ -161,7 +123,7 @@ namespace DocXml.MarkdownGenerator
                     foreach (var field in allFields)
                     {
                         markdownWriter.WriteTableRow(
-                            Bold(field.Info.Name),
+                            markdownWriter.Bold(field.Info.Name),
                             field.Info.FieldType.ToNameString(),
                             field.Comments.Summary);
                     }

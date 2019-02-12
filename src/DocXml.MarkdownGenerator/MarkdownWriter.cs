@@ -41,28 +41,42 @@ namespace DocXml.MarkdownGenerator
         {
             if (text != null) sb.AppendLine(text);
             sb.AppendLine();
-            Console.WriteLine(text);
         }
 
         public void Write(string text)
         {
             if (text == null) return;
             sb.AppendLine(text);
-            Console.WriteLine(text);
+        }
+
+        public void WriteLink(string anchorName, string text)
+        {
+            sb.Append(Link(anchorName, text));
+        }
+        public void WriteHeadingLink(string text)
+        {
+            sb.Append(HeadingLink(text));
+        }
+        public void WriteAnchor(string anchorName)
+        {
+            sb.Append($"<a name=\"{anchorName}\"></a>");
         }
 
         public string Bold(string text)
         {
             return "**" + text + "**";
         }
-
-        public void WriteLink(string anchorName, string text)
+        public string Link(string anchorName, string text)
         {
-            sb.Append($"[{text}]({anchorName})");
+            return $"[{text}]({anchorName})";
         }
-        public void WriteAnchor(string anchorName)
+        public string HeadingLink(string text)
         {
-            sb.Append($"<a name=\"{anchorName}\"></a>");
+            return $"[{text}](#{text.Replace(" ", "-").ToLower()})";
+        }
+        public string HeadingLink(string anchorName, string text)
+        {
+            return $"[{text}](#{anchorName.Replace(" ", "-").ToLower()})";
         }
     }
 }

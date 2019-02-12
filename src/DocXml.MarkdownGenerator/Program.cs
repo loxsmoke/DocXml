@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,13 +31,16 @@ namespace DocXml.MarkdownGenerator
             var typesToDocument = typeCollection.ReferencedTypes.Values
                 .OrderBy(t => t.Type.Namespace)
                 .ThenBy(t => t.Type.Name).ToList();
+            var typesHash = new HashSet<Type>(typesToDocument.Select(t => t.Type));
+            Func<Type,string> typeLinkConverter = (type) => typesHash.Contains(type) ? 
+                markdownWriter.HeadingLink(type.Name + " class", type.Name) : null; 
 
             if (typesToDocument.Count > 0)
             {
                 markdownWriter.WriteH1("All types");
                 foreach (var typeData in typesToDocument.OrderBy(t => t.Type.Name))
                 {
-                    markdownWriter.WriteLink($"#{typeData.Type.Name}", typeData.Type.Name);
+                    markdownWriter.WriteHeadingLink(typeData.Type.Name + " class");
                     markdownWriter.WriteLine("");
                 }
                 markdownWriter.WriteLine("");
@@ -45,11 +49,11 @@ namespace DocXml.MarkdownGenerator
             foreach (var typeData in typesToDocument)
             {
                 markdownWriter.WriteH1(typeData.Type.Name + " Class");
-                markdownWriter.WriteAnchor(typeData.Type.Name);
                 markdownWriter.WriteLine("Namespace: " + typeData.Type.Namespace);
                 if (typeData.Type.BaseType != null && typeData.Type.BaseType != typeof(Object))
                 {
-                    markdownWriter.WriteLine("Base class: " + typeData.Type.BaseType.Name);
+                    markdownWriter.WriteLine("Base class: " + 
+                                             typeData.Type.BaseType.ToNameString(typeLinkConverter));
                 }
 
                 var typeComments = docXmlReader.GetTypeComments(typeData.Type);
@@ -79,7 +83,7 @@ namespace DocXml.MarkdownGenerator
                     {
                         markdownWriter.WriteTableRow(
                             markdownWriter.Bold(prop.Info.Name),
-                            prop.Info.PropertyType.ToNameString(),
+                            prop.Info.PropertyType.ToNameString(typeLinkConverter),
                             prop.Comments.Summary);
                     }
                 }
@@ -111,7 +115,7 @@ namespace DocXml.MarkdownGenerator
                         var methodInfo = method.Info as MethodInfo;
                         markdownWriter.WriteTableRow(
                             markdownWriter.Bold(methodInfo.Name + ToString(methodInfo.GetParameters())),
-                            methodInfo.ReturnType.ToNameString(),
+                            methodInfo.ReturnType.ToNameString(typeLinkConverter),
                             method.Comments.Summary);
                     }
                 }
@@ -124,7 +128,7 @@ namespace DocXml.MarkdownGenerator
                     {
                         markdownWriter.WriteTableRow(
                             markdownWriter.Bold(field.Info.Name),
-                            field.Info.FieldType.ToNameString(),
+                            field.Info.FieldType.ToNameString(typeLinkConverter),
                             field.Comments.Summary);
                     }
                 }

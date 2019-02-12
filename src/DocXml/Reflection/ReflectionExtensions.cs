@@ -56,27 +56,35 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert type to the proper type name.
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names
+        /// to strings if type names should be decorated in some way either by adding links
+        /// or formatting.
         /// </summary>
         /// <param name="type">Type information.</param>
+        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
         /// <returns>Full type name</returns>
-        public static string ToNameString(this Type type)
+        public static string ToNameString(this Type type, Func<Type, string> typeNameConverter = null)
         {
+            var typeName = typeNameConverter?.Invoke(type);
+            if (typeName != null) return typeName;
+
             if (KnownTypeNames.ContainsKey(type))
             {
                 return KnownTypeNames[type];
             }
             if (IsNullable(type))
             {
-                return ToNameString(type.GenericTypeArguments[0]) + "?";
+                return type.GenericTypeArguments[0].ToNameString(typeNameConverter) + "?";
             }
             if (type.IsGenericType)
             {
                 return type.Name.Substring(0, type.Name.IndexOf('`')) + "<" +
-                       string.Join(", ", type.GetGenericArguments().Select(ToNameString)) + ">";
+                       string.Join(", ", type.GetGenericArguments()
+                           .Select(argType => argType.ToNameString(typeNameConverter))) + ">";
             }
             if (type.IsArray)
             {
-                return type.GetElementType().ToNameString() +
+                return type.GetElementType().ToNameString(typeNameConverter) +
                        "[" + 
                        (type.GetArrayRank() > 1 ? new string(',', type.GetArrayRank() - 1) : "") + 
                        "]";

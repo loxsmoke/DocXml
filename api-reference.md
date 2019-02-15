@@ -1,4 +1,4 @@
-# DocXml.dll v.3.1.2.0 API documentation
+# DocXml.dll v.3.1.4.0 API documentation
 
 # All types
 
@@ -34,6 +34,7 @@
 
 Namespace: DocXml.Reflection
 
+Reflection extension methods with supporting properties.
 
 ## Properties
 

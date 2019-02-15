@@ -9,7 +9,7 @@ using DocXmlUnitTests.TestData;
 
 #pragma warning disable CS1591
 
-namespace LoxSmoke.DocXmlUnitTests
+namespace DocXmlUnitTests
 {
     [TestClass]
     public class TypeCommentsUnitTests : BaseTestClass

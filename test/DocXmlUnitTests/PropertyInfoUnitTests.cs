@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 #pragma warning disable CS1591
-namespace LoxSmoke.DocXmlUnitTests
+namespace DocXmlUnitTests
 {
     [TestClass]
     public class PropertyInfoUnitTests : BaseTestClass

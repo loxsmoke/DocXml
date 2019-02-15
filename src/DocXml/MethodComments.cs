@@ -14,7 +14,7 @@ namespace LoxSmoke.DocXml
         /// where Item1 is the "name" of the parameter in XML file and 
         /// Item2 is the body of the comment.
         /// </summary>
-        public List<Tuple<string,string>> Parameters { get; set; } = new List<Tuple<string,string>>();
+        public List<(string Name, string Text)> Parameters { get; set; } = new List<(string Name, string Text)>();
 
         /// <summary>
         /// "returns" comment of the method.
@@ -26,13 +26,13 @@ namespace LoxSmoke.DocXml
         /// Item1 is the "code" of the response and
         /// Item1 is the body of the comment.
         /// </summary>
-        public List<Tuple<string, string>> Responses { get; set; } = new List<Tuple<string, string>>();
+        public List<(string Code, string Text)> Responses { get; set; } = new List<(string Code, string Text)>();
 
         /// <summary>
         /// "typeparam" comments of the method. Each item in the list is the tuple
         /// where Item1 is the "name" of the parameter in XML file and 
         /// Item2 is the body of the comment.
         /// </summary>
-        public List<Tuple<string, string>> TypeParameters { get; set; } = new List<Tuple<string, string>>();
+        public List<(string Name, string Text)> TypeParameters { get; set; } = new List<(string Name, string Text)>();
     }
 }

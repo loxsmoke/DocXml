@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using DocXmlOtherLibForUnitTests;
 using LoxSmoke.DocXml;
-using LoxSmoke.DocXmlUnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #pragma warning disable CS1591

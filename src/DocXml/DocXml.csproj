@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>3.0.1.0</AssemblyVersion>
-    <FileVersion>3.0.1.0</FileVersion>
-    <Version>3.0.1</Version>
+    <AssemblyVersion>3.1.4.0</AssemblyVersion>
+    <FileVersion>3.1.4.0</FileVersion>
+    <Version>3.1.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LoxSmoke.DocXml</PackageId>
     <Authors>LoxSmoke</Authors>
     <Company>LoxSmoke</Company>
     <PackageLicenseUrl>https://github.com/loxsmoke/DocXml/blob/master/LICENSE</PackageLicenseUrl>
     <Description>A set of helper classes and methods for compiler-generated XML documentation retrieval.</Description>
-    <Copyright>Copyright 2017-2018 LoxSmoke</Copyright>
+    <Copyright>Copyright 2017-2019 LoxSmoke</Copyright>
     <PackageTags>xml documentation comments docxml loxsmoke</PackageTags>
     <RepositoryUrl>https://github.com/loxsmoke/DocXml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -21,16 +21,19 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>7.2</LangVersion>
+    <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>7.2</LangVersion>
+    <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Coverage|AnyCPU'">
     <LangVersion>7.2</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

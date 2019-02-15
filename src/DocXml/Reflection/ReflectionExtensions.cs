@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DocXml.Reflection
 {
+    /// <summary>
+    /// Reflection extension methods with supporting properties.
+    /// </summary>
     public static class ReflectionExtensions
     {
         /// <summary>
@@ -48,7 +51,7 @@ namespace DocXml.Reflection
         /// Check if this is nullable type. 
         /// </summary>
         /// <param name="type">Type to check.</param>
-        /// <returns>True if type is nullable</returns>
+        /// <returns>True if type is nullable like int? or Nullable&lt;Something&gt;</returns>
         public static bool IsNullable(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);

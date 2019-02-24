@@ -46,8 +46,16 @@ Reflection extension methods with supporting properties.
 | Name | Returns | Summary |
 |---|---|---|
 | **CreateKnownTypeNamesDictionary()** | Dictionary\<Type, string\> | Creates default dictionary of standard value types plus string type.  |
-| **IsNullable(Type)** | bool | Check if this is nullable type.  |
-| **ToNameString(Type, Func\<Type, string\>)** | string | Convert type to the proper type name.<br>Optional \<paramref name="typeNameConverter" /\> function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting. |
+| **IsNullable(Type type)** | bool | Check if this is nullable type.  |
+| **ToNameString(Type type, Func\<Type, string\> typeNameConverter)** | string | Convert type to the proper type name.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types without field names.  |
+| **ToNameString(Type type, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert type to the proper type name.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types without field names.  |
+| **ToNameString(Type type, Queue\<string\> tupleFieldNames, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert type to the proper type name.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns named tuples with field names like this (Type1 field1, Type2 field2).  **tupleFieldNames** parameter<br>must be specified with all tuple field names stored in the same order as they are in compiler-generated TupleElementNames attribute.<br>If you do not know what it is then the better and easier way is to use ToTypeNameString() methods that retrieve field names from attributes. |
+| **ToNameStringWithValueTupleNames(Type type, IList\<string\> tupleNames, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert type to the string.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2).  |
+| **ToParametersString(MethodBase methodInfo, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert method parameters to the string. If method has no parameters then returned string is ()<br>If parameters are present then returned string contains parameter names with their type names.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2).  |
+| **ToTypeNameString(ParameterInfo parameterInfo, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert method parameter type to the string.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2).  |
+| **ToTypeNameString(MethodInfo methodInfo, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert method return value type to the string.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2).  |
+| **ToTypeNameString(PropertyInfo propertyInfo, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert property type to the string.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2).  |
+| **ToTypeNameString(FieldInfo fieldInfo, Func\<Type, Queue\<string\>, string\> typeNameConverter)** | string | Convert field type to the string.<br>Optional **typeNameConverter** function can convert type names<br>to strings if type names should be decorated in some way either by adding links<br>or formatting.<br><br>This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2).  |
 # CommonComments Class
 
 Namespace: LoxSmoke.DocXml
@@ -77,20 +85,20 @@ Helper class that reads XML documentation generated by C# compiler from code com
 
 | Name | Summary |
 |---|---|
-| **DocXmlReader(string, bool)** | Create reader and use specified XML documentation file |
-| **DocXmlReader(XPathDocument, bool)** | Create reader for specified xpath document. |
-| **DocXmlReader(Func\<Assembly, string\>, bool)** | Open XML documentation files based on assemblies of types. Comment file names <br>are generated based on assembly names by replacing assembly location with .xml. |
-| **DocXmlReader(IEnumerable\<Assembly\>, Func\<Assembly, string\>, bool)** | Open XML documentation files based on assemblies of types. Comment file names <br>are generated based on assembly names by replacing assembly location with .xml. |
+| **DocXmlReader(string fileName, bool unindentText)** | Create reader and use specified XML documentation file |
+| **DocXmlReader(XPathDocument xPathDocument, bool unindentText)** | Create reader for specified xpath document. |
+| **DocXmlReader(Func\<Assembly, string\> assemblyXmlPathFunction, bool unindentText)** | Open XML documentation files based on assemblies of types. Comment file names <br>are generated based on assembly names by replacing assembly location with .xml. |
+| **DocXmlReader(IEnumerable\<Assembly\> assemblies, Func\<Assembly, string\> assemblyXmlPathFunction, bool unindentText)** | Open XML documentation files based on assemblies of types. Comment file names <br>are generated based on assembly names by replacing assembly location with .xml. |
 ## Methods
 
 | Name | Returns | Summary |
 |---|---|---|
-| **GetEnumComments(Type, bool)** | [EnumComments](#enumcomments-class) | Get enum type description and comments for enum values. If \<paramref name="fillValues" /\><br>is false and no comments exist for any value then ValueComments list is empty. |
-| **GetMemberComment(MemberInfo)** | string | Returns Summary comment for specified class member. |
-| **GetMemberComments(MemberInfo)** | [CommonComments](#commoncomments-class) | Returns comments for specified class member. |
-| **GetMethodComments(MethodBase)** | [MethodComments](#methodcomments-class) | Returns comments for the method or constructor. Returns empty comments object<br>if comments for method are missing in XML documentation file.<br>Returned comments tags:<br>Summary, Remarks, Parameters (if present), Responses (if present), Returns |
-| **GetMethodComments(MethodBase, bool)** | [MethodComments](#methodcomments-class) | Returns comments for the class method. May return null object is comments for method<br>are missing in XML documentation file. <br>Returned comments tags:<br>Summary, Remarks, Parameters (if present), Responses (if present), Returns |
-| **GetTypeComments(Type)** | [TypeComments](#typecomments-class) | Return Summary comments for specified type.<br>For Delegate types Parameters field may be returned as well. |
+| **GetEnumComments(Type enumType, bool fillValues)** | [EnumComments](#enumcomments-class) | Get enum type description and comments for enum values. If **fillValues**<br>is false and no comments exist for any value then ValueComments list is empty. |
+| **GetMemberComment(MemberInfo memberInfo)** | string | Returns Summary comment for specified class member. |
+| **GetMemberComments(MemberInfo memberInfo)** | [CommonComments](#commoncomments-class) | Returns comments for specified class member. |
+| **GetMethodComments(MethodBase methodInfo)** | [MethodComments](#methodcomments-class) | Returns comments for the method or constructor. Returns empty comments object<br>if comments for method are missing in XML documentation file.<br>Returned comments tags:<br>Summary, Remarks, Parameters (if present), Responses (if present), Returns |
+| **GetMethodComments(MethodBase methodInfo, bool nullIfNoComment)** | [MethodComments](#methodcomments-class) | Returns comments for the class method. May return null object is comments for method<br>are missing in XML documentation file. <br>Returned comments tags:<br>Summary, Remarks, Parameters (if present), Responses (if present), Returns |
+| **GetTypeComments(Type type)** | [TypeComments](#typecomments-class) | Return Summary comments for specified type.<br>For Delegate types Parameters field may be returned as well. |
 # EnumComments Class
 
 Namespace: LoxSmoke.DocXml
@@ -154,10 +162,10 @@ Method, operator and constructor comments
 
 | Name | Type | Summary |
 |---|---|---|
-| **Parameters** | List\<ValueTuple\<string, string\>\> | "param" comments of the method. Each item in the list is the tuple<br>where Item1 is the "name" of the parameter in XML file and <br>Item2 is the body of the comment. |
+| **Parameters** | List\<(string Name, string Text)\> | "param" comments of the method. Each item in the list is the tuple<br>where Item1 is the "name" of the parameter in XML file and <br>Item2 is the body of the comment. |
 | **Returns** | string | "returns" comment of the method. |
-| **Responses** | List\<ValueTuple\<string, string\>\> | "response" comments of the method. The list contains tuples where <br>Item1 is the "code" of the response and<br>Item1 is the body of the comment. |
-| **TypeParameters** | List\<ValueTuple\<string, string\>\> | "typeparam" comments of the method. Each item in the list is the tuple<br>where Item1 is the "name" of the parameter in XML file and <br>Item2 is the body of the comment. |
+| **Responses** | List\<(string Code, string Text)\> | "response" comments of the method. The list contains tuples where <br>Item1 is the "code" of the response and<br>Item1 is the body of the comment. |
+| **TypeParameters** | List\<(string Name, string Text)\> | "typeparam" comments of the method. Each item in the list is the tuple<br>where Item1 is the "name" of the parameter in XML file and <br>Item2 is the body of the comment. |
 | **Summary** | string | "summary" comment |
 | **Remarks** | string | "remarks" comment |
 | **Example** | string | "example" comment |
@@ -174,7 +182,7 @@ Class, Struct or  delegate comments
 
 | Name | Type | Summary |
 |---|---|---|
-| **Parameters** | List\<ValueTuple\<string, string\>\> | This list contains descriptions of delegate type parameters. <br>For non-delegate types this list is empty.<br>For delegate types this list contains tuples where <br>Item1 is the "param" item "name" attribute and<br>Item2 is the body of the comment |
+| **Parameters** | List\<(string Name, string Text)\> | This list contains descriptions of delegate type parameters. <br>For non-delegate types this list is empty.<br>For delegate types this list contains tuples where <br>Item1 is the "param" item "name" attribute and<br>Item2 is the body of the comment |
 | **Summary** | string | "summary" comment |
 | **Remarks** | string | "remarks" comment |
 | **Example** | string | "example" comment |
@@ -190,13 +198,13 @@ IDs uniquely identify comments in the XML documentation file.
 
 | Name | Returns | Summary |
 |---|---|---|
-| **EnumValueId(Type, string)** | string | Get XML Id of specified value of the enum type.  |
-| **EventId(MemberInfo)** | string | Get XML Id of event field |
-| **FieldId(MemberInfo)** | string | Get XML Id of field |
-| **MemberId(MemberInfo)** | string | Get XML Id of any member of the type.  |
-| **MethodId(MethodBase)** | string | Get XML Id of a class method |
-| **PropertyId(MemberInfo)** | string | Get XML Id of property |
-| **TypeId(Type)** | string | Get XML Id of the type definition. |
+| **EnumValueId(Type enumType, string enumName)** | string | Get XML Id of specified value of the enum type.  |
+| **EventId(MemberInfo eventInfo)** | string | Get XML Id of event field |
+| **FieldId(MemberInfo fieldInfo)** | string | Get XML Id of field |
+| **MemberId(MemberInfo memberInfo)** | string | Get XML Id of any member of the type.  |
+| **MethodId(MethodBase methodInfo)** | string | Get XML Id of a class method |
+| **PropertyId(MemberInfo propertyInfo)** | string | Get XML Id of property |
+| **TypeId(Type type)** | string | Get XML Id of the type definition. |
 ## Fields
 
 | Name | Type | Summary |
@@ -218,9 +226,9 @@ using reflection information.
 
 | Name | Returns | Summary |
 |---|---|---|
-| **Comments(DocXmlReader, IEnumerable\<PropertyInfo\>)** | IEnumerable\<ValueTuple\<PropertyInfo, [CommonComments](#commoncomments-class)\>\> | Get comments for the collection of properties. |
-| **Comments(DocXmlReader, IEnumerable\<MethodBase\>)** | IEnumerable\<ValueTuple\<MethodBase, [MethodComments](#methodcomments-class)\>\> | Get comments for the collection of methods. |
-| **Comments(DocXmlReader, IEnumerable\<FieldInfo\>)** | IEnumerable\<ValueTuple\<FieldInfo, [CommonComments](#commoncomments-class)\>\> | Get comments for the collection of fields. |
+| **Comments([DocXmlReader](#docxmlreader-class) reader, IEnumerable\<PropertyInfo\> propInfos)** | IEnumerable\<(PropertyInfo Info, [CommonComments](#commoncomments-class) Comments)\> | Get comments for the collection of properties. |
+| **Comments([DocXmlReader](#docxmlreader-class) reader, IEnumerable\<MethodBase\> methodInfos)** | IEnumerable\<(MethodBase Info, [MethodComments](#methodcomments-class) Comments)\> | Get comments for the collection of methods. |
+| **Comments([DocXmlReader](#docxmlreader-class) reader, IEnumerable\<FieldInfo\> fieldInfos)** | IEnumerable\<(FieldInfo Info, [CommonComments](#commoncomments-class) Comments)\> | Get comments for the collection of fields. |
 # ReflectionSettings Class
 
 Namespace: LoxSmoke.DocXml.Reflection
@@ -261,12 +269,12 @@ Collection of type information objects.
 
 | Name | Returns | Summary |
 |---|---|---|
-| **ForReferencedTypes(Type, ReflectionSettings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
-| **ForReferencedTypes(Assembly, ReflectionSettings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the types from specified assembly. |
-| **GetReferencedTypes(Type, ReflectionSettings)** | void | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
-| **GetReferencedTypes(Assembly, ReflectionSettings)** | void | Get all types referenced by the types from specified assembly. |
-| **GetReferencedTypes(IEnumerable\<Assembly\>, ReflectionSettings)** | void | Get all types referenced by the types from specified assemblies.<br>Reflection information for the specified type is also returned. |
-| **UnwrapType(Type, Type)** | void | Recursively "unwrap" the generic type or array. If type is not generic and not an array<br>then do nothing. |
+| **ForReferencedTypes(Type type, [ReflectionSettings](#reflectionsettings-class) settings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
+| **ForReferencedTypes(Assembly assembly, [ReflectionSettings](#reflectionsettings-class) settings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the types from specified assembly. |
+| **GetReferencedTypes(Type type, [ReflectionSettings](#reflectionsettings-class) settings)** | void | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
+| **GetReferencedTypes(Assembly assembly, [ReflectionSettings](#reflectionsettings-class) settings)** | void | Get all types referenced by the types from specified assembly. |
+| **GetReferencedTypes(IEnumerable\<Assembly\> assemblies, [ReflectionSettings](#reflectionsettings-class) settings)** | void | Get all types referenced by the types from specified assemblies.<br>Reflection information for the specified type is also returned. |
+| **UnwrapType(Type parentType, Type type)** | void | Recursively "unwrap" the generic type or array. If type is not generic and not an array<br>then do nothing. |
 # TypeInformation Class
 
 Namespace: LoxSmoke.DocXml.Reflection

@@ -195,6 +195,13 @@ namespace DocXmlUnitTests
             get => "test";
             set { }
         }
+
+        /// <summary>
+        /// NestedClass
+        /// </summary>
+        public class NestedClass
+        {
+        }
     }
 }
 

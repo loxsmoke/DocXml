@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using DocXmlUnitTests.TestData.Reflection;
 using LoxSmoke.DocXml.Reflection;
@@ -39,15 +41,44 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetReferenceTypes_OneAssemblyOnly()
+        public void GetReferenceTypes_Type()
         {
-            var tc = new TypeCollection();
-
             var settings = ReflectionSettings.Default;
             settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
 
-            tc.GetReferencedTypes(typeof(TCTestClass), settings);
+            var tc = TypeCollection.ForReferencedTypes(typeof(TCTestClass), settings);
+
             Assert.AreEqual(5, tc.ReferencedTypes.Count);
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum2)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestClass)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestPropertyClass)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestListPropertyClass)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum1)));
+        }
+
+        [TestMethod]
+        public void GetReferenceTypes_Assembly()
+        {
+            var settings = ReflectionSettings.Default;
+            settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
+
+            var tc = TypeCollection.ForReferencedTypes(Assembly.GetExecutingAssembly(), settings);
+
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum2)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestClass)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestPropertyClass)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestListPropertyClass)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum1)));
+        }
+
+        [TestMethod]
+        public void GetReferenceTypes_AssemblyEnum()
+        {
+            var settings = ReflectionSettings.Default;
+            settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
+            var list = new List<Assembly>() {Assembly.GetExecutingAssembly()};
+            var tc = TypeCollection.ForReferencedTypes(list, settings);
+
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum2)));
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestClass)));
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestPropertyClass)));

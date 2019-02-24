@@ -104,6 +104,19 @@ namespace LoxSmoke.DocXml.Reflection
         }
 
         /// <summary>
+        /// Get all types referenced by the types from the list of assemblies.
+        /// </summary>
+        /// <param name="assemblies"></param>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static TypeCollection ForReferencedTypes(IEnumerable<Assembly> assemblies, ReflectionSettings settings = null)
+        {
+            var typeCollection = new TypeCollection();
+            typeCollection.GetReferencedTypes(assemblies, settings);
+            return typeCollection;
+        }
+
+        /// <summary>
         /// Get all types referenced by the specified type.
         /// Reflection information for the specified type is also returned.
         /// </summary>

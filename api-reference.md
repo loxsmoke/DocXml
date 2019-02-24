@@ -1,4 +1,4 @@
-# DocXml.dll v.3.1.4.0 API documentation
+# DocXml.dll v.3.2.0.0 API documentation
 
 # All types
 

@@ -59,5 +59,10 @@ namespace DocXmlUnitTests.TestData.Reflection
         /// <param name="param1"></param>
         /// <returns></returns>
         public int IntFunction(int param1) => 1;
+
+        /// <summary>
+        /// TupleProperty
+        /// </summary>
+        public (int One, int Two) TupleProperty { get; set; }
     }
 }

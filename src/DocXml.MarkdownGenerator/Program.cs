@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using DocXml.Reflection;
 using LoxSmoke.DocXml;
 using LoxSmoke.DocXml.Reflection;
@@ -13,12 +15,6 @@ namespace DocXml.MarkdownGenerator
 {
     class Program
     {
-        static string ToString(ParameterInfo[] parameters)
-        {
-            if (parameters == null || parameters.Length == 0) return "()";
-            return "(" + string.Join(", ", parameters.Select(s => s.ParameterType.ToNameString())) + ")";
-        }
-
         static void Main(string[] args)
         {
             var markdownWriter = new MarkdownWriter();
@@ -32,8 +28,7 @@ namespace DocXml.MarkdownGenerator
                 .OrderBy(t => t.Type.Namespace)
                 .ThenBy(t => t.Type.Name).ToList();
             var typesHash = new HashSet<Type>(typesToDocument.Select(t => t.Type));
-            Func<Type,string> typeLinkConverter = (type) => typesHash.Contains(type) ? 
-                markdownWriter.HeadingLink(type.Name + " class", type.Name) : null; 
+            string TypeLinkConverter(Type type, Queue<string> _) => typesHash.Contains(type) ? markdownWriter.HeadingLink(type.Name + " class", type.Name) : null;
 
             if (typesToDocument.Count > 0)
             {
@@ -53,7 +48,7 @@ namespace DocXml.MarkdownGenerator
                 if (typeData.Type.BaseType != null && typeData.Type.BaseType != typeof(Object))
                 {
                     markdownWriter.WriteLine("Base class: " + 
-                                             typeData.Type.BaseType.ToNameString(typeLinkConverter));
+                        typeData.Type.BaseType.ToNameString(TypeLinkConverter));
                 }
 
                 var typeComments = docXmlReader.GetTypeComments(typeData.Type);
@@ -83,7 +78,7 @@ namespace DocXml.MarkdownGenerator
                     {
                         markdownWriter.WriteTableRow(
                             markdownWriter.Bold(prop.Info.Name),
-                            prop.Info.PropertyType.ToNameString(typeLinkConverter),
+                            prop.Info.ToTypeNameString(TypeLinkConverter),
                             prop.Comments.Summary);
                     }
                 }
@@ -97,8 +92,7 @@ namespace DocXml.MarkdownGenerator
                         .OrderBy(p => p.Info.GetParameters().Length))
                     {
                         markdownWriter.WriteTableRow(
-                            markdownWriter.Bold(typeData.Type.ToNameString() + 
-                                 ToString((prop.Info as ConstructorInfo).GetParameters())),
+                            markdownWriter.Bold(typeData.Type.ToNameString() + prop.Info.ToParametersString(TypeLinkConverter)),
                             prop.Comments.Summary);
                     }
                 }
@@ -114,8 +108,8 @@ namespace DocXml.MarkdownGenerator
                     {
                         var methodInfo = method.Info as MethodInfo;
                         markdownWriter.WriteTableRow(
-                            markdownWriter.Bold(methodInfo.Name + ToString(methodInfo.GetParameters())),
-                            methodInfo.ReturnType.ToNameString(typeLinkConverter),
+                            markdownWriter.Bold(methodInfo.Name + methodInfo.ToParametersString(TypeLinkConverter)),
+                            methodInfo.ToTypeNameString(TypeLinkConverter),
                             method.Comments.Summary);
                     }
                 }
@@ -128,13 +122,13 @@ namespace DocXml.MarkdownGenerator
                     {
                         markdownWriter.WriteTableRow(
                             markdownWriter.Bold(field.Info.Name),
-                            field.Info.FieldType.ToNameString(typeLinkConverter),
+                            field.Info.ToTypeNameString(TypeLinkConverter),
                             field.Comments.Summary);
                     }
                 }
-                File.WriteAllText((args.Length == 0 ? "api-reference.md" : args[0]), 
-                    markdownWriter.sb.ToString());
             }
+            File.WriteAllText((args.Length == 0 ? "api-reference.md" : args[0]),
+                markdownWriter.sb.ToString());
         }
     }
 }

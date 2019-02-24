@@ -33,5 +33,11 @@ namespace DocXmlUnitTests.TestData.Reflection
         /// PublicStaticField
         /// </summary>
         public static int PublicStaticField;
+
+        /// <summary>
+        /// TupleField
+        /// </summary>
+        public (int One, int Two) TupleField;
+
     }
 }

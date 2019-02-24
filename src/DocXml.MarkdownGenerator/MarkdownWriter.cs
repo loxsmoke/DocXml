@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DocXml.MarkdownGenerator
 {
@@ -26,7 +27,27 @@ namespace DocXml.MarkdownGenerator
 
         public void WriteTableRow(params string[] text)
         {
-            Write("| " + string.Join(" | ", text.Select(EscapeSpecialChars)) + " |");
+            Write("| " + string.Join(" | ", text.Select(EscapeSpecialText)) + " |");
+        }
+
+        string EscapeSpecialText(string text)
+        {
+            if (text == null) return "";
+            text = ResolveTag(text, "paramref", "name");
+            return EscapeSpecialChars(text);
+        }
+
+        string ResolveTag(string text, string tagName, string attributeName)
+        {
+            var regex = new Regex("<" + tagName + "( +)" + attributeName + "( *)=( *)\"(.*?)\"( *)/>");
+            for (; ; )
+            { 
+                var match = regex.Match(text);
+                if (!match.Success) return text;
+
+                var attributeValue = match.Groups[4].Value;
+                text = text.Substring(0, match.Index) + Bold(attributeValue) + text.Substring(match.Index + match.Length);
+            }
         }
 
         static string EscapeSpecialChars(string text)

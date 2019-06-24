@@ -9,126 +9,91 @@ using System.Text.RegularExpressions;
 using DocXml.Reflection;
 using LoxSmoke.DocXml;
 using LoxSmoke.DocXml.Reflection;
-using static LoxSmoke.DocXml.Reflection.DocXmlReaderExtensions;
 
 namespace DocXml.MarkdownGenerator
 {
+    /// <summary>
+    /// <typeparamref name=""/>
+    /// <paramref name=""/>
+    /// <![CDATA[]]>
+    /// <c></c>
+    /// <code></code>
+    /// <example></example>
+    /// <exception cref=""></exception>
+    /// <list type=""></list>
+    /// <para></para>
+    /// <see cref=""/>
+    /// <seealso cref=""/>
+    /// </summary>
+
     class Program
     {
+        static void Help()
+        {
+            Console.WriteLine("Usage:");
+            Console.WriteLine("   docxml2md <assembly> [--output <output_md>] [--format <format>]");
+            Console.WriteLine("   <assembly>   - the name of the assembly to document.");
+            Console.WriteLine("   <output_md>  - the optional name of the output file.");
+            Console.WriteLine("   <format>     - markdown file format. Valid values: github, bitbucket. Github is assumed if not specified.");
+        }
+
+        static (string AssemblyName, string OutputFile, string Format) Parse(string [] args)
+        {
+            string assemblyName = null, outputFile = null, format = "github";
+            for (var i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "--output" || args[i] == "-o")
+                {
+                    if (++i == args.Length) return (null, null, null);
+                    outputFile = args[i];
+                }
+                else if (args[i] == "--format" || args[i] == "-f")
+                {
+                    if (++i == args.Length) return (null, null, null);
+                    format = args[i];
+                }
+                else if (assemblyName == null) assemblyName = args[i];
+            }
+
+            if (assemblyName != null && outputFile == null)
+            {
+                outputFile = Path.GetFileNameWithoutExtension(assemblyName) + ".md";
+            }
+
+            return (assemblyName, outputFile, format);
+        }
+
         static void Main(string[] args)
         {
-            var markdownWriter = new MarkdownWriter();
-            var docXmlReader = new DocXmlReader();
-            var reflectionSettings = ReflectionSettings.Default;
-            var myAssembly = Assembly.GetAssembly(typeof(DocXmlReader));
-            markdownWriter.WriteH1($"{Path.GetFileName(myAssembly.ManifestModule.Name)} v.{myAssembly.GetName().Version} API documentation");
-            var typeCollection = TypeCollection.ForReferencedTypes(myAssembly, reflectionSettings);
-
-            var typesToDocument = typeCollection.ReferencedTypes.Values
-                .OrderBy(t => t.Type.Namespace)
-                .ThenBy(t => t.Type.Name).ToList();
-            var typesHash = new HashSet<Type>(typesToDocument.Select(t => t.Type));
-            string TypeLinkConverter(Type type, Queue<string> _) => typesHash.Contains(type) ? markdownWriter.HeadingLink(type.Name + " class", type.Name) : null;
-
-            if (typesToDocument.Count > 0)
+            var (assemblyName, outputFile, format) = Parse(args);
+            if (assemblyName == null)
             {
-                markdownWriter.WriteH1("All types");
-                foreach (var typeData in typesToDocument.OrderBy(t => t.Type.Name))
-                {
-                    markdownWriter.WriteHeadingLink(typeData.Type.Name + " class");
-                    markdownWriter.WriteLine("");
-                }
-                markdownWriter.WriteLine("");
+                Help();
+                return;
             }
 
-            foreach (var typeData in typesToDocument)
+            if (format != "github" && format != "bitbucket")
             {
-                markdownWriter.WriteH1(typeData.Type.Name + " Class");
-                markdownWriter.WriteLine("Namespace: " + typeData.Type.Namespace);
-                if (typeData.Type.BaseType != null && typeData.Type.BaseType != typeof(Object))
-                {
-                    markdownWriter.WriteLine("Base class: " + 
-                        typeData.Type.BaseType.ToNameString(TypeLinkConverter));
-                }
-
-                var typeComments = docXmlReader.GetTypeComments(typeData.Type);
-                markdownWriter.WriteLine(typeComments.Summary);
-
-                if (!string.IsNullOrEmpty(typeComments.Example))
-                {
-                    markdownWriter.WriteH2("Examples");
-                    markdownWriter.WriteLine(typeComments.Example);
-                }
-
-                if (!string.IsNullOrEmpty(typeComments.Remarks))
-                {
-                    markdownWriter.WriteH2("Remarks");
-                    markdownWriter.WriteLine(typeComments.Remarks);
-                }
-
-                var allProperties = docXmlReader.Comments(typeData.Properties).ToList();
-                var allMethods = docXmlReader.Comments(typeData.Methods).ToList();
-                var allFields = docXmlReader.Comments(typeData.Fields).ToList();
-
-                if (allProperties.Count > 0)
-                {
-                    markdownWriter.WriteH2("Properties");
-                    markdownWriter.WriteTableTitle("Name", "Type", "Summary");
-                    foreach (var prop in allProperties)
-                    {
-                        markdownWriter.WriteTableRow(
-                            markdownWriter.Bold(prop.Info.Name),
-                            prop.Info.ToTypeNameString(TypeLinkConverter),
-                            prop.Comments.Summary);
-                    }
-                }
-
-                if (allMethods.Count > 0 && allMethods.Any(m => m.Info is ConstructorInfo))
-                {
-                    markdownWriter.WriteH2("Constructors");
-                    markdownWriter.WriteTableTitle("Name", "Summary");
-                    foreach (var prop in allMethods
-                        .Where(m => m.Info is ConstructorInfo)
-                        .OrderBy(p => p.Info.GetParameters().Length))
-                    {
-                        markdownWriter.WriteTableRow(
-                            markdownWriter.Bold(typeData.Type.ToNameString() + prop.Info.ToParametersString(TypeLinkConverter)),
-                            prop.Comments.Summary);
-                    }
-                }
-
-                if (allMethods.Count > 0 && allMethods.Any(m => m.Info is MethodInfo))
-                {
-                    markdownWriter.WriteH2("Methods");
-                    markdownWriter.WriteTableTitle("Name", "Returns", "Summary");
-                    foreach (var method in allMethods
-                        .Where(m => m.Info != null && !(m.Info is ConstructorInfo) && (m.Info is MethodInfo))
-                        .OrderBy(p => p.Info.Name)
-                        .ThenBy(p => p.Info.GetParameters().Length))
-                    {
-                        var methodInfo = method.Info as MethodInfo;
-                        markdownWriter.WriteTableRow(
-                            markdownWriter.Bold(methodInfo.Name + methodInfo.ToParametersString(TypeLinkConverter)),
-                            methodInfo.ToTypeNameString(TypeLinkConverter),
-                            method.Comments.Summary);
-                    }
-                }
-
-                if (allFields.Count > 0)
-                {
-                    markdownWriter.WriteH2("Fields");
-                    markdownWriter.WriteTableTitle("Name", "Type", "Summary");
-                    foreach (var field in allFields)
-                    {
-                        markdownWriter.WriteTableRow(
-                            markdownWriter.Bold(field.Info.Name),
-                            field.Info.ToTypeNameString(TypeLinkConverter),
-                            field.Comments.Summary);
-                    }
-                }
+                Console.WriteLine("Error: invalid markdown format specified. Expected github or bitbucket");
+                return;
             }
-            File.WriteAllText((args.Length == 0 ? "api-reference.md" : args[0]),
-                markdownWriter.sb.ToString());
+            try
+            {
+                var myAssembly = Assembly.LoadFrom(assemblyName);
+
+                var markdownWriter = format == "github" ? (IMarkdownWriter)new GithubMarkdownWriter() : new BitbucketMarkdownWriter();
+                var typeCollection = TypeCollection.ForReferencedTypes(myAssembly, ReflectionSettings.Default);
+                var generator = new DocumentationGenerator(markdownWriter, typeCollection);
+
+                generator.WriteDocumentTitle(myAssembly);
+                generator.WriteTypeIndex();
+                generator.DocumentTypes();
+                File.WriteAllText(outputFile, markdownWriter.FullText);
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine($"Error: {exc.Message}");
+            }
         }
     }
 }

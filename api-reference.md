@@ -2,34 +2,13 @@
 
 # All types
 
-[CommonComments class](#commoncomments-class)
-
-[DocXmlReader class](#docxmlreader-class)
-
-[DocXmlReaderExtensions class](#docxmlreaderextensions-class)
-
-[EnumComments class](#enumcomments-class)
-
-[EnumValueComment class](#enumvaluecomment-class)
-
-[InheritdocTag class](#inheritdoctag-class)
-
-[MethodComments class](#methodcomments-class)
-
-[ReflectionExtensions class](#reflectionextensions-class)
-
-[ReflectionSettings class](#reflectionsettings-class)
-
-[TypeCollection class](#typecollection-class)
-
-[TypeComments class](#typecomments-class)
-
-[TypeInformation class](#typeinformation-class)
-
-[XmlDocId class](#xmldocid-class)
-
-
-
+|   |   |   |
+|---|---|---|
+| [ReflectionExtensions Class](#reflectionextensions-class) | [InheritdocTag Class](#inheritdoctag-class) | [ReflectionSettings Class](#reflectionsettings-class) |
+| [CommonComments Class](#commoncomments-class) | [MethodComments Class](#methodcomments-class) | [TypeCollection Class](#typecollection-class) |
+| [DocXmlReader Class](#docxmlreader-class) | [TypeComments Class](#typecomments-class) | [TypeInformation Class](#typeinformation-class) |
+| [EnumComments Class](#enumcomments-class) | [XmlDocId Class](#xmldocid-class) |   |
+| [EnumValueComment Class](#enumvaluecomment-class) | [DocXmlReaderExtensions Class](#docxmlreaderextensions-class) |   |
 # ReflectionExtensions Class
 
 Namespace: DocXml.Reflection
@@ -271,6 +250,7 @@ Collection of type information objects.
 |---|---|---|
 | **ForReferencedTypes(Type type, [ReflectionSettings](#reflectionsettings-class) settings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
 | **ForReferencedTypes(Assembly assembly, [ReflectionSettings](#reflectionsettings-class) settings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the types from specified assembly. |
+| **ForReferencedTypes(IEnumerable\<Assembly\> assemblies, [ReflectionSettings](#reflectionsettings-class) settings)** | [TypeCollection](#typecollection-class) | Get all types referenced by the types from the list of assemblies. |
 | **GetReferencedTypes(Type type, [ReflectionSettings](#reflectionsettings-class) settings)** | void | Get all types referenced by the specified type.<br>Reflection information for the specified type is also returned. |
 | **GetReferencedTypes(Assembly assembly, [ReflectionSettings](#reflectionsettings-class) settings)** | void | Get all types referenced by the types from specified assembly. |
 | **GetReferencedTypes(IEnumerable\<Assembly\> assemblies, [ReflectionSettings](#reflectionsettings-class) settings)** | void | Get all types referenced by the types from specified assemblies.<br>Reflection information for the specified type is also returned. |

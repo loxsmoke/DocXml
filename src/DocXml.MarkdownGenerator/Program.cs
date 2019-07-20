@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using DocXml.MarkdownGenerator.MarkdownWriters;
+using DocXml.MarkdownGenerator.MarkdownWriters.Interfaces;
 using DocXml.Reflection;
 using LoxSmoke.DocXml;
 using LoxSmoke.DocXml.Reflection;
@@ -32,14 +34,14 @@ namespace DocXml.MarkdownGenerator
         {
             Console.WriteLine("Usage:");
             Console.WriteLine("   docxml2md <assembly> [--output <output_md>] [--format <format>]");
-            Console.WriteLine("   <assembly>   - the name of the assembly to document.");
-            Console.WriteLine("   <output_md>  - the optional name of the output file.");
-            Console.WriteLine("   <format>     - markdown file format. Valid values: github, bitbucket. Github is assumed if not specified.");
+            Console.WriteLine("   <assembly>   - The name of the assembly to document.");
+            Console.WriteLine("   <output_md>  - Optional. The name of the markdown output file.");
+            Console.WriteLine($"   <format>     - Optional. The markdown file format. Valid values: {MarkdownFormatNames}.");
         }
 
         static (string AssemblyName, string OutputFile, string Format) Parse(string [] args)
         {
-            string assemblyName = null, outputFile = null, format = "github";
+            string assemblyName = null, outputFile = null, format = MarkdownWriters.First().FormatName;
             for (var i = 0; i < args.Length; i++)
             {
                 if (args[i] == "--output" || args[i] == "-o")
@@ -63,6 +65,13 @@ namespace DocXml.MarkdownGenerator
             return (assemblyName, outputFile, format);
         }
 
+        static List<IMarkdownWriter> MarkdownWriters = new List<IMarkdownWriter>()
+        {
+            new GithubMarkdownWriter(),
+            new BitbucketMarkdownWriter()
+        };
+        static string MarkdownFormatNames => string.Join(",", MarkdownWriters.Select(md => md.FormatName));
+
         static void Main(string[] args)
         {
             var (assemblyName, outputFile, format) = Parse(args);
@@ -72,23 +81,27 @@ namespace DocXml.MarkdownGenerator
                 return;
             }
 
-            if (format != "github" && format != "bitbucket")
+            var writer = MarkdownWriters.FirstOrDefault(md => md.FormatName.Equals(format, StringComparison.OrdinalIgnoreCase));
+
+            if (format == null)
             {
-                Console.WriteLine("Error: invalid markdown format specified. Expected github or bitbucket");
+                writer = MarkdownWriters.First();
+                Console.WriteLine($"Markdown format not specified. Assuming {writer.FormatName}.");
+            }
+            if (writer == null)
+            {
+                Console.WriteLine($"Error: invalid markdown format specified. Valid values: {MarkdownFormatNames}");
                 return;
             }
+
             try
             {
                 var myAssembly = Assembly.LoadFrom(assemblyName);
-
-                var markdownWriter = format == "github" ? (IMarkdownWriter)new GithubMarkdownWriter() : new BitbucketMarkdownWriter();
-                var typeCollection = TypeCollection.ForReferencedTypes(myAssembly, ReflectionSettings.Default);
-                var generator = new DocumentationGenerator(markdownWriter, typeCollection);
-
-                generator.WriteDocumentTitle(myAssembly);
-                generator.WriteTypeIndex();
-                generator.DocumentTypes();
-                File.WriteAllText(outputFile, markdownWriter.FullText);
+                if (myAssembly == null)
+                {
+                    Console.WriteLine($"Could not load assembly \'{assemblyName}\'");
+                }
+                DocumentationGenerator.GenerateMarkdown(myAssembly, writer, outputFile, false, true);
             }
             catch (Exception exc)
             {

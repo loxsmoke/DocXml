@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DocXml.MarkdownGenerator
+namespace DocXml.MarkdownGenerator.MarkdownWriters.Interfaces
 {
     public interface IMarkdownWriter
     {
+        string FormatName { get; }
         void Write(string text);
         void WriteLine(string text);
 

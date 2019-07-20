@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using DocXml.MarkdownGenerator.MarkdownWriters.Interfaces;
 
-namespace DocXml.MarkdownGenerator
+namespace DocXml.MarkdownGenerator.MarkdownWriters
 {
     public class GithubMarkdownWriter : IMarkdownWriter
     {
+        public string FormatName => "github";
+
         #region Basic writing
         public StringBuilder allText = new StringBuilder();
 

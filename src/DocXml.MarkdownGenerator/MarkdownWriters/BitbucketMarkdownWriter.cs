@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using DocXml.MarkdownGenerator.MarkdownWriters.Interfaces;
 
-namespace DocXml.MarkdownGenerator
+namespace DocXml.MarkdownGenerator.MarkdownWriters
 {
     public class BitbucketMarkdownWriter : IMarkdownWriter
     {
+        public string FormatName => "bitbucket";
+
         #region Basic writing
-        public StringBuilder allText = new StringBuilder();
+        StringBuilder allText = new StringBuilder();
 
         public void Write(string text)
         {
@@ -26,11 +27,13 @@ namespace DocXml.MarkdownGenerator
         #region Formatted writing
         public void WriteH1(string text)
         {
+            allText.AppendLine();
             WriteLine("# " + text);
         }
 
         public void WriteH2(string text)
         {
+            allText.AppendLine();
             WriteLine("## " + text);
         }
         public void WriteLink(string anchorName, string text)
@@ -61,7 +64,7 @@ namespace DocXml.MarkdownGenerator
         #endregion
 
         #region Text formatting
-        string EscapeSpecialText(string text)
+        public string EscapeSpecialText(string text)
         {
             if (text == null) return "";
             text = ResolveTag(text, "paramref", "name");
@@ -84,8 +87,8 @@ namespace DocXml.MarkdownGenerator
         public string EscapeSpecialChars(string text)
         {
             if (text == null) return "";
-            text = text.Replace("<", "\\<");
-            text = text.Replace(">", "\\>");
+            text = text.Replace("&gt;", ">");
+            text = text.Replace("&lt;", "<");
             return text.Replace("\r\n", "<br>");
         }
 
@@ -93,7 +96,6 @@ namespace DocXml.MarkdownGenerator
         {
             return "**" + text + "**";
         }
-
         public string Link(string anchorName, string text)
         {
             return $"[{text}]({anchorName})";

@@ -204,6 +204,8 @@ namespace LoxSmoke.DocXml.Reflection
             // Ignore compiler-generated types
             // If we have filtering function then ask if type is OK
             if (!IsCompilerGenerated(type.CustomAttributes) &&
+                (type.DeclaringType == null || 
+                type.DeclaringType.Name != "<PrivateImplementationDetails>") &&
                 (Settings.TypeFilter == null ||
                 Settings.TypeFilter(type))) return true;
             IgnoreTypes.Add(type);

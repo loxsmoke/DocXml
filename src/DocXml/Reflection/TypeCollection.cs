@@ -203,7 +203,7 @@ namespace LoxSmoke.DocXml.Reflection
             }
             // Ignore compiler-generated types
             // If we have filtering function then ask if type is OK
-            if (!IsCompilerGenerated(type.CustomAttributes) &&
+            if (!IsCompilerGenerated(type) &&
                 (type.DeclaringType == null || 
                 type.DeclaringType.Name != "<PrivateImplementationDetails>") &&
                 (Settings.TypeFilter == null ||
@@ -249,7 +249,7 @@ namespace LoxSmoke.DocXml.Reflection
             }
             foreach (var info in type.GetFields(Settings.FieldFlags))
             {
-                if (IsCompilerGenerated(info.CustomAttributes)) continue;
+                if (IsCompilerGenerated(info)) continue;
                 if (Settings.FieldFilter != null && !Settings.FieldFilter(info)) continue;
                 thisTypeInfo.Fields.Add(info);
                 UnwrapType(type, info.FieldType);
@@ -319,9 +319,15 @@ namespace LoxSmoke.DocXml.Reflection
             PendingPropTypes.Enqueue(type);
         }
 
-        bool IsCompilerGenerated(IEnumerable<System.Reflection.CustomAttributeData> attrs)
+        bool IsCompilerGenerated(Type type)
         {
-            return attrs.Any(attr => attr.AttributeType == typeof(CompilerGeneratedAttribute));
+            return type.Name.Contains('<') ||
+                   type.CustomAttributes.Any(attr => attr.AttributeType == typeof(CompilerGeneratedAttribute));
+        }
+        bool IsCompilerGenerated(FieldInfo fieldInfo)
+        {
+            return fieldInfo.FieldType.Name.Contains('<') ||
+                   fieldInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(CompilerGeneratedAttribute));
         }
     }
 }

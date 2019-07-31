@@ -238,11 +238,15 @@ namespace DocXml.Reflection
                                .Select(arg => arg.argumentType.ToNameString(tupleFieldNames, typeNameConverter) +
                                (arg.argumentName == null ? "" : (" " + arg.argumentName)))) + ")";
                 }
-                else
+                else if (type.Name.Contains('`'))
                 {
                     newTypeName = type.Name.Substring(0, type.Name.IndexOf('`')) + "<" +
                        string.Join(", ", type.GetGenericArguments()
                            .Select(argType => argType.ToNameString(tupleFieldNames, typeNameConverter))) + ">";
+                }
+                else
+                {
+                    newTypeName = type.Name;
                 }
             }
             else if (type.IsArray)

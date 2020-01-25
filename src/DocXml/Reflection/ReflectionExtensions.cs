@@ -13,7 +13,7 @@ namespace DocXml.Reflection
     public static class ReflectionExtensions
     {
         /// <summary>
-        /// Dictionary containing mapping of type to type names.
+        /// A dictionary containing a mapping of type to type names.
         /// </summary>
         public static Dictionary<Type, string> KnownTypeNames
             => _knownTypeNames ?? (_knownTypeNames = CreateKnownTypeNamesDictionary());
@@ -21,9 +21,9 @@ namespace DocXml.Reflection
         private static Dictionary<Type, string> _knownTypeNames;
 
         /// <summary>
-        /// Creates default dictionary of standard value types plus string type. 
+        /// Create a dictionary of standard value types and a string type. 
         /// </summary>
-        /// <returns>Dictionary of type to type names</returns>
+        /// <returns>Dictionary mapping types to type names</returns>
         public static Dictionary<Type, string> CreateKnownTypeNamesDictionary()
         {
             return new Dictionary<Type, string>()
@@ -50,11 +50,11 @@ namespace DocXml.Reflection
         }
 
         /// <summary>
-        /// Check if this is a nullable value type. 
-        /// Object references are not considered nullable by this function.
+        /// Checks if the specified type is a nullable value type. 
+        /// Returns false for object references.
         /// </summary>
         /// <param name="type">Type to check.</param>
-        /// <returns>True if type is nullable like int? or Nullable&lt;Something&gt;</returns>
+        /// <returns>True if the type is nullable like int? or Nullable&lt;Something&gt;</returns>
         public static bool IsNullable(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
@@ -62,14 +62,14 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert type to the proper type name.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types without field names. 
         /// </summary>
         /// <param name="type">Type information.</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
         /// <returns>Full type name</returns>
         public static string ToNameString(this Type type, Func<Type, string> typeNameConverter = null)
         {
@@ -78,15 +78,20 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert type to the proper type name.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types without field names. 
         /// </summary>
         /// <param name="type">Type information.</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full type name</returns>
         public static string ToNameString(this Type type, Func<Type, Queue<string>, string> typeNameConverter,
             bool invokeTypeNameConverterForGenericType = false)
@@ -97,15 +102,20 @@ namespace DocXml.Reflection
         /// <summary>
         /// Convert method parameters to the string. If method has no parameters then returned string is ()
         /// If parameters are present then returned string contains parameter names with their type names.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2). 
         /// </summary>
         /// <param name="methodInfo">Method information</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full list of parameter types and their names</returns>
         public static string ToParametersString(this MethodBase methodInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
@@ -117,15 +127,20 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert method parameter type to the string.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2). 
         /// </summary>
         /// <param name="parameterInfo">Parameter information.</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full type name of the parameter</returns>
         public static string ToTypeNameString(this ParameterInfo parameterInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
@@ -137,15 +152,20 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert method return value type to the string.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2). 
         /// </summary>
         /// <param name="methodInfo">Method information.</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full type name of the return value</returns>
         public static string ToTypeNameString(this MethodInfo methodInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
@@ -157,15 +177,20 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert property type to the string.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2). 
         /// </summary>
         /// <param name="propertyInfo">Property information.</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full type name of the property</returns>
         public static string ToTypeNameString(this PropertyInfo propertyInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
@@ -177,15 +202,20 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert field type to the string.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2). 
         /// </summary>
         /// <param name="fieldInfo">Field information.</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full type name of the field</returns>
         public static string ToTypeNameString(this FieldInfo fieldInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
@@ -197,16 +227,21 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert type to the string.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns ValueTuple types with field names like this (Type1 name1, Type2 name2). 
         /// </summary>
         /// <param name="type"></param>
         /// <param name="tupleNames">The names of the tuple fields from compiler-generated TupleElementNames attribute</param>
-        /// <param name="typeNameConverter">Optional function that converts type name to string.</param>
-        /// <param name="invokeTypeNameConverterForGenericType"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
+        /// <param name="invokeTypeNameConverterForGenericType">
+        /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// ToNameString() to avoid infinite recursion.  
+        /// This is an optional parameter with default value of false.</param>
         /// <returns>Full name of the specified type</returns>
         public static string ToNameStringWithValueTupleNames(this Type type, IList<string> tupleNames, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
@@ -217,8 +252,8 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Convert type to the proper type name.
-        /// Optional <paramref name="typeNameConverter"/> function can convert type names
-        /// to strings if type names should be decorated in some way either by converting text to markdown or 
+        /// Optional <paramref name="typeNameConverter"/> function can convert type names to strings 
+        /// if type names should be decorated in some way either by converting text to markdown or 
         /// HTML links or adding some formatting.
         /// 
         /// This method returns named tuples with field names like this (Type1 field1, Type2 field2).  <paramref name="tupleFieldNames"/> parameter
@@ -227,11 +262,11 @@ namespace DocXml.Reflection
         /// </summary>
         /// <param name="type"></param>
         /// <param name="tupleFieldNames">The names of value tuple fields as stored in TupleElementNames attribute. This queue is modified during call.</param>
-        /// <param name="typeNameConverter"></param>
+        /// <param name="typeNameConverter">The optional function that converts type name to string.</param>
         /// <param name="invokeTypeNameConverterForGenericType">
         /// True if typeNameConverter lambda function should be invoked for generic type name such as for the List name in case of List&lt;SomeType&gt;
-        /// If parameter is false then typeNameConverter is not invoked for the generic type nane and only the plain type name is returned.
-        /// If parameter is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
+        /// If the parameter value is false then typeNameConverter is not invoked for the generic type name and only the plain type name is returned.
+        /// If the parameter value is true then typeNameConverter must handle generic type definitions carefully and avoid calling 
         /// ToNameString() to avoid infinite recursion.  
         /// This is an optional parameter with default value of false.</param>
         /// <returns>Full type name</returns>
@@ -313,8 +348,11 @@ namespace DocXml.Reflection
             typeof(ValueTuple<,,,,,,,>) });
 
         /// <summary>
-        /// Remove the parameter count part of the generic type name as in List`1. 
-        /// If specified string does not contain the number of parameters part then the same string is returned.
+        /// Remove the parameter count part of the generic type name. 
+        /// For example the generic list type name is List`1.
+        /// This method leaves only the name part of the type such as List.
+        /// If specified string does not contain the number of parameters 
+        /// part then the same string is returned.
         /// </summary>
         /// <param name="genericTypeName">Type name</param>
         /// <returns>Type name without the number of parameters.</returns>

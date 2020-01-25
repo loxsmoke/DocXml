@@ -8,7 +8,7 @@ using System.Text;
 namespace LoxSmoke.DocXml.Reflection
 {
     /// <summary>
-    /// DocXmlReader extension methods to retrieve type properties, methods and fields
+    /// DocXmlReader extension methods to retrieve type properties, methods, and fields
     /// using reflection information.
     /// </summary>
     public static class DocXmlReaderExtensions

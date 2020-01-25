@@ -48,6 +48,26 @@ namespace DocXmlUnitTests
         }
 
         [DataTestMethod]
+        [DataRow(typeof(List<>), true, "*List*<+T+>")]
+        [DataRow(typeof(List<>), false, "List<+T+>")]
+        [DataRow(typeof(List<int>), true, "*List*<*int*>")]
+        [DataRow(typeof(List<int>), false, "List<*int*>")]
+        [DataRow(typeof(List<List<int>>), true, "*List*<*List*<*int*>>")]
+        [DataRow(typeof(List<List<int>>), false, "List<List<*int*>>")]
+        public void ToNameString_InvokeTypeNameConverterForGenericType(Type type, 
+            bool invokeTypeNameConverterForGenericType, string expectedText)
+        {
+            var text = type.ToNameString((t,q) =>
+            { 
+                if (t.IsGenericParameter) return $"+{t.Name}+";
+                if (t.IsGenericTypeDefinition) return $"*{t.Name.CleanGenericTypeName()}*";
+                return $"*{t.ToNameString()}*"; 
+            },
+            invokeTypeNameConverterForGenericType);
+            Assert.AreEqual(expectedText, text);
+        }
+
+        [DataTestMethod]
         [DataRow(typeof(DateTime), false)]
         [DataRow(typeof(DateTime?), true)]
         [DataRow(typeof(string), false)]
@@ -100,6 +120,16 @@ namespace DocXmlUnitTests
             var fieldInfo = type.GetField(fieldName);
             var text = fieldInfo.ToTypeNameString();
             Assert.AreEqual(expectedText, text);
+        }
+
+        [DataTestMethod]
+        [DataRow(typeof(string), "String")]
+        [DataRow(typeof(List<>), "List")]
+        [DataRow(typeof(List<string>), "List")]
+        public void CleanGenericTypeName(Type type, string expectedName)
+        {
+            var result = type.Name.CleanGenericTypeName();
+            Assert.AreEqual(expectedName, result);
         }
     }
 }

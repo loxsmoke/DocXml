@@ -178,9 +178,13 @@ namespace LoxSmoke.DocXml
             if (type.MemberType == MemberTypes.TypeInfo && (type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
             {
                 var typeName = Regex.Replace(type.Name, "`[0-9]+", "");
+
+                var arrayString = Regex.Match(type.Name, @"([\[,\]]*)&?$").Captures.OfType<Capture>().SingleOrDefault()?.Value;
+                typeName = typeName.Substring(0, typeName.Length - arrayString.Length);
+
                 var paramString = string.Join(",",
                     args.Select(o => GetTypeXmlId(o, false, isMethodParameter)).ToArray());
-                fullTypeName = $"{typeNamespace}{typeName}{{{paramString}}}{outString}";
+                fullTypeName = $"{typeNamespace}{typeName}{{{paramString}}}{arrayString}{outString}";
             }
             else if (type.IsNested)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DocXmlUnitTests
@@ -112,6 +113,29 @@ namespace DocXmlUnitTests
         /// <param name="array2">Parameter array2</param>
         /// <returns>Return value description</returns>
         public int MemberFunctionWithArray(short[] array1, int[,] array2) { return 0; }
+
+        /// <summary>
+        /// MemberFunctionWithGenericTypeArray description
+        /// </summary>
+        /// <param name="arrayOfListOfInt">Parameter arrayOfListOfInt</param>
+        public static void MemberFunctionWithGenericTypeArray(params List<int>[] arrayOfListOfInt) { }
+
+        /// <summary>
+        /// MemberFunctionWithGenericTypeMultiDimArray description
+        /// </summary>
+        /// <param name="multiDimArrayOfListOfInt">Parameter multiDimArrayOfListOfInt</param>
+        public static void MemberFunctionWithGenericTypeMultiDimArray(List<int>[,] multiDimArrayOfListOfInt) { }
+
+        /// <summary>
+        /// MemberFunctionWithGenericTypeJaggedArray description
+        /// </summary>
+        /// <param name="jaggedArrayOfListOfInt">Parameter jaggedArrayOfListOfInt</param>
+        public static void MemberFunctionWithGenericTypeJaggedArray(List<int>[][] jaggedArrayOfListOfInt) { }
+
+        /// <summary>MemberFunctionWithGenericTypeOutArray description</summary>
+        /// <param name="outArrayOfListOfInt">Parameter outArrayOfListOfInt</param>
+        public static void MemberFunctionWithGenericTypeOutArray(out List<float>[] outArrayOfListOfInt)
+            => outArrayOfListOfInt = new[] { new List<float>() };
 
         /// <summary>
         /// Delegate type description

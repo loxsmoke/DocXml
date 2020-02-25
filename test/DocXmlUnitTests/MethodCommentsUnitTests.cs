@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.XPath;
 using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
@@ -253,6 +252,30 @@ namespace DocXmlUnitTests
         {
             var comments = Reader.GetMethodComments(MySubClass_MultilineSummary);
             Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeArray() {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericTypeArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeArray description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeMultiDimArray() {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericTypeMultiDimArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeMultiDimArray description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeJaggedArray() {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericTypeJaggedArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeJaggedArray description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeOutArray() {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericTypeOutArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeOutArray description", comments.Summary);
         }
 
         [TestMethod]

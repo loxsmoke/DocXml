@@ -45,14 +45,29 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
-        /// MethodWithNullableIntParam
+        /// MethodWithRefParam
         /// </summary>
-        public void MethodWithNullableIntParam(int? nullableIntParam) { }
+        public void MethodWithRefParam(ref int refParam) { }
 
         /// <summary>
-        /// MethodWithNullableIntByRefParam
+        /// MethodWithOutParam
         /// </summary>
-        public void MethodWithNullableIntByRefParam(in int? nullableIntByRefParam) { }
+        public void MethodWithOutParam(out int outParam) { outParam = 0; }
+
+        /// <summary>
+        /// MethodWithInParam
+        /// </summary>
+        public void MethodWithInParam(in int inParam) { }
+
+        /// <summary>
+        /// MethodWithNullableParam
+        /// </summary>
+        public void MethodWithNullableParam(int? nullableParam) { }
+
+        /// <summary>
+        /// MethodWithNullableInParam
+        /// </summary>
+        public void MethodWithNullableInParam(in int? nullableInParam) { }
 
         /// <summary>
         /// Return one tuple
@@ -73,10 +88,10 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
-        /// Return one tuple and byref param tuple
+        /// Return one tuple and ref param tuple
         /// </summary>
         /// <returns></returns>
-        public (string One, string Two) GetTuple2ByRef(in (string Three, string Four) tupleParam) {
+        public (string One, string Two) GetTuple2Ref(ref (string Three, string Four) tupleParam) {
             return ("", "");
         }
 
@@ -90,10 +105,10 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
-        /// Return one tuple and unnamed byref param tuple
+        /// Return one tuple and unnamed ref param tuple
         /// </summary>
         /// <returns></returns>
-        public (string One, string Two) GetTuple3ByRef(in (string, string) unnamedTupleParam) {
+        public (string One, string Two) GetTuple3Ref(ref (string, string) unnamedTupleParam) {
             return ("", "");
         }
 

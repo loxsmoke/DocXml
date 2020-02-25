@@ -145,7 +145,10 @@ namespace DocXml.Reflection
         public static string ToTypeNameString(this ParameterInfo parameterInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
         {
-            return parameterInfo.ParameterType.ToNameStringWithValueTupleNames(
+            var parameterType = parameterInfo.IsIn
+                ? parameterInfo.ParameterType.GetElementType()
+                : parameterInfo.ParameterType;
+            return parameterType.ToNameStringWithValueTupleNames(
                 parameterInfo.GetCustomAttribute<TupleElementNamesAttribute>()?.TransformNames, typeNameConverter,
                 invokeTypeNameConverterForGenericType);
         }

@@ -45,6 +45,16 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
+        /// MethodWithNullableIntParam
+        /// </summary>
+        public void MethodWithNullableIntParam(int? nullableIntParam) { }
+
+        /// <summary>
+        /// MethodWithNullableIntByRefParam
+        /// </summary>
+        public void MethodWithNullableIntByRefParam(in int? nullableIntByRefParam) { }
+
+        /// <summary>
         /// Return one tuple
         /// </summary>
         /// <returns></returns>
@@ -63,11 +73,27 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
+        /// Return one tuple and byref param tuple
+        /// </summary>
+        /// <returns></returns>
+        public (string One, string Two) GetTuple2ByRef(in (string Three, string Four) tupleParam) {
+            return ("", "");
+        }
+
+        /// <summary>
         /// Return one tuple and unnamed param tuple
         /// </summary>
         /// <returns></returns>
         public (string One, string Two) GetTuple3((string, string) unnamedTupleParam)
         {
+            return ("", "");
+        }
+
+        /// <summary>
+        /// Return one tuple and unnamed byref param tuple
+        /// </summary>
+        /// <returns></returns>
+        public (string One, string Two) GetTuple3ByRef(in (string, string) unnamedTupleParam) {
             return ("", "");
         }
 

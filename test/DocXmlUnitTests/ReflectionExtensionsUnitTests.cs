@@ -78,9 +78,13 @@ namespace DocXmlUnitTests
 
         [DataTestMethod]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.PublicMethod), "()")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithNullableIntParam), "(int? nullableIntParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithNullableIntByRefParam), "(int? nullableIntByRefParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple1), "()")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple2), "((string Three, string Four) tupleParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple2ByRef), "((string Three, string Four) tupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple3), "((string, string) unnamedTupleParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple3ByRef), "((string, string) unnamedTupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple4), "((string, string) unnamedTupleParam, (string Three, string Four) tupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple5), "((string A1, string A2, string A3, string A4, string A5, string A6, string A7) tupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple6), "((string A1, string A2, string A3, string A4, string A5, string A6, (string A8, string A9)) tupleParam)")]

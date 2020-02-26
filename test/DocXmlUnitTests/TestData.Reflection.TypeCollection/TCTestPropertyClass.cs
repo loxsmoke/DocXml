@@ -68,7 +68,7 @@ namespace DocXmlUnitTests.TestData.Reflection
         /// <summary>
         /// RefProperty
         /// </summary>
-        public ref int RefProperty { get { return ref fieldForRef; } }
-        private int fieldForRef = 0;
+        public ref int RefProperty => ref fieldForRef;
+        private int fieldForRef;
     }
 }

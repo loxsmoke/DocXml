@@ -64,5 +64,11 @@ namespace DocXmlUnitTests.TestData.Reflection
         /// TupleProperty
         /// </summary>
         public (int One, int Two) TupleProperty { get; set; }
+
+        /// <summary>
+        /// RefProperty
+        /// </summary>
+        public ref int RefProperty { get { return ref fieldForRef; } }
+        private int fieldForRef = 0;
     }
 }

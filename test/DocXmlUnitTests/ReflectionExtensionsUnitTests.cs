@@ -48,6 +48,29 @@ namespace DocXmlUnitTests
         }
 
         [DataTestMethod]
+        [DataRow(typeof(DateTime), "DateTime&")]
+        [DataRow(typeof(double), "double&")]
+        [DataRow(typeof(char), "char&")]
+        [DataRow(typeof(int), "int&")]
+        [DataRow(typeof(bool), "bool&")]
+        [DataRow(typeof(void), "void&")]
+        [DataRow(typeof(string), "string&")]
+
+        [DataRow(typeof(bool?), "bool?&")]
+        [DataRow(typeof(List<bool?>), "List<bool?>&")]
+        [DataRow(typeof(List<>), "List<T>&")]
+        [DataRow(typeof(bool[]), "bool[]&")]
+        [DataRow(typeof(bool[,]), "bool[,]&")]
+        [DataRow(typeof(bool[,,]), "bool[,,]&")]
+        public void ToNameString_RefType(Type type, string expectedText) {
+            var text = type.MakeByRefType().ToNameString();
+            Assert.AreEqual(expectedText, text);
+
+            var text2 = type.MakeByRefType().ToNameString((_, queue) => null);
+            Assert.AreEqual(expectedText, text2);
+        }
+
+        [DataTestMethod]
         [DataRow(typeof(List<>), true, "*List*<+T+>")]
         [DataRow(typeof(List<>), false, "List<+T+>")]
         [DataRow(typeof(List<int>), true, "*List*<*int*>")]
@@ -102,6 +125,7 @@ namespace DocXmlUnitTests
         [DataTestMethod]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.PublicMethod), "void")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple1), "(string One, string Two)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithRefReturn), "int&")]
         public void ToTypeNameString_MethodReturn(Type type, string methodName, string expectedText)
         {
             var methodInfo = type.GetMethod(methodName);
@@ -112,6 +136,7 @@ namespace DocXmlUnitTests
         [DataTestMethod]
         [DataRow(typeof(TCTestPropertyClass), nameof(TCTestPropertyClass.DoubleListProperty), "List<double>")]
         [DataRow(typeof(TCTestPropertyClass), nameof(TCTestPropertyClass.TupleProperty), "(int One, int Two)")]
+        [DataRow(typeof(TCTestPropertyClass), nameof(TCTestPropertyClass.RefProperty), "int&")]
         public void ToTypeNameString_Property(Type type, string propName, string expectedText)
         {
             var propInfo = type.GetProperty(propName);

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DocXmlUnitTests.TestData.Reflection
+﻿namespace DocXmlUnitTests.TestData.Reflection
 {
     /// <summary>
     /// Test data class with methods
@@ -43,6 +39,11 @@ namespace DocXmlUnitTests.TestData.Reflection
         public static void PublicStaticMethod()
         {
         }
+
+        /// <summary>
+        /// MethodWithRefReturn
+        /// </summary>
+        public ref int MethodWithRefReturn(ref int x) => ref x;
 
         /// <summary>
         /// MethodWithRefParam

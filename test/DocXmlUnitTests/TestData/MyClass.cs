@@ -82,6 +82,24 @@ namespace DocXmlUnitTests
         public MyClass(int one) { }
 
         /// <summary>
+        /// Constructor with one generic parameter
+        /// </summary>
+        /// <param name="one">Parameter one</param>
+        public MyClass(List<int> one) { }
+
+        /// <summary>
+        /// Constructor with one array parameter of generic type
+        /// </summary>
+        /// <param name="one">Parameter one</param>
+        public MyClass(List<int>[] one) { }
+
+        /// <summary>
+        /// Constructor with one array in parameter of generic type
+        /// </summary>
+        /// <param name="one">Parameter one</param>
+        public MyClass(in List<int>[] one) { }
+
+        /// <summary>
         /// Member function description
         /// </summary>
         /// <returns>Return value description</returns>
@@ -116,23 +134,23 @@ namespace DocXmlUnitTests
         /// MemberFunctionWithGenericTypeArray description
         /// </summary>
         /// <param name="arrayOfListOfInt">Parameter arrayOfListOfInt</param>
-        public static void MemberFunctionWithGenericTypeArray(params List<int>[] arrayOfListOfInt) { }
+        public static void MemberFunctionWithGenericArray(params List<int>[] arrayOfListOfInt) { }
 
         /// <summary>
         /// MemberFunctionWithGenericTypeMultiDimArray description
         /// </summary>
         /// <param name="multiDimArrayOfListOfInt">Parameter multiDimArrayOfListOfInt</param>
-        public static void MemberFunctionWithGenericTypeMultiDimArray(List<int>[,] multiDimArrayOfListOfInt) { }
+        public static void MemberFunctionWithGenericMultiDimArray(List<int>[,] multiDimArrayOfListOfInt) { }
 
         /// <summary>
         /// MemberFunctionWithGenericTypeJaggedArray description
         /// </summary>
         /// <param name="jaggedArrayOfListOfInt">Parameter jaggedArrayOfListOfInt</param>
-        public static void MemberFunctionWithGenericTypeJaggedArray(List<int>[][] jaggedArrayOfListOfInt) { }
+        public static void MemberFunctionWithGenericJaggedArray(List<int>[][] jaggedArrayOfListOfInt) { }
 
         /// <summary>MemberFunctionWithGenericTypeOutArray description</summary>
         /// <param name="outArrayOfListOfInt">Parameter outArrayOfListOfInt</param>
-        public static void MemberFunctionWithGenericTypeOutArray(out List<float>[] outArrayOfListOfInt)
+        public static void MemberFunctionWithGenericOutArray(out List<float>[] outArrayOfListOfInt)
             => outArrayOfListOfInt = new[] { new List<float>() };
 
         /// <summary>
@@ -165,6 +183,58 @@ namespace DocXmlUnitTests
         {
             get { return 1; }
             set { }
+        }
+
+        /// <summary>
+        /// ItemPropertyTwoParams description
+        /// </summary>
+        /// <param name="parameter1">Parameter1 description</param>
+        /// <param name="parameter2">Parameter2 description</param>
+        /// <returns>Return value description</returns>
+        public int this[int parameter1, string parameter2]
+        {
+            get { return 1; }
+            set { }
+        }
+
+        /// <summary>
+        /// ItemPropertyInParam description
+        /// </summary>
+        /// <param name="parameter">Parameter description</param>
+        /// <returns>Return value description</returns>
+        public int this[in int parameter]
+        {
+            get { return 1; }
+        }
+
+        /// <summary>
+        /// ItemPropertyGenericParam description
+        /// </summary>
+        /// <param name="parameter">Parameter description</param>
+        /// <returns>Return value description</returns>
+        public int this[List<int> parameter]
+        {
+            get { return 1; }
+        }
+
+        /// <summary>
+        /// ItemPropertyGenericArrayParam description
+        /// </summary>
+        /// <param name="parameter">Parameter description</param>
+        /// <returns>Return value description</returns>
+        public int this[List<int>[] parameter]
+        {
+            get { return 1; }
+        }
+
+        /// <summary>
+        /// ItemPropertyGenericMultiDimArrayInParam description
+        /// </summary>
+        /// <param name="parameter">Parameter description</param>
+        /// <returns>Return value description</returns>
+        public int this[in List<int>[,,] parameter]
+        {
+            get { return 1; }
         }
 
         /// <summary>
@@ -204,6 +274,17 @@ namespace DocXmlUnitTests
         /// <param name="parameter2">Parameter description</param>
         /// <returns>Return value description</returns>
         public List<X> TemplateMethod3<X,Y>(List<X> parameter1, List<Y> parameter2)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// TemplateMethod4 description
+        /// </summary>
+        /// <typeparam name="T">Type parameter</typeparam>
+        /// <param name="parameter">Parameter description</param>
+        /// <returns>Return value description</returns>
+        public List<T> TemplateMethod4<T>(in List<T>[][][] parameter)
         {
             return null;
         }

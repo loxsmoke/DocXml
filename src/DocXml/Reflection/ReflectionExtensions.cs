@@ -145,10 +145,7 @@ namespace DocXml.Reflection
         public static string ToTypeNameString(this ParameterInfo parameterInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
         {
-            var parameterType = parameterInfo.ParameterType.IsByRef
-                ? parameterInfo.ParameterType.GetElementType()
-                : parameterInfo.ParameterType;
-            return parameterType.ToNameStringWithValueTupleNames(
+            return parameterInfo.ParameterType.ToNameStringWithValueTupleNames(
                 parameterInfo.GetCustomAttribute<TupleElementNamesAttribute>()?.TransformNames, typeNameConverter,
                 invokeTypeNameConverterForGenericType);
         }
@@ -276,6 +273,9 @@ namespace DocXml.Reflection
         public static string ToNameString(this Type type, Queue<string> tupleFieldNames, Func<Type, Queue<string>, string> typeNameConverter = null, 
             bool invokeTypeNameConverterForGenericType = false)
         {
+            var refSymbol = type.IsByRef ? "&" : "";
+            type = type.IsByRef ? type.GetElementType() : type;
+
             var decoratedTypeName = type.IsGenericType ? null : typeNameConverter?.Invoke(type, tupleFieldNames);
 
             if (decoratedTypeName != null &&
@@ -334,7 +334,8 @@ namespace DocXml.Reflection
             }
 
             // If decoratedTypeName is not null then all formatting above was just for tuple name removal from the queue
-            return decoratedTypeName ?? newTypeName;
+            var typeName = decoratedTypeName ?? newTypeName;
+            return typeName + refSymbol;
         }
 
         /// <summary>

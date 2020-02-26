@@ -92,7 +92,8 @@
         /// Return one tuple and ref param tuple
         /// </summary>
         /// <returns></returns>
-        public (string One, string Two) GetTuple2Ref(ref (string Three, string Four) tupleParam) {
+        public (string One, string Two) GetTuple2Ref(ref (string Three, string Four) tupleParam)
+        {
             return ("", "");
         }
 
@@ -109,7 +110,8 @@
         /// Return one tuple and unnamed ref param tuple
         /// </summary>
         /// <returns></returns>
-        public (string One, string Two) GetTuple3Ref(ref (string, string) unnamedTupleParam) {
+        public (string One, string Two) GetTuple3Ref(ref (string, string) unnamedTupleParam)
+        {
             return ("", "");
         }
 

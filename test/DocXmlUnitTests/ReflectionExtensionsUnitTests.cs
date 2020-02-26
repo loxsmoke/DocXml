@@ -62,7 +62,8 @@ namespace DocXmlUnitTests
         [DataRow(typeof(bool[]), "bool[]&")]
         [DataRow(typeof(bool[,]), "bool[,]&")]
         [DataRow(typeof(bool[,,]), "bool[,,]&")]
-        public void ToNameString_RefType(Type type, string expectedText) {
+        public void ToNameString_RefType(Type type, string expectedText)
+        {
             var text = type.MakeByRefType().ToNameString();
             Assert.AreEqual(expectedText, text);
 

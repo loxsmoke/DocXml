@@ -304,6 +304,7 @@ namespace DocXmlUnitTests
         /// </summary>
         public class NestedClass
         {
+            public int Item { set { _ = value; } }
         }
     }
 }

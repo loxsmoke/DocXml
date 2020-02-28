@@ -218,6 +218,13 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void XmlDocId_MemberId_ItemSetOnlyProperty() {
+            var info = typeof(MyClass.NestedClass).GetMember(nameof(MyClass.NestedClass.Item)).First();
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.NestedClass.Item", id);
+        }
+
+        [TestMethod]
         public void XmlDocId_MemberId_Indexer()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(string) });

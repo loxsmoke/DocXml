@@ -48,6 +48,30 @@ namespace DocXmlUnitTests
         }
 
         [DataTestMethod]
+        [DataRow(typeof(DateTime), "ref DateTime")]
+        [DataRow(typeof(double), "ref double")]
+        [DataRow(typeof(char), "ref char")]
+        [DataRow(typeof(int), "ref int")]
+        [DataRow(typeof(bool), "ref bool")]
+        [DataRow(typeof(void), "ref void")]
+        [DataRow(typeof(string), "ref string")]
+
+        [DataRow(typeof(bool?), "ref bool?")]
+        [DataRow(typeof(List<bool?>), "ref List<bool?>")]
+        [DataRow(typeof(List<>), "ref List<T>")]
+        [DataRow(typeof(bool[]), "ref bool[]")]
+        [DataRow(typeof(bool[,]), "ref bool[,]")]
+        [DataRow(typeof(bool[,,]), "ref bool[,,]")]
+        public void ToNameString_RefType(Type type, string expectedText)
+        {
+            var text = type.MakeByRefType().ToNameString();
+            Assert.AreEqual(expectedText, text);
+
+            var text2 = type.MakeByRefType().ToNameString((_, queue) => null);
+            Assert.AreEqual(expectedText, text2);
+        }
+
+        [DataTestMethod]
         [DataRow(typeof(List<>), true, "*List*<+T+>")]
         [DataRow(typeof(List<>), false, "List<+T+>")]
         [DataRow(typeof(List<int>), true, "*List*<*int*>")]
@@ -78,9 +102,16 @@ namespace DocXmlUnitTests
 
         [DataTestMethod]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.PublicMethod), "()")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithRefParam), "(ref int refParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithOutParam), "(out int outParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithInParam), "(in int inParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithNullableParam), "(int? nullableParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithNullableInParam), "(in int? nullableInParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple1), "()")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple2), "((string Three, string Four) tupleParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple2Ref), "(ref (string Three, string Four) tupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple3), "((string, string) unnamedTupleParam)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple3Ref), "(ref (string, string) unnamedTupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple4), "((string, string) unnamedTupleParam, (string Three, string Four) tupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple5), "((string A1, string A2, string A3, string A4, string A5, string A6, string A7) tupleParam)")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple6), "((string A1, string A2, string A3, string A4, string A5, string A6, (string A8, string A9)) tupleParam)")]
@@ -95,6 +126,7 @@ namespace DocXmlUnitTests
         [DataTestMethod]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.PublicMethod), "void")]
         [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.GetTuple1), "(string One, string Two)")]
+        [DataRow(typeof(MethodsReflectionClass), nameof(MethodsReflectionClass.MethodWithRefReturn), "ref int")]
         public void ToTypeNameString_MethodReturn(Type type, string methodName, string expectedText)
         {
             var methodInfo = type.GetMethod(methodName);
@@ -105,6 +137,7 @@ namespace DocXmlUnitTests
         [DataTestMethod]
         [DataRow(typeof(TCTestPropertyClass), nameof(TCTestPropertyClass.DoubleListProperty), "List<double>")]
         [DataRow(typeof(TCTestPropertyClass), nameof(TCTestPropertyClass.TupleProperty), "(int One, int Two)")]
+        [DataRow(typeof(TCTestPropertyClass), nameof(TCTestPropertyClass.RefProperty), "ref int")]
         public void ToTypeNameString_Property(Type type, string propName, string expectedText)
         {
             var propInfo = type.GetProperty(propName);

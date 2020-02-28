@@ -147,7 +147,7 @@ namespace DocXml.Reflection
         {
             if (parameterInfo.ParameterType.IsByRef)
             {
-                return (parameterInfo.ParameterType.IsByRef ? (parameterInfo.IsIn ? "in " : (parameterInfo.IsOut ? "out " : "ref ")) : "") +
+                return (parameterInfo.IsIn ? "in " : (parameterInfo.IsOut ? "out " : "ref ")) +
                     parameterInfo.ParameterType.GetElementType().ToNameStringWithValueTupleNames(
                     parameterInfo.GetCustomAttribute<TupleElementNamesAttribute>()?.TransformNames, typeNameConverter,
                     invokeTypeNameConverterForGenericType);

@@ -179,7 +179,7 @@ namespace LoxSmoke.DocXml
             {
                 var typeName = Regex.Replace(type.Name, "`[0-9]+", "");
 
-                var arrayString = Regex.Match(type.Name, @"[\[,\]]*&?$").Captures.OfType<Capture>().SingleOrDefault()?.Value;
+                var arrayString = Regex.Match(type.Name, @"[\[,\]]*&?$").Captures.OfType<Capture>().Single().Value;
                 typeName = typeName.Substring(0, typeName.Length - arrayString.Length);
 
                 var paramString = string.Join(",",

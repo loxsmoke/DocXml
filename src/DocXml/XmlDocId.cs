@@ -177,10 +177,10 @@ namespace LoxSmoke.DocXml
 
             if (type.MemberType == MemberTypes.TypeInfo && (type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
             {
-                var typeName = Regex.Replace(type.Name, "`[0-9]+", "");
                 var paramString = string.Join(",",
-                    args.Select(o => GetTypeXmlId(o, false, isMethodParameter)).ToArray());
-                fullTypeName = $"{typeNamespace}{typeName}{{{paramString}}}{outString}";
+                    args.Select(o => GetTypeXmlId(o, false, isMethodParameter)));
+                var typeName = Regex.Replace(type.Name, "`[0-9]+", "{" + paramString + "}");
+                fullTypeName = $"{typeNamespace}{typeName}{outString}";
             }
             else if (type.IsNested)
             {
@@ -198,9 +198,9 @@ namespace LoxSmoke.DocXml
             {
                 var index = fullTypeName.IndexOf("[,");
                 var lastIndex = fullTypeName.IndexOf(']', index);
-                fullTypeName = fullTypeName.Replace(
-                    fullTypeName.Substring(index, lastIndex - index + 1),
-                    "[" + new string('x', lastIndex - index - 1).Replace("x", "0:,") + "0:]");
+                fullTypeName = fullTypeName.Substring(0, index + 1) +
+                    string.Join(",", Enumerable.Repeat("0:", lastIndex - index)) + 
+                    fullTypeName.Substring(lastIndex);
             }
             return fullTypeName;
         }

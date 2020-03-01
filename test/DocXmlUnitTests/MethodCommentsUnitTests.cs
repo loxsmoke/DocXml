@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.XPath;
 using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
@@ -64,27 +63,22 @@ namespace DocXmlUnitTests
             MySubClass_MultilineSummary = typeof(MySubClass).GetMethod(nameof(MySubClass.MultilineSummary));
         }
 
+        [TestMethod]
+        public void Constructor_Comments_NoParams()
+        {
+            var constr = MyClass_Type.GetConstructor(Array.Empty<Type>());
+            var mm = Reader.GetMethodComments(constr);
+            Assert.AreEqual(0, mm.Parameters.Count);
+            Assert.AreEqual("Constructor with no parameters", mm.Summary);
+        }
 
         [TestMethod]
-        public void Constructor_Comments()
+        public void Constructor_Comments_OneParam()
         {
-            var constructors = MyClass_Type.GetConstructors();
-            Assert.AreEqual(2, constructors.Length);
-            foreach (var constr in constructors)
-            {
-                var mm = Reader.GetMethodComments(constr);
-                if (constr.GetParameters().Length == 0)
-                {
-                    Assert.AreEqual(mm.Parameters.Count, constr.GetParameters().Length);
-                    Assert.AreEqual("Constructor with no parameters", mm.Summary);
-                }
-                else if (constr.GetParameters().Length == 1)
-                {
-                    Assert.AreEqual(mm.Parameters.Count, constr.GetParameters().Length);
-                    AssertParam(mm, 0, "one", "Parameter one");
-                    Assert.AreEqual("Constructor with one parameter", mm.Summary);
-                }
-            }
+            var constr = MyClass_Type.GetConstructor(new[] { typeof(int) });
+            var mm = Reader.GetMethodComments(constr);
+            AssertParam(mm, 0, "one", "Parameter one");
+            Assert.AreEqual("Constructor with one parameter", mm.Summary);
         }
 
         [TestMethod]
@@ -132,7 +126,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunctio_ArrayParams_Comments()
+        public void MemberFunction_ArrayParams_Comments()
         {
             var mm = Reader.GetMethodComments(MyClass_MemberFunctionWithArray);
 
@@ -253,6 +247,34 @@ namespace DocXmlUnitTests
         {
             var comments = Reader.GetMethodComments(MySubClass_MultilineSummary);
             Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeArray()
+        {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeArray description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeMultiDimArray()
+        {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericMultiDimArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeMultiDimArray description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeJaggedArray()
+        {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericJaggedArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeJaggedArray description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void MemberFunction_GenericTypeOutArray()
+        {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericOutArray)));
+            Assert.AreEqual("MemberFunctionWithGenericTypeOutArray description", comments.Summary);
         }
 
         [TestMethod]

@@ -84,9 +84,41 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void XmlDocId_MemberId_Constructor()
         {
-            var info = typeof(MyClass).GetConstructors().First();
+            var info = typeof(MyClass).GetConstructor(Array.Empty<Type>());
             var id = info.MemberId();
             Assert.AreEqual("M:DocXmlUnitTests.MyClass.#ctor", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_ConstructorWithParam()
+        {
+            var info = typeof(MyClass).GetConstructor(new[] { typeof(int) });
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.#ctor(System.Int32)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_ConstructorWithGenericParam()
+        {
+            var info = typeof(MyClass).GetConstructor(new[] { typeof(List<int>) });
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.#ctor(System.Collections.Generic.List{System.Int32})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_ConstructorWithGenericArrayParam()
+        {
+            var info = typeof(MyClass).GetConstructor(new[] { typeof(List<int>[]) });
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.#ctor(System.Collections.Generic.List{System.Int32}[])", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_ConstructorWithGenericArrayInParam()
+        {
+            var info = typeof(MyClass).GetConstructor(new[] { typeof(List<int>[]).MakeByRefType() });
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.#ctor(System.Collections.Generic.List{System.Int32}[]@)", id);
         }
 
         [TestMethod]
@@ -98,11 +130,147 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void XmlDocId_MemberId_MethodWithRefParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunction2), new[] { typeof(int), typeof(int).MakeByRefType() });
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunction2(System.Int32,System.Int32@)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_MethodWithArrayParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithArray));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithArray(System.Int16[],System.Int32[0:,0:])", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_MethodWithGenericArrayParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericArray));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericArray(System.Collections.Generic.List{System.Int32}[])", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_MethodWithGenericMultiDimArrayParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericMultiDimArray));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericMultiDimArray(System.Collections.Generic.List{System.Int32}[0:,0:])", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_MethodWithGenericJaggedArrayParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericJaggedArray));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericJaggedArray(System.Collections.Generic.List{System.Int32}[][])", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_MethodWithGenericJaggedArrayOutParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericOutArray));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericOutArray(System.Collections.Generic.List{System.Single}[]@)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateMethod()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod``1", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateMethodWithGenericParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod2));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod2``1(System.Collections.Generic.List{``0})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateMethodWithTwoTemplateTypes()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod3));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod3``2(System.Collections.Generic.List{``0},System.Collections.Generic.List{``1})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateMethodWithGenericJaggedArrayInParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod4));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod4``1(System.Collections.Generic.List{``0}[][][]@)", id);
+        }
+
+        [TestMethod]
         public void XmlDocId_MemberId_Property()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.GetSetProperty)).First();
             var id = info.MemberId();
             Assert.AreEqual("P:DocXmlUnitTests.MyClass.GetSetProperty", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_ItemSetOnlyProperty()
+        {
+            var info = typeof(MyClass.NestedClass).GetMember(nameof(MyClass.NestedClass.Item)).First();
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.NestedClass.Item", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_Indexer()
+        {
+            var info = typeof(MyClass).GetProperty("Item", new[] { typeof(string) });
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.Item(System.String)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_IndexerWithTwoParams()
+        {
+            var info = typeof(MyClass).GetProperty("Item", new[] { typeof(int), typeof(string) });
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.Item(System.Int32,System.String)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_IndexerWithInParam()
+        {
+            var info = typeof(MyClass).GetProperty("Item", new[] { typeof(int).MakeByRefType() });
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.Item(System.Int32@)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_IndexerWithGenericParam()
+        {
+            var info = typeof(MyClass).GetProperty("Item", new[] { typeof(List<int>) });
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.Item(System.Collections.Generic.List{System.Int32})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_IndexerWithGenericArrayParam()
+        {
+            var info = typeof(MyClass).GetProperty("Item", new[] { typeof(List<int>[]) });
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.Item(System.Collections.Generic.List{System.Int32}[])", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_IndexerWithGenericMultiDimArrayInParam()
+        {
+            var info = typeof(MyClass).GetProperty("Item", new[] { typeof(List<int>[,,]).MakeByRefType() });
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.Item(System.Collections.Generic.List{System.Int32}[0:,0:,0:]@)", id);
         }
 
         [TestMethod]
@@ -120,6 +288,7 @@ namespace DocXmlUnitTests
             var id = info.MemberId();
             Assert.AreEqual("T:DocXmlUnitTests.MyClass.NestedClass", id);
         }
+
         [TestMethod]
         public void XmlDocId_MemberId_Event()
         {
@@ -127,6 +296,7 @@ namespace DocXmlUnitTests
             var id = info.MemberId();
             Assert.AreEqual("E:DocXmlUnitTests.MyClass.eventField", id);
         }
+
         [TestMethod]
         public void XmlDocId_MemberId_Unsupported()
         {

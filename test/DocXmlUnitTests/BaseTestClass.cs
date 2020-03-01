@@ -24,19 +24,19 @@ namespace DocXmlUnitTests
 
         public void AssertParam(MethodComments comments, int paramIndex, string name, string text)
         {
-            Assert.AreEqual(name, comments.Parameters[paramIndex].Item1);
-            Assert.AreEqual(text, comments.Parameters[paramIndex].Item2);
+            Assert.AreEqual(name, comments.Parameters[paramIndex].Name);
+            Assert.AreEqual(text, comments.Parameters[paramIndex].Text);
         }
         public void AssertParam(TypeComments comments, int paramIndex, string name, string text)
         {
-            Assert.AreEqual(name, comments.Parameters[paramIndex].Item1);
-            Assert.AreEqual(text, comments.Parameters[paramIndex].Item2);
+            Assert.AreEqual(name, comments.Parameters[paramIndex].Name);
+            Assert.AreEqual(text, comments.Parameters[paramIndex].Text);
         }
 
         public void AssertTypeParam(MethodComments comments, int paramIndex, string name, string text)
         {
-            Assert.AreEqual(name, comments.TypeParameters[paramIndex].Item1);
-            Assert.AreEqual(text, comments.TypeParameters[paramIndex].Item2);
+            Assert.AreEqual(name, comments.TypeParameters[paramIndex].Name);
+            Assert.AreEqual(text, comments.TypeParameters[paramIndex].Text);
         }
 
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DocXmlUnitTests.TestData.Reflection
+﻿namespace DocXmlUnitTests.TestData.Reflection
 {
     /// <summary>
     /// Test data class with methods
@@ -45,6 +41,36 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
+        /// MethodWithRefReturn
+        /// </summary>
+        public ref int MethodWithRefReturn(ref int x) => ref x;
+
+        /// <summary>
+        /// MethodWithRefParam
+        /// </summary>
+        public void MethodWithRefParam(ref int refParam) { }
+
+        /// <summary>
+        /// MethodWithOutParam
+        /// </summary>
+        public void MethodWithOutParam(out int outParam) { outParam = 0; }
+
+        /// <summary>
+        /// MethodWithInParam
+        /// </summary>
+        public void MethodWithInParam(in int inParam) { }
+
+        /// <summary>
+        /// MethodWithNullableParam
+        /// </summary>
+        public void MethodWithNullableParam(int? nullableParam) { }
+
+        /// <summary>
+        /// MethodWithNullableInParam
+        /// </summary>
+        public void MethodWithNullableInParam(in int? nullableInParam) { }
+
+        /// <summary>
         /// Return one tuple
         /// </summary>
         /// <returns></returns>
@@ -63,10 +89,28 @@ namespace DocXmlUnitTests.TestData.Reflection
         }
 
         /// <summary>
+        /// Return one tuple and ref param tuple
+        /// </summary>
+        /// <returns></returns>
+        public (string One, string Two) GetTuple2Ref(ref (string Three, string Four) tupleParam)
+        {
+            return ("", "");
+        }
+
+        /// <summary>
         /// Return one tuple and unnamed param tuple
         /// </summary>
         /// <returns></returns>
         public (string One, string Two) GetTuple3((string, string) unnamedTupleParam)
+        {
+            return ("", "");
+        }
+
+        /// <summary>
+        /// Return one tuple and unnamed ref param tuple
+        /// </summary>
+        /// <returns></returns>
+        public (string One, string Two) GetTuple3Ref(ref (string, string) unnamedTupleParam)
         {
             return ("", "");
         }

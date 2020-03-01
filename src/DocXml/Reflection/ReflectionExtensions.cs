@@ -122,7 +122,7 @@ namespace DocXml.Reflection
         {
             var parameters = methodInfo.GetParameters();
             if (parameters.Length == 0) return "()";
-            return "(" + string.Join(", ", parameters.Select(s => s.ToTypeNameString(typeNameConverter, invokeTypeNameConverterForGenericType) + " " + s.Name)) + ")";
+            return "(" + string.Join(", ", parameters.Select(p => p.ToTypeNameString(typeNameConverter, invokeTypeNameConverterForGenericType) + " " + p.Name)) + ")";
         }
 
         /// <summary>
@@ -145,7 +145,15 @@ namespace DocXml.Reflection
         public static string ToTypeNameString(this ParameterInfo parameterInfo, Func<Type, Queue<string>, string> typeNameConverter = null,
             bool invokeTypeNameConverterForGenericType = false)
         {
-            return parameterInfo.ParameterType.ToNameStringWithValueTupleNames(
+            if (parameterInfo.ParameterType.IsByRef)
+            {
+                return (parameterInfo.IsIn ? "in " : (parameterInfo.IsOut ? "out " : "ref ")) +
+                    parameterInfo.ParameterType.GetElementType().ToNameStringWithValueTupleNames(
+                    parameterInfo.GetCustomAttribute<TupleElementNamesAttribute>()?.TransformNames, typeNameConverter,
+                    invokeTypeNameConverterForGenericType);
+            }
+            return
+                parameterInfo.ParameterType.ToNameStringWithValueTupleNames(
                 parameterInfo.GetCustomAttribute<TupleElementNamesAttribute>()?.TransformNames, typeNameConverter,
                 invokeTypeNameConverterForGenericType);
         }
@@ -273,6 +281,12 @@ namespace DocXml.Reflection
         public static string ToNameString(this Type type, Queue<string> tupleFieldNames, Func<Type, Queue<string>, string> typeNameConverter = null, 
             bool invokeTypeNameConverterForGenericType = false)
         {
+            if (type.IsByRef)
+            {
+                return  "ref " + 
+                    type.GetElementType().ToNameString(tupleFieldNames, typeNameConverter, invokeTypeNameConverterForGenericType);
+            }
+
             var decoratedTypeName = type.IsGenericType ? null : typeNameConverter?.Invoke(type, tupleFieldNames);
 
             if (decoratedTypeName != null &&

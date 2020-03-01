@@ -68,7 +68,7 @@ namespace DocXmlUnitTests
         {
             var constr = MyClass_Type.GetConstructor(Array.Empty<Type>());
             var mm = Reader.GetMethodComments(constr);
-            Assert.AreEqual(mm.Parameters.Count, 0);
+            Assert.AreEqual(0, mm.Parameters.Count);
             Assert.AreEqual("Constructor with no parameters", mm.Summary);
         }
 
@@ -126,7 +126,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunctio_ArrayParams_Comments()
+        public void MemberFunction_ArrayParams_Comments()
         {
             var mm = Reader.GetMethodComments(MyClass_MemberFunctionWithArray);
 

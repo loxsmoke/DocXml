@@ -172,7 +172,7 @@ namespace DocXmlUnitTests
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public int this[string parameter] { get { return 1; } }
+        public int this[string parameter] => 1;
 
         /// <summary>
         /// ItemGetSetProperty description
@@ -181,7 +181,7 @@ namespace DocXmlUnitTests
         /// <returns>Return value description</returns>
         public int this[int parameter]
         {
-            get { return 1; }
+            get => 1;
             set { }
         }
 
@@ -193,7 +193,7 @@ namespace DocXmlUnitTests
         /// <returns>Return value description</returns>
         public int this[int parameter1, string parameter2]
         {
-            get { return 1; }
+            get => 1;
             set { }
         }
 
@@ -202,57 +202,42 @@ namespace DocXmlUnitTests
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public int this[in int parameter]
-        {
-            get { return 1; }
-        }
+        public int this[in int parameter]  => 1;
 
         /// <summary>
         /// ItemPropertyGenericParam description
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public int this[List<int> parameter]
-        {
-            get { return 1; }
-        }
+        public int this[List<int> parameter] => 1;
 
         /// <summary>
         /// ItemPropertyGenericArrayParam description
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public int this[List<int>[] parameter]
-        {
-            get { return 1; }
-        }
+        public int this[List<int>[] parameter] => 1;
 
         /// <summary>
         /// ItemPropertyGenericMultiDimArrayInParam description
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public int this[in List<int>[,,] parameter]
-        {
-            get { return 1; }
-        }
+        public int this[in List<int>[,,] parameter] => 1;
 
         /// <summary>
         /// Operator description
         /// </summary>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public static explicit operator int(MyClass parameter) { return 1; }
+        public static explicit operator int(MyClass parameter) => 1;
 
         /// <summary>
         /// TemplateMethod description
         /// </summary>
         /// <typeparam name="T">Type parameter</typeparam>
         /// <returns>Return value description</returns>
-        public List<T> TemplateMethod<T>()
-        {
-            return null;
-        }
+        public List<T> TemplateMethod<T>() => null;
 
         /// <summary>
         /// TemplateMethod2 description
@@ -260,10 +245,7 @@ namespace DocXmlUnitTests
         /// <typeparam name="T">Type parameter</typeparam>
         /// <param name="parameter">Parameter description</param>
         /// <returns>Return value description</returns>
-        public List<T> TemplateMethod2<T>(List<T> parameter)
-        {
-            return null;
-        }
+        public List<T> TemplateMethod2<T>(List<T> parameter) => null;
 
         /// <summary>
         /// TemplateMethod3 description
@@ -273,10 +255,7 @@ namespace DocXmlUnitTests
         /// <param name="parameter1">Parameter description</param>
         /// <param name="parameter2">Parameter description</param>
         /// <returns>Return value description</returns>
-        public List<X> TemplateMethod3<X,Y>(List<X> parameter1, List<Y> parameter2)
-        {
-            return null;
-        }
+        public List<X> TemplateMethod3<X, Y>(List<X> parameter1, List<Y> parameter2) => null;
 
         /// <summary>
         /// TemplateMethod4 description

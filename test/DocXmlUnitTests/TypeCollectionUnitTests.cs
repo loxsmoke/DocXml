@@ -48,12 +48,14 @@ namespace DocXmlUnitTests
 
             var tc = TypeCollection.ForReferencedTypes(typeof(TCTestClass), settings);
 
-            Assert.AreEqual(5, tc.ReferencedTypes.Count);
+            Assert.AreEqual(6, tc.ReferencedTypes.Count);
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum2)));
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestClass)));
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestPropertyClass)));
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestListPropertyClass)));
             Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(ReflectionTestEnum1)));
+            Assert.IsTrue(tc.ReferencedTypes.ContainsKey(typeof(TCTestParameterClass)));
+            Assert.IsFalse(tc.ReferencedTypes.ContainsKey(typeof(TCTestParameterClass).MakeByRefType()));
         }
 
         [TestMethod]

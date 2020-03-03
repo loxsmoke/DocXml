@@ -1,4 +1,5 @@
-﻿namespace DocXmlOtherLibForUnitTests.TestData {
+﻿namespace DocXmlOtherLibForUnitTests.TestData
+{
     /// <summary>
     /// Other enum
     /// </summary>

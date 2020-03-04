@@ -300,7 +300,7 @@ namespace LoxSmoke.DocXml.Reflection
                 }
                 return;
             }
-            else if (type.IsArray) // SomeType[]
+            else if (type.IsArray || type.IsByRef) // SomeType[] or ref SomeType
             {
                 UnwrapType(parentType, type.GetElementType());
             }

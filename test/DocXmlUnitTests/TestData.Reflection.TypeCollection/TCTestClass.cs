@@ -40,5 +40,17 @@ namespace DocXmlUnitTests.TestData.Reflection
         /// ClassListProperty
         /// </summary>
         public List<TCTestListPropertyClass> ClassListProperty { get; set; }
+
+        /// <summary>
+        /// ClassMethod
+        /// </summary>
+        /// <param name="parameter">TCTestParameterClass parameter</param>
+        public void ClassMethod(TCTestParameterClass parameter) { }
+
+        /// <summary>
+        /// RefClassMethod
+        /// </summary>
+        /// <param name="parameter">TCTestParameterClass ref parameter</param>
+        public void RefClassMethod(ref TCTestParameterClass parameter) { }
     }
 }

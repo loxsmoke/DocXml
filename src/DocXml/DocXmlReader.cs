@@ -214,16 +214,16 @@ namespace LoxSmoke.DocXml
         /// Get enum type description and comments for enum values. If <paramref name="fillValues"/>
         /// is false and no comments exist for any value then ValueComments list is empty.
         /// </summary>
-        /// <param name="enumType">For non-enum types ArgumentException would be throws</param>
+        /// <param name="enumType">Enum type to get comments for. If this is not an enum type then functions throws an ArgumentException</param>
         /// <param name="fillValues">True if ValueComments list should be filled even if 
-        /// non of the enum values have any summary comments</param>
+        /// none of the enum values have any summary comments</param>
         /// <returns>EnumComment</returns>
         public EnumComments GetEnumComments(Type enumType, bool fillValues = false)
         {
             if (!enumType.IsEnum) throw new ArgumentException(nameof(enumType));
 
             var comments = new EnumComments();
-            var typeNode = GetXmlMemberNode(enumType.TypeId(), enumType?.ReflectedType);
+            var typeNode = GetXmlMemberNode(enumType.TypeId(), enumType);
             if (typeNode != null)
             {
                 GetCommonComments(comments, typeNode);
@@ -232,7 +232,7 @@ namespace LoxSmoke.DocXml
             bool valueCommentsExist = false;
             foreach (var enumName in enumType.GetEnumNames())
             {
-                var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName), enumType?.ReflectedType);
+                var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName), enumType);
                 valueCommentsExist |= (valueNode != null);
                 var valueComment = new EnumValueComment()
                 {

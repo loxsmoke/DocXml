@@ -2,9 +2,6 @@
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 #pragma warning disable CS1591
 
@@ -97,12 +94,7 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void EnumType_WithValue_Comments_OtherAssembly()
         {
-            var docReader = new DocXmlReader(
-                new[] { typeof(MyClass).Assembly, typeof(OtherEnum).Assembly },
-                (a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
-
-            var mm = docReader.GetEnumComments(typeof(OtherEnum));
-
+            var mm = new DocXmlReader().GetEnumComments(typeof(OtherEnum));
             Assert.AreEqual("Other enum", mm.Summary);
             Assert.AreEqual(1, mm.ValueComments.Count);
             AssertEnumComment(1, "Value1", "Enum value one", mm.ValueComments[0]);

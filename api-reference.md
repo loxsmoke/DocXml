@@ -1,7 +1,7 @@
-# DocXml.dll v.3.3.0.0 API documentation
+# docxml.dll v.3.4.1.0 API documentation
 
 Created by 
-[mddox](https://github.com/loxsmoke/mddox) on 1/25/2020
+[mddox](https://github.com/loxsmoke/mddox) on 3/5/2020
 
 # All types
 

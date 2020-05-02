@@ -113,7 +113,7 @@ namespace LoxSmoke.DocXml
                 {
                     return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." +
                            propertyInfo.Name +
-                           GetParametersXmlId(setParameters.Take(setParameters.Length - 1), GetGenericClassParams(propertyInfo));
+                           GetParametersXmlId(setParameters.Take(setParameters.Length - 1));
                 }
             }
             return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;

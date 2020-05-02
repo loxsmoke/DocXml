@@ -105,7 +105,7 @@ namespace LoxSmoke.DocXml
                 {
                     return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." +
                            propertyInfo.Name +
-                           GetParametersXmlId(getParameters);
+                           GetParametersXmlId(getParameters, GetGenericClassParams(propertyInfo));
                 }
 
                 var setParameters = (propertyInfo as PropertyInfo)?.SetMethod?.GetParameters();
@@ -164,11 +164,13 @@ namespace LoxSmoke.DocXml
         /// <param name="type">The type.</param>
         /// <param name="isOut">Whether the declaring member for this type is an out directional parameter.</param>
         /// <param name="isMethodParameter">If the type is being used has a method parameter.</param>
+        /// <param name="genericClassParams">The names of the generic class parameters from the parent type.</param>
         /// <returns>The full name.</returns>
-        static string GetTypeXmlId(Type type, bool isOut = false, bool isMethodParameter = false)
+        static string GetTypeXmlId(Type type, bool isOut = false, bool isMethodParameter = false, string[] genericClassParams = null)
         {
-            // Generic parameters are referred as ``N where N is position of generic type
-            if (type.IsGenericParameter) return $"``{type.GenericParameterPosition}";
+            // Generic parameters of the class  are referred to as  `N where N is position of generic type.
+            // Generic parameters of the method are referred to as ``N where N is position of generic type.
+            if (type.IsGenericParameter) return $"{GenericParamPrefix(type, genericClassParams)}{type.GenericParameterPosition}";
 
             Type[] args = type.GetGenericArguments();
             string fullTypeName;
@@ -178,7 +180,7 @@ namespace LoxSmoke.DocXml
             if (type.MemberType == MemberTypes.TypeInfo && (type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
             {
                 var paramString = string.Join(",",
-                    args.Select(o => GetTypeXmlId(o, false, isMethodParameter)));
+                    args.Select(o => GetTypeXmlId(o, isOut: false, isMethodParameter, genericClassParams)));
                 var typeName = Regex.Replace(type.Name, "`[0-9]+", "{" + paramString + "}");
                 fullTypeName = $"{typeNamespace}{typeName}{outString}";
             }
@@ -213,17 +215,21 @@ namespace LoxSmoke.DocXml
         static string GetMethodXmlId(MethodBase methodInfo)
         {
             return $"{ShortMethodName(methodInfo)}" +
-                   GetParametersXmlId(methodInfo.GetParameters()) +
+                   GetParametersXmlId(methodInfo.GetParameters(), GetGenericClassParams(methodInfo)) +
                    ExplicitImplicitPostfix(methodInfo);
         }
 
-        static string GetParametersXmlId(IEnumerable<ParameterInfo> parameters)
+        static string GetParametersXmlId(IEnumerable<ParameterInfo> parameters, string[] genericClassParams)
         {
             // Calculate the parameter string as this is in the member name in the XML
-            var parameterStrings = parameters.Select(parameterInfo =>
-                GetTypeXmlId(parameterInfo.ParameterType, parameterInfo.IsOut | parameterInfo.ParameterType.IsByRef, true))
+            var parameterStrings = parameters
+                .Select(parameterInfo => GetTypeXmlId(
+                    parameterInfo.ParameterType,
+                    parameterInfo.IsOut || parameterInfo.ParameterType.IsByRef,
+                    isMethodParameter: true,
+                    genericClassParams))
                 .ToList();
-            return ((parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : "");
+            return (parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : "";
         }
 
         /// <summary>
@@ -259,6 +265,18 @@ namespace LoxSmoke.DocXml
             if (methodInfo.IsConstructor) return ConstructorNameID;
             return (IsIndexerProperty(methodInfo) ? "Item" : methodInfo.Name) + 
                    ((methodInfo.IsGenericMethod ? ("``" + methodInfo.GetGenericArguments().Length) : ""));
+        }
+
+        static string[] GetGenericClassParams(MemberInfo info)
+        {
+            return info.DeclaringType.IsGenericType
+                ? info.DeclaringType.GetGenericArguments().Select(t => t.Name).ToArray()
+                : Array.Empty<string>();
+        }
+
+        static string GenericParamPrefix(Type type, string[] genericClassParams)
+        {
+            return genericClassParams.Contains(type.Name) ? "`" : "``";
         }
         #endregion
     }

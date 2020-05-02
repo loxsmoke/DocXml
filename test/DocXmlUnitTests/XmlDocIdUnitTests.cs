@@ -1,4 +1,5 @@
-﻿using LoxSmoke.DocXml;
+﻿using DocXmlUnitTests.TestData;
+using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -305,6 +306,62 @@ namespace DocXmlUnitTests
             {
                 XmlDocId.MemberId(info);
             });
+        }
+
+        [TestMethod]
+        public void XmlDocId_TypeId_TemplateClass()
+        {
+            var info = typeof(MyTemplateClass<,>);
+            var id = info.TypeId();
+            Assert.AreEqual("T:DocXmlUnitTests.TestData.MyTemplateClass`2", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateClassCtor()
+        {
+            var info = typeof(MyTemplateClass<,>).GetConstructor(Type.EmptyTypes);
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.MyTemplateClass`2.#ctor", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateClassMethodUsingClassTypeParams()
+        {
+            var info = typeof(MyTemplateClass<,>).GetMethod("Foo");
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.MyTemplateClass`2.Foo(`0,System.Collections.Generic.List{`1})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateClassMethodUsingOnlyOwnTypeParams()
+        {
+            var info = typeof(MyTemplateClass<,>).GetMethod("Bar");
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.MyTemplateClass`2.Bar``2(``0,System.Collections.Generic.List{``1})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateClassMethodMixingTypeParamsFromClassAndMethod()
+        {
+            var info = typeof(MyTemplateClass<,>).GetMethod("Qux");
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.MyTemplateClass`2.Qux``2(`0,System.Collections.Generic.List{`1},``0,System.Collections.Generic.List{``1})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateClassIndexerUsingClassTypeParams()
+        {
+            var info = typeof(MyTemplateClass<,>).GetProperty("Item");
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.TestData.MyTemplateClass`2.Item(`0,System.Collections.Generic.List{`1})", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_NestedTemplateClassMethodMixingTypeParamsFromParentClassNestedClassAndMethod()
+        {
+            var info = typeof(MyTemplateClass<,>.MyNestedTemplateClass<,>).GetMethod("Baz");
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.TestData.MyTemplateClass`2.MyNestedTemplateClass`2.Baz``2(`0,System.Collections.Generic.List{`1},`2,System.Collections.Generic.List{`3},``0,System.Collections.Generic.List{``1})", id);
         }
     }
 }

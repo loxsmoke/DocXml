@@ -235,6 +235,22 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void XmlDocId_MemberId_GetOnlyIndexer()
+        {
+            var info = typeof(MyClass.ClassWithGetOnlyIndexer).GetProperty("Item");
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.ClassWithGetOnlyIndexer.Item(System.Int32,System.String)", id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_SetOnlyIndexer()
+        {
+            var info = typeof(MyClass.ClassWithSetOnlyIndexer).GetProperty("Item");
+            var id = info.MemberId();
+            Assert.AreEqual("P:DocXmlUnitTests.MyClass.ClassWithSetOnlyIndexer.Item(System.Int32,System.String)", id);
+        }
+
+        [TestMethod]
         public void XmlDocId_MemberId_IndexerWithTwoParams()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(int), typeof(string) });

@@ -113,7 +113,7 @@ namespace LoxSmoke.DocXml
                 {
                     return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." +
                            propertyInfo.Name +
-                           GetParametersXmlId(setParameters.Skip(1));
+                           GetParametersXmlId(setParameters.Take(setParameters.Length - 1));
                 }
             }
             return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;
@@ -199,7 +199,7 @@ namespace LoxSmoke.DocXml
                 var index = fullTypeName.IndexOf("[,");
                 var lastIndex = fullTypeName.IndexOf(']', index);
                 fullTypeName = fullTypeName.Substring(0, index + 1) +
-                    string.Join(",", Enumerable.Repeat("0:", lastIndex - index)) + 
+                    string.Join(",", Enumerable.Repeat("0:", lastIndex - index)) +
                     fullTypeName.Substring(lastIndex);
             }
             return fullTypeName;
@@ -247,7 +247,6 @@ namespace LoxSmoke.DocXml
                 (methodInfo.Name != "op_Explicit" && methodInfo.Name != "op_Implicit")) return "";
             return "~" + GetTypeXmlId((methodInfo as MethodInfo).ReturnType);
         }
-
 
         /// <summary>
         /// Get method name. Some methods have special names or like generic methods some extra information.

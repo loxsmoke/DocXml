@@ -285,6 +285,20 @@ namespace DocXmlUnitTests
         {
             public int Item { set { _ = value; } }
         }
+
+        /// <summary>Class having a get only indexer.</summary>
+        public class ClassWithGetOnlyIndexer
+        {
+            /// <summary>Indexer allowing only get.</summary>
+            public bool this[int i, string s] { get => true; }
+        }
+
+        /// <summary>Class having a set only indexer.</summary>
+        public class ClassWithSetOnlyIndexer
+        {
+            /// <summary>Indexer allowing only set.</summary>
+            public bool this[int i, string s] { set { } }
+        }
     }
 }
 

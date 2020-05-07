@@ -56,7 +56,7 @@ namespace LoxSmoke.DocXml
         /// <param name="unindentText">True if extra leading spaces should be removed from comments</param>
         public DocXmlReader(string fileName, bool unindentText = true)
         {
-            var document = new XPathDocument(fileName);
+            var document = new XPathDocument(fileName, XmlSpace.Preserve);
             navigator = document.CreateNavigator();
             UnIndentText = unindentText;
         }
@@ -316,7 +316,7 @@ namespace LoxSmoke.DocXml
                 assemblyNavigators.Add(assembly, null);
                 return null;
             }
-            var document = new XPathDocument(commentFileName);
+            var document = new XPathDocument(commentFileName, XmlSpace.Preserve);
             var docNavigator = document.CreateNavigator();
             assemblyNavigators.Add(assembly, docNavigator);
             return docNavigator;

@@ -40,5 +40,20 @@ namespace DocXmlUnitTests
             Assert.IsNotNull(mm.Remarks);
             Assert.IsNotNull(mm.Example);
         }
+
+        [TestMethod]
+        public void DocXmlReader_AutoName_PreservesWhitespace()
+        {
+            var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
+            var summary = doc.GetMemberComment(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithParaTagsInSummary)));
+            Assert.AreEqual(
+@"<para>
+First paragraph.
+</para>
+<para>
+Second paragraph.
+</para>",
+                summary);
+        }
     }
 }

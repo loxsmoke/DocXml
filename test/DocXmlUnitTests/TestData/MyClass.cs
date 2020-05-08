@@ -154,6 +154,16 @@ namespace DocXmlUnitTests
             => outArrayOfListOfInt = new[] { new List<float>() };
 
         /// <summary>
+        /// <para>
+        /// First paragraph.
+        /// </para>
+        /// <para>
+        /// Second paragraph.
+        /// </para>
+        /// </summary>
+        public void MemberFunctionWithParaTagsInSummary() { }
+
+        /// <summary>
         /// Delegate type description
         /// </summary>
         /// <param name="parameter">Parameter description</param>

@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>3.4.2.0</AssemblyVersion>
-    <FileVersion>3.4.2.0</FileVersion>
-    <Version>3.4.2</Version>
+    <AssemblyVersion>3.4.3.0</AssemblyVersion>
+    <FileVersion>3.4.3.0</FileVersion>
+    <Version>3.4.3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LoxSmoke.DocXml</PackageId>
     <Authors>LoxSmoke</Authors>
@@ -19,29 +18,24 @@
     <Configurations>Debug;Release;Coverage</Configurations>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>7.2</LangVersion>
     <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>7.2</LangVersion>
     <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Coverage|AnyCPU'">
     <LangVersion>7.2</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <DocumentationFile>C:\Dev\DocXml\src\DocXml\DocXml.xml</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-
 </Project>

@@ -177,7 +177,9 @@ namespace LoxSmoke.DocXml
             var typeNamespace = type.Namespace == null ? "" : $"{type.Namespace}.";
             var outString = isOut ? "@" : "";
 
-            if (type.MemberType == MemberTypes.TypeInfo && (type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
+            if (type.MemberType == MemberTypes.TypeInfo && 
+                !type.IsGenericTypeDefinition &&
+                (type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
             {
                 var paramString = string.Join(",",
                     args.Select(o => GetTypeXmlId(o, isOut: false, isMethodParameter, genericClassParams)));
@@ -275,7 +277,7 @@ namespace LoxSmoke.DocXml
 
         static string GenericParamPrefix(Type type, string[] genericClassParams)
         {
-            return genericClassParams.Contains(type.Name) ? "`" : "``";
+            return (genericClassParams != null && genericClassParams.Contains(type.Name)) ? "`" : "``";
         }
         #endregion
     }

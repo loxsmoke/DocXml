@@ -379,5 +379,12 @@ namespace DocXmlUnitTests
             var id = info.MemberId();
             Assert.AreEqual("M:DocXmlUnitTests.TestData.MyTemplateClass`2.MyNestedTemplateClass`2.Baz``2(`0,System.Collections.Generic.List{`1},`2,System.Collections.Generic.List{`3},``0,System.Collections.Generic.List{``1})", id);
         }
+
+        [TestMethod]
+        public void XmlDocId_GenericInterface()
+        {
+            var id = typeof(GenericTestInterface<>).TypeId();
+            Assert.AreEqual("T:DocXmlUnitTests.TestData.GenericTestInterface`1", id);
+        }
     }
 }

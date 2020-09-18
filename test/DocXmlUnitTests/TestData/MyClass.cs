@@ -279,6 +279,26 @@ namespace DocXmlUnitTests
         }
 
         /// <summary>
+        /// TemplateMethod5 description 
+        /// </summary>
+        /// <param name="parameter">parameter description</param>
+        public void TemplateMethod5<T>(params T[] parameter)
+        {
+
+        }
+
+        /// <summary>
+        /// TemplateMethod6 description 
+        /// </summary>
+        /// <param name="parameter1">parameter1 description</param>
+        /// <param name="parameter2">parameter2 description</param>
+        public bool TemplateMethod6<TEnum>(object parameter1, out TEnum parameter2) where TEnum : struct//, Enum 
+        {
+            parameter2 = default;
+            return false;
+        }
+
+        /// <summary>
         /// GetSetProperty comment
         /// </summary>
         /// <returns>prop return</returns>

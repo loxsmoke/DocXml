@@ -211,6 +211,23 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void XmlDocId_MemberId_TemplateMethodWithGenericParamsArray()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod5));
+            var id   = info.MemberId();
+
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod5``1(``0[])",id);
+        }
+
+        [TestMethod]
+        public void XmlDocId_MemberId_TemplateMethodWithGenericOutParam()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod6));
+            var id   = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod6``1(System.Object,``0@)", id);
+        }
+
+        [TestMethod]
         public void XmlDocId_MemberId_Property()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.GetSetProperty)).First();

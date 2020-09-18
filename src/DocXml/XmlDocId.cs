@@ -190,6 +190,19 @@ namespace LoxSmoke.DocXml
             {
                 fullTypeName = $"{typeNamespace}{type.DeclaringType.Name}.{type.Name}{outString}";
             }
+            else if (type.ContainsGenericParameters && type.IsArray)
+            {
+                var paramString = GetTypeXmlId(type.GetElementType(), isOut: false, isMethodParameter,
+                                               genericClassParams);
+
+                var typeName = paramString + "[]";
+                fullTypeName = $"{typeName}{outString}";
+            }
+            else if (type.ContainsGenericParameters && type.GetElementType() != null)
+            {
+                var typeName = GetTypeXmlId(type.GetElementType(), isOut: false, isMethodParameter, genericClassParams);
+                fullTypeName = $"{typeName}{outString}";
+            }
             else
             {
                 fullTypeName = $"{typeNamespace}{type.Name}{outString}";

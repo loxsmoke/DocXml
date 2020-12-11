@@ -11,6 +11,10 @@ namespace DocXmlUnitTests
     public class EnumCommentsUnitTests : BaseTestClass
     {
         public Type TestEnum2_Type;
+        public Type TestEnumUInt8_Type;
+        public Type TestEnumUInt64_Type;
+        public Type TestEnumInt64_Type;
+        public Type TestEnumWithNegativeValues_Type;
         public Type TestEnumWithValueComments_Type;
         public Type TestEnumWNoComments_Type;
 
@@ -19,6 +23,10 @@ namespace DocXmlUnitTests
         {
             base.Setup();
             TestEnum2_Type = typeof(TestEnum2);
+            TestEnumUInt8_Type = typeof(TestEnumUInt8);
+            TestEnumUInt64_Type = typeof(TestEnumUInt64);
+            TestEnumInt64_Type = typeof(TestEnumInt64);
+            TestEnumWithNegativeValues_Type = typeof(TestEnumWithNegativeValues);
             TestEnumWithValueComments_Type = typeof(TestEnumWithValueComments);
             TestEnumWNoComments_Type = typeof(MyNoCommentClass.TestEnumNoComments);
         }
@@ -98,6 +106,48 @@ namespace DocXmlUnitTests
             Assert.AreEqual("Other enum", mm.Summary);
             Assert.AreEqual(1, mm.ValueComments.Count);
             AssertEnumComment(1, "Value1", "Enum value one", mm.ValueComments[0]);
+        }
+
+        [TestMethod]
+        public void EnumType_WithValues_UInt8()
+        {
+            var mm = Reader.GetEnumComments(TestEnumUInt8_Type);
+            Assert.AreEqual(2, mm.ValueComments.Count);
+            AssertEnumComment(0, "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertEnumComment(0, "Value2", "Enum value two", mm.ValueComments[1]);
+            Assert.AreEqual((byte)10, mm.ValueComments[0].ValueObject);
+            Assert.AreEqual((byte)20, mm.ValueComments[1].ValueObject);
+        }
+
+        [TestMethod]
+        public void EnumType_WithValues_UInt64()
+        {
+            var mm = Reader.GetEnumComments(TestEnumUInt64_Type);
+            Assert.AreEqual(2, mm.ValueComments.Count);
+            AssertEnumComment(0, "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertEnumComment(0, "Value2", "Enum value two", mm.ValueComments[1]);
+            Assert.AreEqual(10UL, mm.ValueComments[0].ValueObject);
+            Assert.AreEqual(20UL, mm.ValueComments[1].ValueObject);
+        }
+
+        [TestMethod]
+        public void EnumType_WithValues_Int64()
+        {
+            var mm = Reader.GetEnumComments(TestEnumInt64_Type);
+            Assert.AreEqual(2, mm.ValueComments.Count);
+            AssertEnumComment(0, "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertEnumComment(0, "Value2", "Enum value two", mm.ValueComments[1]);
+            Assert.AreEqual(10L, mm.ValueComments[0].ValueObject);
+            Assert.AreEqual(20L, mm.ValueComments[1].ValueObject);
+        }
+
+        [TestMethod]
+        public void EnumType_WithNegativeValues()
+        {
+            var mm = Reader.GetEnumComments(TestEnumWithNegativeValues_Type);
+            Assert.AreEqual(2, mm.ValueComments.Count);
+            AssertEnumComment(-20, "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertEnumComment(-10, "Value2", "Enum value two", mm.ValueComments[1]);
         }
     }
 }

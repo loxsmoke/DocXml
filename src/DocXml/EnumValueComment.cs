@@ -16,9 +16,17 @@ namespace LoxSmoke.DocXml
         public string Name { get; set; }
 
         /// <summary>
-        /// Integer value of the enum
+        /// Integer value of the enum, if the enum is the default (int32) base type; otherwise, returns 0.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="ValueObject"/> to get the base integer value regardless of integer type.
+        /// </remarks>
         public int Value { get; set; }
+
+        /// <summary>
+        /// Integer value of the enum, whether signed or unsigned, or 8, 16, 32, or 64 bits in length.
+        /// </summary>
+        public object ValueObject { get; set; }
 
         /// <summary>
         /// Debugging-friendly text.
@@ -26,7 +34,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{(Name??"")}={Value}" + (Summary != null ? $" {Summary}" : "");
+            return $"{(Name??"")}={ValueObject??Value}" + (Summary != null ? $" {Summary}" : "");
         }
     }
 }

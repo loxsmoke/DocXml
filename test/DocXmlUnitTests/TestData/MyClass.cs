@@ -20,6 +20,70 @@ namespace DocXmlUnitTests
     };
 
     /// <summary>
+    /// Enum type description
+    /// </summary>
+    public enum TestEnumUInt8 : byte
+    {
+        /// <summary>
+        /// Enum value one
+        /// </summary>
+        Value1 = 10,
+        
+        /// <summary>
+        /// Enum value two
+        /// </summary>
+        Value2 = 20
+    };
+
+    /// <summary>
+    /// Enum type description
+    /// </summary>
+    public enum TestEnumUInt64 : ulong
+    {
+        /// <summary>
+        /// Enum value one
+        /// </summary>
+        Value1 = 10,
+        
+        /// <summary>
+        /// Enum value two
+        /// </summary>
+        Value2 = 20
+    };
+
+    /// <summary>
+    /// Enum type description
+    /// </summary>
+    public enum TestEnumInt64 : long
+    {
+        /// <summary>
+        /// Enum value one
+        /// </summary>
+        Value1 = 10,
+        
+        /// <summary>
+        /// Enum value two
+        /// </summary>
+        Value2 = 20
+    };
+
+    /// <summary>
+    /// Enum type description
+    /// </summary>
+    public enum TestEnumWithNegativeValues
+    {
+        /// <summary>
+        /// Enum value one
+        /// </summary>
+        Value1 = -20,
+        
+        /// <summary>
+        /// Enum value two
+        /// </summary>
+        Value2 = -10
+    };
+
+    /// <summary>
     /// Enum 2 type description
     /// </summary>
     public enum TestEnum2

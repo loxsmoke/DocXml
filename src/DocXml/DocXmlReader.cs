@@ -237,8 +237,9 @@ namespace LoxSmoke.DocXml
                 var valueComment = new EnumValueComment()
                 {
                     Name = enumName,
-                    Value = (int) Enum.Parse(enumType, enumName)
+                    ValueObject = Convert.ChangeType(Enum.Parse(enumType, enumName), Enum.GetUnderlyingType(enumType))
                 };
+                valueComment.Value = valueComment.ValueObject as int? ?? 0;
                 comments.ValueComments.Add(valueComment);
                 GetCommonComments(valueComment, valueNode);
             }

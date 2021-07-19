@@ -2,6 +2,7 @@
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Numerics;
 
 #pragma warning disable CS1591
 
@@ -34,6 +35,17 @@ namespace DocXmlUnitTests
         void AssertEnumComment(int expectedValue, string expectedName, string expectedSummary, EnumValueComment comment)
         {
             Assert.AreEqual(expectedValue, comment.Value);
+            Assert.AreEqual(expectedValue, comment.BigValue);
+            Assert.AreEqual(expectedName, comment.Name);
+            Assert.AreEqual(expectedSummary, comment.Summary);
+        }
+
+        void AssertBigEnumComment(BigInteger expectedValue, string expectedName, string expectedSummary, EnumValueComment comment)
+        {
+            Assert.IsTrue(comment.IsBigValue);
+            Assert.AreEqual(expectedValue, comment.BigValue);
+            Assert.AreEqual(0, comment.Value);
+            Assert.AreEqual(expectedValue, comment.BigValue);
             Assert.AreEqual(expectedName, comment.Name);
             Assert.AreEqual(expectedSummary, comment.Summary);
         }
@@ -113,10 +125,8 @@ namespace DocXmlUnitTests
         {
             var mm = Reader.GetEnumComments(TestEnumUInt8_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);
-            AssertEnumComment(0, "Value1", "Enum value one", mm.ValueComments[0]);
-            AssertEnumComment(0, "Value2", "Enum value two", mm.ValueComments[1]);
-            Assert.AreEqual((byte)10, mm.ValueComments[0].ValueObject);
-            Assert.AreEqual((byte)20, mm.ValueComments[1].ValueObject);
+            AssertEnumComment(10, "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertEnumComment(20, "Value2", "Enum value two", mm.ValueComments[1]);
         }
 
         [TestMethod]
@@ -124,10 +134,8 @@ namespace DocXmlUnitTests
         {
             var mm = Reader.GetEnumComments(TestEnumUInt64_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);
-            AssertEnumComment(0, "Value1", "Enum value one", mm.ValueComments[0]);
-            AssertEnumComment(0, "Value2", "Enum value two", mm.ValueComments[1]);
-            Assert.AreEqual(10UL, mm.ValueComments[0].ValueObject);
-            Assert.AreEqual(20UL, mm.ValueComments[1].ValueObject);
+            AssertBigEnumComment(new BigInteger(10L), "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertBigEnumComment(new BigInteger(20L), "Value2", "Enum value two", mm.ValueComments[1]);
         }
 
         [TestMethod]
@@ -135,10 +143,8 @@ namespace DocXmlUnitTests
         {
             var mm = Reader.GetEnumComments(TestEnumInt64_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);
-            AssertEnumComment(0, "Value1", "Enum value one", mm.ValueComments[0]);
-            AssertEnumComment(0, "Value2", "Enum value two", mm.ValueComments[1]);
-            Assert.AreEqual(10L, mm.ValueComments[0].ValueObject);
-            Assert.AreEqual(20L, mm.ValueComments[1].ValueObject);
+            AssertBigEnumComment(new BigInteger(10L), "Value1", "Enum value one", mm.ValueComments[0]);
+            AssertBigEnumComment(new BigInteger(20L), "Value2", "Enum value two", mm.ValueComments[1]);
         }
 
         [TestMethod]

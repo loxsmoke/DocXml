@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+using System.Numerics;
 
 // Disable warning for missing XML comments 
 #pragma warning disable CS1591
@@ -229,17 +230,36 @@ namespace LoxSmoke.DocXml
                 GetCommonComments(comments, typeNode);
             };
 
-            bool valueCommentsExist = false;
+            var underlyingType = Enum.GetUnderlyingType(enumType);
+            var valueCommentsExist = false;
             foreach (var enumName in enumType.GetEnumNames())
             {
                 var valueNode = GetXmlMemberNode(enumType.EnumValueId(enumName), enumType);
                 valueCommentsExist |= (valueNode != null);
+                var parsedValue = Enum.Parse(enumType, enumName);
                 var valueComment = new EnumValueComment()
                 {
                     Name = enumName,
-                    ValueObject = Convert.ChangeType(Enum.Parse(enumType, enumName), Enum.GetUnderlyingType(enumType))
+                    IsBigValue = true
                 };
-                valueComment.Value = valueComment.ValueObject as int? ?? 0;
+                if (underlyingType == typeof(uint))
+                {
+                    valueComment.BigValue = Convert.ToUInt32(parsedValue);
+                }
+                else if (underlyingType == typeof(long))
+                {
+                    valueComment.BigValue = Convert.ToInt64(parsedValue);
+                }
+                else if (underlyingType == typeof(ulong))
+                {
+                    valueComment.BigValue = Convert.ToUInt64(parsedValue);
+                }
+                else
+                {
+                    valueComment.IsBigValue = false;
+                    valueComment.Value = Convert.ToInt32(parsedValue);
+                    valueComment.BigValue = valueComment.Value;
+                }
                 comments.ValueComments.Add(valueComment);
                 GetCommonComments(valueComment, valueNode);
             }

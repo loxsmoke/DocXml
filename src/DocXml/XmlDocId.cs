@@ -97,9 +97,7 @@ namespace LoxSmoke.DocXml
         {
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
             if ((propertyInfo.MemberType & MemberTypes.Property) == 0) throw new ArgumentException(nameof(propertyInfo));
-
-            if (propertyInfo.Name == "Item")
-            {
+                                   
                 var getParameters = (propertyInfo as PropertyInfo)?.GetMethod?.GetParameters();
                 if (getParameters?.Length > 0)
                 {
@@ -115,7 +113,7 @@ namespace LoxSmoke.DocXml
                            propertyInfo.Name +
                            GetParametersXmlId(setParameters.Take(setParameters.Length - 1), GetGenericClassParams(propertyInfo));
                 }
-            }
+            
             return PropertyPrefix + ":" + GetTypeXmlId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;
         }
 

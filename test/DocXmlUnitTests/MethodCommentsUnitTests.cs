@@ -6,7 +6,6 @@ using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 #pragma warning disable CS1591
 
@@ -64,7 +63,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void Constructor_Comments_NoParams()
+        public void GetMethodComments_Constructor_NoParams()
         {
             var constr = MyClass_Type.GetConstructor(Array.Empty<Type>());
             var mm = Reader.GetMethodComments(constr);
@@ -73,7 +72,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void Constructor_Comments_OneParam()
+        public void GetMethodComments_Constructor_OneParam()
         {
             var constr = MyClass_Type.GetConstructor(new[] { typeof(int) });
             var mm = Reader.GetMethodComments(constr);
@@ -82,18 +81,25 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Comments()
+        public void GetMethodComments()
         {
-            var mm = Reader.GetMethodComments(MyClass_MemberFunction);
-            Assert.AreEqual("Member function description", mm.Summary);
-            Assert.AreEqual(0, mm.Parameters.Count);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual("200", mm.Responses.First().Item1);
-            Assert.AreEqual("OK", mm.Responses.First().Item2);
+            var comments = Reader.GetMethodComments(MyClass_MemberFunction);
+            Assert.AreEqual("Member function description", comments.Summary);
+            Assert.AreEqual(0, comments.Parameters.Count);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual("200", comments.Responses.First().Item1);
+            Assert.AreEqual("OK", comments.Responses.First().Item2);
+            Assert.AreEqual(
+                "<summary>" + Environment.NewLine +
+                "            Member function description" + Environment.NewLine +
+                "            </summary>" + Environment.NewLine +
+                "            <returns>Return value description</returns>" + Environment.NewLine +
+                "            <response code=\"200\">OK</response>",
+                comments.FullCommentText.Trim('\r', '\n', ' '));
         }
 
         [TestMethod]
-        public void MemberFunction_Comments_Empty()
+        public void GetMethodComments_Empty()
         {
             var mm = Reader.GetMethodComments(MyNoCommentClass_Method);
             Assert.IsNull(mm.Summary);
@@ -102,7 +108,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Overload_1_Params_Comments()
+        public void GetMethodComments_1_Param()
         {
             var mm = Reader.GetMethodComments(MyClass_MemberFunction2_string);
 
@@ -114,7 +120,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Overload_2_Params_Comments()
+        public void GetMethodComments_2_Params()
         {
             var mm = Reader.GetMethodComments(MyClass_MemberFunction2_int);
 
@@ -126,7 +132,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_ArrayParams_Comments()
+        public void GetMethodComments_ArrayParams()
         {
             var mm = Reader.GetMethodComments(MyClass_MemberFunctionWithArray);
 
@@ -139,7 +145,7 @@ namespace DocXmlUnitTests
 
 
         [TestMethod]
-        public void StaticOperator_Comments()
+        public void GetMethodComments_StaticOperator()
         {
             var mm = Reader.GetMethodComments(MyClass_PlusOperator);
             Assert.AreEqual("Operator description", mm.Summary);
@@ -150,7 +156,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void IndexerProperty_Comments()
+        public void GetMethodComments_IndexerProperty()
         {
             var mm = Reader.GetMethodComments(MyClass_ItemProperty);
             Assert.AreEqual("Property description", mm.Summary);
@@ -160,7 +166,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void ExplicitOperator_Comments()
+        public void GetMethodComments_ExplicitOperator()
         {
             var mm = Reader.GetMethodComments(MyClass_explicitOperator);
             Assert.AreEqual("Operator description", mm.Summary);
@@ -171,7 +177,7 @@ namespace DocXmlUnitTests
 
 
         [TestMethod]
-        public void TemplateMethod_Comments()
+        public void GetMethodComments_TemplateMethod()
         {
             var mm = Reader.GetMethodComments(MyClass_TemplateMethod);
             Assert.AreEqual("TemplateMethod description", mm.Summary);
@@ -182,7 +188,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void TemplateMethod_WithGenericParameter_Comments()
+        public void GetMethodComments_TemplateMethod_GenericParameter()
         {
             var mm = Reader.GetMethodComments(MyClass_TemplateMethod2);
             Assert.AreEqual("TemplateMethod2 description", mm.Summary);
@@ -194,7 +200,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void TemplateMethod_With_2_GenericParameters_Comments()
+        public void GetMethodComments_TemplateMethod_2_GenericParameters()
         {
             var mm = Reader.GetMethodComments(MyClass_TemplateMethod3);
             Assert.AreEqual("TemplateMethod3 description", mm.Summary);
@@ -208,7 +214,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void TemplateMethod_In_Base_Class_Comments()
+        public void GetMethodComments_TemplateMethod_BaseClass()
         {
             var mm = Reader.GetMethodComments(MySubClass_TemplateMethod3);
             Assert.AreEqual("TemplateMethod3 description", mm.Summary);
@@ -219,7 +225,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberSummary_Comment()
+        public void GetMethodComment()
         {
             var constructors = typeof(MySubClass).GetConstructors();
             Assert.AreEqual(1, constructors.Length);
@@ -227,58 +233,70 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberComments()
+        public void GetMethodComments_SubClass()
         {
             var comments = Reader.GetMemberComments(MySubClass_MethodWithComments);
             Assert.AreEqual("Method summary", comments.Summary);
             Assert.AreEqual("Method example", comments.Example);
             Assert.AreEqual("Method remarks", comments.Remarks);
-        }
+            Assert.AreEqual(
+                "<summary>Method summary</summary>" + Environment.NewLine +
+                "            <remarks>Method remarks</remarks>" + Environment.NewLine +
+                "            <example>Method example</example>",
+                comments.FullCommentText.Trim('\r', '\n', ' '));
+         }
 
         [TestMethod]
-        public void MemberFunction_InParamter()
+        public void GetMethodComments_InParamter()
         {
             var comments = Reader.GetMethodComments(MySubClass_MethodWithInParam);
             Assert.AreEqual("MethodWithInParam description", comments.Summary);
         }
 
         [TestMethod]
-        public void MemberFunction_MultiLineSummary()
+        public void GetMethodComments_MultiLineSummary()
         {
             var comments = Reader.GetMethodComments(MySubClass_MultilineSummary);
             Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
         }
 
         [TestMethod]
-        public void MemberFunction_GenericTypeArray()
+        public void GetMethodComments_GenericTypeArray()
         {
             var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericArray)));
             Assert.AreEqual("MemberFunctionWithGenericTypeArray description", comments.Summary);
         }
 
         [TestMethod]
-        public void MemberFunction_GenericTypeMultiDimArray()
+        public void GetMethodComments_GenericTypeMultiDimArray()
         {
             var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericMultiDimArray)));
             Assert.AreEqual("MemberFunctionWithGenericTypeMultiDimArray description", comments.Summary);
         }
 
         [TestMethod]
-        public void MemberFunction_GenericTypeJaggedArray()
+        public void GetMethodComments_GenericTypeJaggedArray()
         {
             var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericJaggedArray)));
             Assert.AreEqual("MemberFunctionWithGenericTypeJaggedArray description", comments.Summary);
         }
 
         [TestMethod]
-        public void MemberFunction_GenericTypeOutArray()
+        public void GetMethodComments_GenericTypeOutArray()
         {
             var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericOutArray)));
             Assert.AreEqual("MemberFunctionWithGenericTypeOutArray description", comments.Summary);
         }
 
         [TestMethod]
-        public void MemberFunction_Inheritdoc_Constructor()
+        public void GetMethodComments_ReadOnlyStringCollection()
+        {
+            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithReadOnlyStringCollection)));
+            Assert.AreEqual("MemberFunctionWithReadOnlyStringCollection description", comments.Summary);
+        }
+
+        [TestMethod]
+        public void GetMethodComments_Inheritdoc_Constructor()
         {
             var comments =
                 Reader.GetMethodComments(typeof(ClassForInheritdoc)
@@ -291,7 +309,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Inheritdoc_VirtualOverride()
+        public void GetMethodComments_Inheritdoc_VirtualOverride()
         {
             var comments =
                 Reader.GetMethodComments(typeof(ClassForInheritdoc)
@@ -301,7 +319,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Inheritdoc_InterfaceImplementation()
+        public void GetMethodComments_Inheritdoc_InterfaceImplementation()
         {
             var comments =
                 Reader.GetMethodComments(typeof(ClassForInheritdoc)
@@ -311,7 +329,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Inheritdoc_Cref()
+        public void GetMethodComments_Inheritdoc_Cref()
         {
             var comments =
                 Reader.GetMethodComments(typeof(ClassForInheritdocCref)
@@ -322,7 +340,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void MemberFunction_Inheritdoc_Cref_OtherAssembly()
+        public void GetMethodComments_Inheritdoc_Cref_OtherAssembly()
         {
             var docReader = new DocXmlReader(
                 new Assembly[] { typeof(MyClass).Assembly, typeof(OtherClass).Assembly},
@@ -336,7 +354,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void Property_Inheritdoc()
+        public void GetMemberComments_Property_Inheritdoc()
         {
             var comments =
                 Reader.GetMemberComments(typeof(ClassForInheritdoc).GetProperty(nameof(ClassForInheritdoc.Property)));

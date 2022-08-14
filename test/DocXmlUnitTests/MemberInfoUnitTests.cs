@@ -36,49 +36,49 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void SimpleField_Summary()
+        public void GetMemberComment()
         {
             var mm = Reader.GetMemberComment(MyClass_stringField);
             Assert.AreEqual("String field description", mm);
         }
 
         [TestMethod]
-        public void SimpleField_NoComment()
+        public void GetMemberComment_NoComment()
         {
             var mm = Reader.GetMemberComments(MyNoCommentClass_field);
             Assert.IsNull(mm.Summary);
         }
 
         [TestMethod]
-        public void ConstField_Summary()
+        public void GetMemberComment_ConstField()
         {
             var mm = Reader.GetMemberComment(MyClass_PI);
             Assert.AreEqual("Const field description", mm);
         }
 
         [TestMethod]
-        public void ValueProperty_Summary()
+        public void GetMemberComment_ValueProperty()
         {
             var mm = Reader.GetMemberComment(MyClass_ValProperty);
             Assert.AreEqual("Value property description", mm);
         }
 
         [TestMethod]
-        public void EnumProperty_Summary()
+        public void GetMemberComment_EnumProperty()
         {
             var mm = Reader.GetMemberComment(MyClass_ImportantEnum);
             Assert.AreEqual("Enum property description", mm);
         }
 
         [TestMethod]
-        public void EventField_Summary()
+        public void GetMemberComment_EventField()
         {
             var mm = Reader.GetMemberComment(MyClass_eventField);
             Assert.AreEqual("Event field description", mm);
         }
 
         [TestMethod]
-        public void GenericField_Summary()
+        public void GetMemberComment_GenericField()
         {
             var mm = Reader.GetMemberComment(MyClass_genericTypeField);
             Assert.AreEqual("Generic field description", mm);

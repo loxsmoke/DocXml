@@ -28,5 +28,10 @@ namespace LoxSmoke.DocXml
         /// Inheritdoc tag. Null if missing in comments.
         /// </summary>
         public InheritdocTag Inheritdoc { get; set; }
+
+        /// <summary>
+        /// Full XML comment text
+        /// </summary>
+        public string FullCommentText { get; set; }
     }
 }

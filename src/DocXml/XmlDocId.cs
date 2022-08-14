@@ -172,8 +172,8 @@ namespace LoxSmoke.DocXml
 
             Type[] args = type.GetGenericArguments();
             string fullTypeName;
-            var typeNamespace = type.Namespace == null ? "" : $"{type.Namespace}.";
-            var outString = isOut ? "@" : "";
+            var typeNamespace = type.Namespace == null ? string.Empty : $"{type.Namespace}.";
+            var outString = isOut ? "@" : string.Empty;
 
             if (type.MemberType == MemberTypes.TypeInfo && 
                 !type.IsGenericTypeDefinition &&
@@ -191,14 +191,14 @@ namespace LoxSmoke.DocXml
             else if (type.ContainsGenericParameters && (type.IsArray || type.GetElementType() != null))
             {
                 var typeName = GetTypeXmlId(type.GetElementType(), isOut: false, isMethodParameter, genericClassParams);
-                fullTypeName = $"{typeName}{(type.IsArray ? "[]": "")}{outString}";
+                fullTypeName = $"{typeName}{(type.IsArray ? "[]": string.Empty)}{outString}";
             }
             else
             {
                 fullTypeName = $"{typeNamespace}{type.Name}{outString}";
             }
 
-            fullTypeName = fullTypeName.Replace("&", "");
+            fullTypeName = fullTypeName.Replace("&", string.Empty);
 
             // Multi-dimensional arrays must have 0: for each dimension. Eg. [,,] has to become [0:,0:,0:]
             while (fullTypeName.Contains("[,"))
@@ -234,7 +234,7 @@ namespace LoxSmoke.DocXml
                     isMethodParameter: true,
                     genericClassParams))
                 .ToList();
-            return (parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : "";
+            return (parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : string.Empty;
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace LoxSmoke.DocXml
         static string ExplicitImplicitPostfix(MethodBase methodInfo)
         {
             if (!methodInfo.IsSpecialName || 
-                (methodInfo.Name != "op_Explicit" && methodInfo.Name != "op_Implicit")) return "";
+                (methodInfo.Name != "op_Explicit" && methodInfo.Name != "op_Implicit")) return string.Empty;
             return "~" + GetTypeXmlId((methodInfo as MethodInfo).ReturnType);
         }
 
@@ -268,7 +268,7 @@ namespace LoxSmoke.DocXml
         {
             if (methodInfo.IsConstructor) return ConstructorNameID;
             return (IsIndexerProperty(methodInfo) ? "Item" : methodInfo.Name) + 
-                   ((methodInfo.IsGenericMethod ? ("``" + methodInfo.GetGenericArguments().Length) : ""));
+                   ((methodInfo.IsGenericMethod ? ("``" + methodInfo.GetGenericArguments().Length) : string.Empty));
         }
 
         static string[] GetGenericClassParams(MemberInfo info)

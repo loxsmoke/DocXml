@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>3.4.5.0</AssemblyVersion>
-    <FileVersion>3.4.5.0</FileVersion>
-    <Version>3.4.5</Version>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <FileVersion>3.5.0.0</FileVersion>
+    <Version>3.5.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LoxSmoke.DocXml</PackageId>
     <Authors>LoxSmoke</Authors>
     <Company>LoxSmoke</Company>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Description>A set of helper classes and methods for compiler-generated XML documentation retrieval.</Description>
-    <Copyright>Copyright 2017-2020 LoxSmoke</Copyright>
+    <Copyright>Copyright 2017-2022 LoxSmoke</Copyright>
     <PackageTags>xml documentation comments docxml loxsmoke</PackageTags>
     <RepositoryUrl>https://github.com/loxsmoke/DocXml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

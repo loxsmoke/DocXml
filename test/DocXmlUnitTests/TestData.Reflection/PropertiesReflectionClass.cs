@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
+#pragma warning disable CS0169
+#pragma warning disable CS0649
+
 namespace DocXmlUnitTests.TestData.Reflection
 {
     /// <summary>

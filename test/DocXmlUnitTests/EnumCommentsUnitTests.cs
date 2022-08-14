@@ -51,13 +51,13 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void NotEnumType_Comment()
+        public void GetEnumComments_NotEnumType()
         {
             Assert.ThrowsException<ArgumentException>(() => Reader.GetEnumComments(MyClass_Type));
         }
 
         [TestMethod]
-        public void EnumType_Comment()
+        public void GetEnumComments()
         {
             var mm = Reader.GetEnumComments(TestEnum2_Type);
             Assert.AreEqual("Enum 2 type description", mm.Summary);
@@ -65,7 +65,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_NoComment()
+        public void GetEnumComments_NoComment()
         {
             var mm = Reader.GetEnumComments(TestEnumWNoComments_Type);
             Assert.IsNull(mm.Summary);
@@ -73,13 +73,13 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_Values_NoComments()
+        public void GetEnumComments_Values_NoComments()
         {
             var mm = Reader.GetEnumComments(TestEnum2_Type, true);
             Assert.AreEqual("Enum 2 type description", mm.Summary);
             Assert.AreEqual(2, mm.ValueComments.Count);
-            AssertEnumComment(0, "Value21", "", mm.ValueComments[0]);
-            AssertEnumComment(1, "Value22", "", mm.ValueComments[1]);
+            AssertEnumComment(0, "Value21", string.Empty, mm.ValueComments[0]);
+            AssertEnumComment(1, "Value22", string.Empty, mm.ValueComments[1]);
         }
 
         [TestMethod]
@@ -102,7 +102,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_WithValues_Comments()
+        public void GetEnumComments_WithValues_Comments()
         {
             var mm = Reader.GetEnumComments(TestEnumWithValueComments_Type);
             Assert.AreEqual("Enum type description", mm.Summary);
@@ -112,7 +112,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_WithValue_Comments_OtherAssembly()
+        public void GetEnumComments_WithValue_Comments_OtherAssembly()
         {
             var mm = new DocXmlReader().GetEnumComments(typeof(OtherEnum));
             Assert.AreEqual("Other enum", mm.Summary);
@@ -121,7 +121,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_WithValues_UInt8()
+        public void GetEnumComments_WithValues_UInt8()
         {
             var mm = Reader.GetEnumComments(TestEnumUInt8_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);
@@ -130,7 +130,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_WithValues_UInt64()
+        public void GetEnumComments_WithValues_UInt64()
         {
             var mm = Reader.GetEnumComments(TestEnumUInt64_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);
@@ -139,7 +139,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_WithValues_Int64()
+        public void GetEnumComments_WithValues_Int64()
         {
             var mm = Reader.GetEnumComments(TestEnumInt64_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);
@@ -148,7 +148,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void EnumType_WithNegativeValues()
+        public void GetEnumComments_WithNegativeValues()
         {
             var mm = Reader.GetEnumComments(TestEnumWithNegativeValues_Type);
             Assert.AreEqual(2, mm.ValueComments.Count);

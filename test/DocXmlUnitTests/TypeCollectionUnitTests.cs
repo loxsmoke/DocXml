@@ -15,7 +15,7 @@ namespace DocXmlUnitTests
     public class TypeCollectionUnitTests
     {
         [TestMethod]
-        public void CrackType_SimpleValue()
+        public void UnwrapType_SimpleValue()
         {
             var tc = new TypeCollection();
             tc.Settings = ReflectionSettings.Default;
@@ -27,7 +27,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void CrackType_GenericType()
+        public void UnwrapType_GenericType()
         {
             var tc = new TypeCollection();
             tc.Settings = ReflectionSettings.Default;
@@ -41,7 +41,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetReferenceTypes_Type()
+        public void ForReferencedTypes_Type()
         {
             var settings = ReflectionSettings.Default;
             settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
@@ -59,7 +59,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetReferenceTypes_Assembly()
+        public void ForReferencedTypes_Assembly()
         {
             var settings = ReflectionSettings.Default;
             settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
@@ -74,7 +74,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetReferenceTypes_AssemblyEnum()
+        public void ForReferencedTypes_AssemblyEnum()
         {
             var settings = ReflectionSettings.Default;
             settings.AssemblyFilter = (a) => a.FullName.Contains("DocXml");
@@ -89,7 +89,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetReferenceTypes_DefaultSettings()
+        public void GetReferencedTypes_DefaultSettings()
         {
             var tc = new TypeCollection();
             

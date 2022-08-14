@@ -24,7 +24,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void DocXmlReaderExtensions_PropertyComments()
+        public void PropertyComments()
         {
             var tc = TypeCollection.ForReferencedTypes(typeof(PropertiesReflectionClass));
             var props = Reader.Comments(tc.ReferencedTypes[typeof(PropertiesReflectionClass)].Properties)
@@ -40,7 +40,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void DocXmlReaderExtensions_MethodComments()
+        public void MethodComments()
         {
             var settings = ReflectionSettings.Default;
             settings.MethodFlags |= BindingFlags.NonPublic;
@@ -56,7 +56,7 @@ namespace DocXmlUnitTests
             Assert.AreEqual("PublicStaticMethod", methods["PublicStaticMethod"].Summary);
         }
         [TestMethod]
-        public void DocXmlReaderExtensions_FieldComments()
+        public void FieldComments()
         {
             var settings = ReflectionSettings.Default;
             settings.FieldFlags |= BindingFlags.NonPublic; 

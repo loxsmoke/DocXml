@@ -76,7 +76,7 @@
         /// <returns></returns>
         public (string One, string Two) GetTuple1()
         {
-            return ("", "");
+            return (string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@
         /// <returns></returns>
         public (string One, string Two) GetTuple2((string Three, string Four) tupleParam)
         {
-            return ("", "");
+            return (string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@
         /// <returns></returns>
         public (string One, string Two) GetTuple2Ref(ref (string Three, string Four) tupleParam)
         {
-            return ("", "");
+            return (string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@
         /// <returns></returns>
         public (string One, string Two) GetTuple3((string, string) unnamedTupleParam)
         {
-            return ("", "");
+            return (string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@
         /// <returns></returns>
         public (string One, string Two) GetTuple3Ref(ref (string, string) unnamedTupleParam)
         {
-            return ("", "");
+            return (string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@
         /// <returns></returns>
         public (string One, string Two) GetTuple4((string, string) unnamedTupleParam, (string Three, string Four) tupleParam)
         {
-            return ("", "");
+            return (string.Empty, string.Empty);
         }
 
         /// <summary>

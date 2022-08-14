@@ -33,21 +33,21 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void Property_Item_GetOnly()
+        public void GetMemberComments_GetOnly()
         {
             var comments = Reader.GetMemberComments(MyClass_ItemProperty_GetOnly);
             Assert.AreEqual("Property description", comments.Summary);
         }
 
         [TestMethod]
-        public void Property_Item_GetSet()
+        public void GetMemberComments_GetSet()
         {
             var comments = Reader.GetMemberComments(MyClass_ItemProperty_GetSet);
             Assert.AreEqual("ItemGetSetProperty description", comments.Summary);
         }
 
         [TestMethod]
-        public void Property_GetSetAndCommon()
+        public void GetMemberComments_GetSetAndCommon()
         {
             var comments = Reader.GetMemberComments(MyClass_GetSetProperty);
             Assert.AreEqual("GetSetProperty comment", comments.Summary);

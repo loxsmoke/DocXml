@@ -316,7 +316,7 @@ namespace DocXml.Reflection
                     newTypeName = "(" +
                            string.Join(", ", tupleFields
                                .Select(arg => arg.argumentType.ToNameString(tupleFieldNames, typeNameConverter, invokeTypeNameConverterForGenericType) +
-                               (arg.argumentName == null ? "" : (" " + arg.argumentName)))) + ")";
+                               (arg.argumentName == null ? string.Empty : (" " + arg.argumentName)))) + ")";
                 }
                 else if (type.Name.Contains('`'))
                 {
@@ -336,7 +336,7 @@ namespace DocXml.Reflection
             {
                 newTypeName = type.GetElementType().ToNameString(tupleFieldNames, typeNameConverter, invokeTypeNameConverterForGenericType) +
                        "[" +
-                       (type.GetArrayRank() > 1 ? new string(',', type.GetArrayRank() - 1) : "") +
+                       (type.GetArrayRank() > 1 ? new string(',', type.GetArrayRank() - 1) : string.Empty) +
                        "]";
             }
             else

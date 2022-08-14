@@ -16,74 +16,74 @@ namespace DocXmlUnitTests
     public class XmlDocIdUnitTests
     {
         [TestMethod]
-        public void XmlDocId_MethodId_Null()
+        public void MethodId_Null()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.MethodId(null));
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Null()
+        public void MemberId_Null()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.MemberId(null));
         }
 
         [TestMethod]
-        public void XmlDocId_PropertyId_Null()
+        public void PropertyId_Null()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.PropertyId(null));
         }
 
         [TestMethod]
-        public void XmlDocId_PropertyId_NonProperty()
+        public void PropertyId_NonProperty()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.stringField)).First();
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.PropertyId(info));
         }
 
         [TestMethod]
-        public void XmlDocId_FieldId_Null()
+        public void FieldId_Null()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.FieldId(null));
         }
 
         [TestMethod]
-        public void XmlDocId_FieldId_NonField()
+        public void FieldId_NonField()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.ValProperty)).First();
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.FieldId(info));
         }
 
         [TestMethod]
-        public void XmlDocId_EventId_Null()
+        public void EventId_Null()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EventId(null));
         }
 
         [TestMethod]
-        public void XmlDocId_EventId_NonEvent()
+        public void EventId_NonEvent()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.ValProperty)).First();
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.EventId(info));
         }
 
         [TestMethod]
-        public void XmlDocId_EnumValueIdId_TypeNull()
+        public void EnumValueIdId_TypeNull()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EnumValueId(null, ""));
+            Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EnumValueId(null, string.Empty));
         }
         [TestMethod]
-        public void XmlDocId_EnumValueIdId_ValueNull()
+        public void EnumValueIdId_ValueNull()
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EnumValueId(typeof(TestEnumWithValueComments), null));
         }
         [TestMethod]
-        public void XmlDocId_EnumValueIdId_NonEnum()
+        public void EnumValueIdId_NonEnum()
         {
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.EnumValueId(typeof(MyClass), "notnull"));
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Constructor()
+        public void MemberId_Constructor()
         {
             var info = typeof(MyClass).GetConstructor(Array.Empty<Type>());
             var id = info.MemberId();
@@ -91,7 +91,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_ConstructorWithParam()
+        public void MemberId_ConstructorWithParam()
         {
             var info = typeof(MyClass).GetConstructor(new[] { typeof(int) });
             var id = info.MemberId();
@@ -99,7 +99,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_ConstructorWithGenericParam()
+        public void MemberId_ConstructorWithGenericParam()
         {
             var info = typeof(MyClass).GetConstructor(new[] { typeof(List<int>) });
             var id = info.MemberId();
@@ -107,7 +107,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_ConstructorWithGenericArrayParam()
+        public void MemberId_ConstructorWithGenericArrayParam()
         {
             var info = typeof(MyClass).GetConstructor(new[] { typeof(List<int>[]) });
             var id = info.MemberId();
@@ -115,7 +115,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_ConstructorWithGenericArrayInParam()
+        public void MemberId_ConstructorWithGenericArrayInParam()
         {
             var info = typeof(MyClass).GetConstructor(new[] { typeof(List<int>[]).MakeByRefType() });
             var id = info.MemberId();
@@ -123,7 +123,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Method()
+        public void MemberId_Method()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.MemberFunction)).First();
             var id = info.MemberId();
@@ -131,7 +131,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_MethodWithRefParam()
+        public void MemberId_MethodWithRefParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunction2), new[] { typeof(int), typeof(int).MakeByRefType() });
             var id = info.MemberId();
@@ -139,7 +139,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_MethodWithArrayParam()
+        public void MemberId_MethodWithArrayParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithArray));
             var id = info.MemberId();
@@ -147,7 +147,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_MethodWithGenericArrayParam()
+        public void MemberId_MethodWithGenericArrayParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericArray));
             var id = info.MemberId();
@@ -155,7 +155,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_MethodWithGenericMultiDimArrayParam()
+        public void MemberId_MethodWithGenericMultiDimArrayParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericMultiDimArray));
             var id = info.MemberId();
@@ -163,7 +163,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_MethodWithGenericJaggedArrayParam()
+        public void MemberId_MethodWithGenericJaggedArrayParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericJaggedArray));
             var id = info.MemberId();
@@ -171,7 +171,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_MethodWithGenericJaggedArrayOutParam()
+        public void MemberId_MethodWithGenericJaggedArrayOutParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericOutArray));
             var id = info.MemberId();
@@ -179,7 +179,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateMethod()
+        public void MemberId_TemplateMethod()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod));
             var id = info.MemberId();
@@ -187,7 +187,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateMethodWithGenericParam()
+        public void MemberId_TemplateMethodWithGenericParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod2));
             var id = info.MemberId();
@@ -195,7 +195,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateMethodWithTwoTemplateTypes()
+        public void MemberId_TemplateMethodWithTwoTemplateTypes()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod3));
             var id = info.MemberId();
@@ -203,7 +203,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateMethodWithGenericJaggedArrayInParam()
+        public void MemberId_TemplateMethodWithGenericJaggedArrayInParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod4));
             var id = info.MemberId();
@@ -211,7 +211,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateMethodWithGenericParamsArray()
+        public void MemberId_TemplateMethodWithGenericParamsArray()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod5));
             var id   = info.MemberId();
@@ -220,7 +220,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateMethodWithGenericOutParam()
+        public void MemberId_TemplateMethodWithGenericOutParam()
         {
             var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod6));
             var id   = info.MemberId();
@@ -228,7 +228,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Property()
+        public void MemberId_Property()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.GetSetProperty)).First();
             var id = info.MemberId();
@@ -236,7 +236,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_ItemSetOnlyProperty()
+        public void MemberId_ItemSetOnlyProperty()
         {
             var info = typeof(MyClass.NestedClass).GetMember(nameof(MyClass.NestedClass.Item)).First();
             var id = info.MemberId();
@@ -244,7 +244,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Indexer()
+        public void MemberId_Indexer()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(string) });
             var id = info.MemberId();
@@ -252,7 +252,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_GetOnlyIndexer()
+        public void MemberId_GetOnlyIndexer()
         {
             var info = typeof(MyClass.ClassWithGetOnlyIndexer).GetProperty("Item");
             var id = info.MemberId();
@@ -260,7 +260,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_SetOnlyIndexer()
+        public void MemberId_SetOnlyIndexer()
         {
             var info = typeof(MyClass.ClassWithSetOnlyIndexer).GetProperty("Item");
             var id = info.MemberId();
@@ -268,7 +268,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_IndexerWithTwoParams()
+        public void MemberId_IndexerWithTwoParams()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(int), typeof(string) });
             var id = info.MemberId();
@@ -276,7 +276,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_IndexerWithInParam()
+        public void MemberId_IndexerWithInParam()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(int).MakeByRefType() });
             var id = info.MemberId();
@@ -284,7 +284,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_IndexerWithGenericParam()
+        public void MemberId_IndexerWithGenericParam()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(List<int>) });
             var id = info.MemberId();
@@ -292,7 +292,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_IndexerWithGenericArrayParam()
+        public void MemberId_IndexerWithGenericArrayParam()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(List<int>[]) });
             var id = info.MemberId();
@@ -300,7 +300,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_IndexerWithGenericMultiDimArrayInParam()
+        public void MemberId_IndexerWithGenericMultiDimArrayInParam()
         {
             var info = typeof(MyClass).GetProperty("Item", new[] { typeof(List<int>[,,]).MakeByRefType() });
             var id = info.MemberId();
@@ -308,7 +308,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Field()
+        public void MemberId_Field()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.stringField)).First();
             var id = info.MemberId();
@@ -316,7 +316,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_NestedType()
+        public void MemberId_NestedType()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.NestedClass)).First();
             var id = info.MemberId();
@@ -324,7 +324,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Event()
+        public void MemberId_Event()
         {
             var info = typeof(MyClass).GetMember(nameof(MyClass.eventField)).First();
             var id = info.MemberId();
@@ -332,7 +332,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_Unsupported()
+        public void MemberId_Unsupported()
         {
             var info = typeof(MyClass);
             Assert.ThrowsException<NotSupportedException>(() =>
@@ -342,7 +342,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_TypeId_TemplateClass()
+        public void TypeId_TemplateClass()
         {
             var info = typeof(MyTemplateClass<,>);
             var id = info.TypeId();
@@ -350,7 +350,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateClassCtor()
+        public void MemberId_TemplateClassCtor()
         {
             var info = typeof(MyTemplateClass<,>).GetConstructor(Type.EmptyTypes);
             var id = info.MemberId();
@@ -358,7 +358,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateClassMethodUsingClassTypeParams()
+        public void MemberId_TemplateClassMethodUsingClassTypeParams()
         {
             var info = typeof(MyTemplateClass<,>).GetMethod("Foo");
             var id = info.MemberId();
@@ -366,7 +366,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateClassMethodUsingOnlyOwnTypeParams()
+        public void MemberId_TemplateClassMethodUsingOnlyOwnTypeParams()
         {
             var info = typeof(MyTemplateClass<,>).GetMethod("Bar");
             var id = info.MemberId();
@@ -374,7 +374,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateClassMethodMixingTypeParamsFromClassAndMethod()
+        public void MemberId_TemplateClassMethodMixingTypeParamsFromClassAndMethod()
         {
             var info = typeof(MyTemplateClass<,>).GetMethod("Qux");
             var id = info.MemberId();
@@ -382,7 +382,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_TemplateClassIndexerUsingClassTypeParams()
+        public void MemberId_TemplateClassIndexerUsingClassTypeParams()
         {
             var info = typeof(MyTemplateClass<,>).GetProperty("Item");
             var id = info.MemberId();
@@ -390,7 +390,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_MemberId_NestedTemplateClassMethodMixingTypeParamsFromParentClassNestedClassAndMethod()
+        public void MemberId_NestedTemplateClassMethodMixingTypeParamsFromParentClassNestedClassAndMethod()
         {
             var info = typeof(MyTemplateClass<,>.MyNestedTemplateClass<,>).GetMethod("Baz");
             var id = info.MemberId();
@@ -398,7 +398,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void XmlDocId_GenericInterface()
+        public void GenericInterface()
         {
             var id = typeof(GenericTestInterface<>).TypeId();
             Assert.AreEqual("T:DocXmlUnitTests.TestData.GenericTestInterface`1", id);

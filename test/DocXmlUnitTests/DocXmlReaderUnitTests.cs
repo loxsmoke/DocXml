@@ -14,7 +14,7 @@ namespace DocXmlUnitTests
     public class DocXmlReaderUnitTests
     {
         [TestMethod]
-        public void DocXmlReader_AutoName_ClassComment()
+        public void GetTypeComments()
         {
             var doc = new DocXmlReader((a) =>Path.GetFileNameWithoutExtension(a.Location) + ".xml");
             var mm = doc.GetTypeComments(typeof(MyClass));
@@ -22,7 +22,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void DocXmlReader_AutoName_UnknownAssembly_ClassComment()
+        public void GetTypeComments_UnknownAssembly()
         {
             var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
             var mm = doc.GetTypeComments(typeof(FileInfo));
@@ -32,7 +32,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void DocXmlReader_AutoName_OtherAssembly_ClassComment()
+        public void GetTypeComments_OtherAssembly()
         {
             var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
             var mm = doc.GetTypeComments(typeof(OtherClass));
@@ -42,7 +42,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void DocXmlReader_AutoName_PreservesWhitespace()
+        public void GetMemberComment_PreservesWhitespace()
         {
             var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
             var summary = doc.GetMemberComment(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithParaTagsInSummary)));
@@ -54,6 +54,17 @@ First paragraph.
 Second paragraph.
 </para>",
                 summary);
+        }
+
+        [TestMethod]
+        public void GetTypeComments_FullCommentText()
+        {
+            var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
+            var mm = doc.GetTypeComments(typeof(OtherClass));
+            Assert.IsNotNull(mm.Summary);
+            Assert.IsNotNull(mm.Remarks);
+            Assert.IsNotNull(mm.Example);
+            Assert.IsNotNull(mm.FullCommentText);
         }
     }
 }

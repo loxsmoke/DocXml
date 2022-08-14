@@ -290,6 +290,7 @@ namespace LoxSmoke.DocXml
 
         private void GetCommonComments(CommonComments comments, XPathNavigator rootNode)
         {
+            comments.FullCommentText = rootNode?.InnerXml;
             comments.Summary = GetSummaryComment(rootNode);
             comments.Remarks = GetRemarksComment(rootNode);
             comments.Example = GetExampleComment(rootNode);
@@ -306,13 +307,12 @@ namespace LoxSmoke.DocXml
             var node = GetXmlMemberNodeFromDictionary(name, typeForAssembly);
             if (node != null ||
                 !searchAllCurrentFiles ||
-                assemblyNavigators.Count <= 1 && typeForAssembly != null) return node;
-            foreach (var docNavigator in assemblyNavigators.Values)
-            {
-                node = docNavigator.SelectSingleNode(string.Format(MemberXPath, name));
-                if (node != null) break;
-            }
-            return node;
+                assemblyNavigators.Count <= 1 && typeForAssembly != null) 
+                return node;
+
+            return assemblyNavigators.Values
+                .Select(docNavigator => docNavigator.SelectSingleNode(string.Format(MemberXPath, name)))
+                .FirstOrDefault(foundNode => foundNode != null);
         }
 
         private XPathNavigator GetXmlMemberNodeFromDictionary(string name, Type typeForAssembly)
@@ -345,10 +345,10 @@ namespace LoxSmoke.DocXml
 
         private string GetXmlText(XPathNavigator node)
         {
-            var innerText = node?.InnerXml ?? "";
+            var innerText = node?.InnerXml ?? string.Empty;
             if (!UnIndentText || string.IsNullOrEmpty(innerText)) return innerText;
 
-            var outerText = node?.OuterXml ?? "";
+            var outerText = node?.OuterXml ?? string.Empty;
             var indentText = FindIndent(outerText);
             if (string.IsNullOrEmpty(indentText)) return innerText;
             return innerText.Replace(indentText, indentText[0].ToString()).Trim('\r', '\n');
@@ -356,42 +356,29 @@ namespace LoxSmoke.DocXml
 
         private string FindIndent(string outerText)
         {
-            if (string.IsNullOrEmpty(outerText)) return "";
+            if (string.IsNullOrEmpty(outerText)) return string.Empty;
             var end = outerText.LastIndexOf("</");
-            if (end < 0) return "";
+            if (end < 0) return string.Empty;
             var start = end - 1;
             for (; start >= 0 && outerText[start] != '\r' && outerText[start] != '\n'; start--) ;
-            if (start < 0 || end <= start) return "";
+            if (start < 0 || end <= start) return string.Empty;
             return outerText.Substring(start, end - start);
         }
 
 
-        private string GetSummaryComment(XPathNavigator rootNode)
-        {
-            return GetXmlText(rootNode?.SelectSingleNode(SummaryXPath));
-        }
-        private string GetRemarksComment(XPathNavigator rootNode)
-        {
-            return GetXmlText(rootNode?.SelectSingleNode(RemarksXPath));
-        }
+        private string GetSummaryComment(XPathNavigator rootNode) => GetXmlText(rootNode?.SelectSingleNode(SummaryXPath));
 
-        private string GetExampleComment(XPathNavigator rootNode)
-        {
-            return GetXmlText(rootNode?.SelectSingleNode(ExampleXPath));
-        }
+        private string GetRemarksComment(XPathNavigator rootNode) => GetXmlText(rootNode?.SelectSingleNode(RemarksXPath));
+
+        private string GetExampleComment(XPathNavigator rootNode) => GetXmlText(rootNode?.SelectSingleNode(ExampleXPath));
 
         private string GetReturnsComment(XPathNavigator methodNode)
         {
             var responseNodes = methodNode?.Select(ReturnsXPath);
-            if (responseNodes?.MoveNext() == true)
-                return GetXmlText(responseNodes.Current);
-            return "";
+            return (responseNodes?.MoveNext() == true) ? GetXmlText(responseNodes.Current) : string.Empty;
         }
 
-        private List<(string Name, string Text)> GetParametersComments(XPathNavigator rootNode)
-        {
-            return GetNamedComments(rootNode, ParamXPath, NameAttribute);
-        }
+        private List<(string Name, string Text)> GetParametersComments(XPathNavigator rootNode) => GetNamedComments(rootNode, ParamXPath, NameAttribute);
 
         private List<(string Name, string Text)> GetNamedComments(XPathNavigator rootNode, string path, string attributeName)
         {
@@ -401,7 +388,7 @@ namespace LoxSmoke.DocXml
 
             while (childNodes.MoveNext())
             {
-                var code = childNodes.Current.GetAttribute(attributeName, "");
+                var code = childNodes.Current.GetAttribute(attributeName, string.Empty);
                 list.Add((code, GetXmlText(childNodes.Current)));
             }
             return list;
@@ -441,12 +428,14 @@ namespace LoxSmoke.DocXml
                 comments?.Parameters?.Count > 0 ||
                 !string.IsNullOrEmpty(comments?.Returns) ||
                 comments?.Responses?.Count > 0 ||
-                comments?.TypeParameters?.Count > 0) return comments;
+                comments?.TypeParameters?.Count > 0) 
+                return comments;
 
             // If an explicit cref attribute is specified, the documentation from 
             // the specified namespace/type/member is inherited.
             if (GetCrefComments(comments.Inheritdoc.Cref, methodInfo.ReflectedType, comments, 
-                (node) => GetComments(methodInfo, comments, node))) return comments;
+                (node) => GetComments(methodInfo, comments, node))) 
+                return comments;
 
             // For constructors:
             // - Search backwards up the type inheritance chain for a constructor 
@@ -515,12 +504,14 @@ namespace LoxSmoke.DocXml
         private TypeComments ResolveInheritdocComments(TypeComments comments, Type type)
         {
             if (!NeedsResolving(comments) ||
-                comments?.Parameters?.Count > 0) return comments;
+                comments?.Parameters?.Count > 0) 
+                return comments;
 
             // If an explicit cref attribute is specified, the documentation from
             // the specified namespace/type/member is inherited. 
             if (GetCrefComments(comments.Inheritdoc.Cref, type, comments,
-                (node) => GetComments(type, comments, node))) return comments;
+                (node) => GetComments(type, comments, node))) 
+                return comments;
 
             // For types and interfaces:
             // - Inherit documentation from all base classes working backwards up 

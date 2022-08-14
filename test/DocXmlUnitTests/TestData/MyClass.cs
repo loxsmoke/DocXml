@@ -217,6 +217,11 @@ namespace DocXmlUnitTests
         public static void MemberFunctionWithGenericOutArray(out List<float>[] outArrayOfListOfInt)
             => outArrayOfListOfInt = new[] { new List<float>() };
 
+        /// <summary>MemberFunctionWithReadOnlyStringCollection description</summary>
+        /// <param name="readOnlyStringCollection">Parameter readOnlyStringCollection</param>
+        public static void MemberFunctionWithReadOnlyStringCollection(IReadOnlyCollection<string> readOnlyStringCollection)
+        { }
+
         /// <summary>
         /// <para>
         /// First paragraph.
@@ -377,7 +382,9 @@ namespace DocXmlUnitTests
         /// </summary>
         public class NestedClass
         {
+#pragma warning disable CS1591
             public int Item { set { _ = value; } }
+#pragma warning restore CS1591
         }
 
         /// <summary>Class having a get only indexer.</summary>

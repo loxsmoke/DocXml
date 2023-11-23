@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LoxSmoke.DocXml
 {
@@ -13,9 +11,15 @@ namespace LoxSmoke.DocXml
         /// This list contains descriptions of delegate type parameters. 
         /// For non-delegate types this list is empty.
         /// For delegate types this list contains tuples where 
-        /// Item1 is the "param" item "name" attribute and
-        /// Item2 is the body of the comment
+        /// Name is the "name" attribute of "param"
+        /// Text is the body of the comment
         /// </summary>
         public List<(string Name, string Text)> Parameters { get; set; } = new List<(string Name, string Text)>();
+        /// <summary>
+        /// This list contains description of generic type parameter
+        /// Name is the "name" attribute of "typeparam"
+        /// Text is the body of the comment
+        /// </summary>
+        public List<(string Name, string Text)> TypeParameters { get; set; } = new List<(string Name, string Text)>();
     }
 }

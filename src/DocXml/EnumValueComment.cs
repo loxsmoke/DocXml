@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
-using LoxSmoke.DocXml;
+﻿using System.Numerics;
 
 namespace LoxSmoke.DocXml
 {

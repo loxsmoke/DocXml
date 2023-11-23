@@ -83,5 +83,16 @@ namespace DocXmlUnitTests
             Assert.AreEqual(string.Empty, comments.Inheritdoc.Cref);
             Assert.AreEqual("Interface summary", comments.Summary);
         }
+
+        [TestMethod]
+        public void GetTypeComments_TypeParam()
+        {
+            var mm = Reader.GetTypeComments(typeof(ClassWithTypeParams<int, string>));
+            Assert.AreEqual(2, mm.TypeParameters.Count);
+            Assert.AreEqual("T1", mm.TypeParameters[0].Name);
+            Assert.AreEqual("Type param1", mm.TypeParameters[0].Text);
+            Assert.AreEqual("T2", mm.TypeParameters[1].Name);
+            Assert.AreEqual("Type param2", mm.TypeParameters[1].Text);
+        }
     }
 }

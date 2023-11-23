@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Xml;
 using System.Xml.XPath;
-using System.Numerics;
 
 // Disable warning for missing XML comments 
 #pragma warning disable CS1591
@@ -175,6 +172,7 @@ namespace LoxSmoke.DocXml
             {
                 comments.Parameters = GetParametersComments(node);
             }
+            comments.TypeParameters = GetTypeparamComments(node);
             GetCommonComments(comments, node);
             comments = ResolveInheritdocComments(comments, type);
             return comments;
@@ -379,6 +377,7 @@ namespace LoxSmoke.DocXml
         }
 
         private List<(string Name, string Text)> GetParametersComments(XPathNavigator rootNode) => GetNamedComments(rootNode, ParamXPath, NameAttribute);
+        private List<(string Name, string Text)> GetTypeparamComments(XPathNavigator rootNode) => GetNamedComments(rootNode, TypeParamXPath, NameAttribute);
 
         private List<(string Name, string Text)> GetNamedComments(XPathNavigator rootNode, string path, string attributeName)
         {

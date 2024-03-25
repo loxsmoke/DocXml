@@ -132,7 +132,28 @@ namespace DocXmlUnitTests
         /// <summary>
         /// Nested class
         /// </summary>
-        public class Nested { }
+        public class Nested
+        {
+            /// <summary>
+            /// Double nested class
+            /// </summary>
+            public class DoubleNested
+            {
+            }
+        }
+
+        /// <summary>
+        /// Nested generic class
+        /// </summary>
+        public class Nested<T1>
+        {
+            /// <summary>
+            /// Double nested generic class
+            /// </summary>
+            public class DoubleNested<T2>
+            {
+            }
+        }
 
         /// <summary>
         /// Constructor with no parameters

@@ -171,7 +171,13 @@ namespace LoxSmoke.DocXml
 
             Type[] args = type.GetGenericArguments();
             string fullTypeName;
-            var typeNamespace = type.Namespace == null ? string.Empty : $"{type.Namespace}.";
+            string typeNamespace;
+            if (type.DeclaringType != null)
+                typeNamespace = $"{GetTypeXmlId(type.DeclaringType)}.";
+            else if (type.Namespace != null)
+                typeNamespace = $"{type.Namespace}.";
+            else
+                typeNamespace = "";
             var outString = isOut ? "@" : string.Empty;
 
             if (type.MemberType == MemberTypes.TypeInfo && 
@@ -182,10 +188,6 @@ namespace LoxSmoke.DocXml
                     args.Select(o => GetTypeXmlId(o, isOut: false, isMethodParameter, genericClassParams)));
                 var typeName = Regex.Replace(type.Name, "`[0-9]+", "{" + paramString + "}");
                 fullTypeName = $"{typeNamespace}{typeName}{outString}";
-            }
-            else if (type.IsNested)
-            {
-                fullTypeName = $"{typeNamespace}{type.DeclaringType.Name}.{type.Name}{outString}";
             }
             else if (type.ContainsGenericParameters && (type.IsArray || type.GetElementType() != null))
             {

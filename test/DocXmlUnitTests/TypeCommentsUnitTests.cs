@@ -58,6 +58,27 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void GetTypeComments_DoubleNestedClass()
+        {
+            var mm = Reader.GetTypeComments(typeof(MyClass.Nested.DoubleNested));
+            Assert.AreEqual("Double nested class", mm.Summary);
+        }
+
+        [TestMethod]
+        public void GetTypeComments_NestedGenericClass()
+        {
+            var mm = Reader.GetTypeComments(typeof(MyClass.Nested<>));
+            Assert.AreEqual("Nested generic class", mm.Summary);
+        }
+
+        [TestMethod]
+        public void GetTypeComments_DoubleNestedGenericClass()
+        {
+            var mm = Reader.GetTypeComments(typeof(MyClass.Nested<>.DoubleNested<>));
+            Assert.AreEqual("Double nested generic class", mm.Summary);
+        }
+
+        [TestMethod]
         public void GetTypeComments_DelegateType()
         {
             var mm = Reader.GetTypeComments(MyClass_Type.GetNestedType(nameof(MyClass.DelegateType)));

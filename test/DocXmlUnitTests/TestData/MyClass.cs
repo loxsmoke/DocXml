@@ -139,6 +139,12 @@ namespace DocXmlUnitTests
             /// </summary>
             public class DoubleNested
             {
+                /// <summary>
+                /// Triple nested class
+                /// </summary>
+                public class TripleNested
+                {
+                }
             }
         }
 

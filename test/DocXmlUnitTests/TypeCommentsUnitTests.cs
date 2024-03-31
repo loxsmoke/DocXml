@@ -1,8 +1,6 @@
 ﻿using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.XPath;
 using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
@@ -21,11 +19,18 @@ namespace DocXmlUnitTests
             base.Setup();
         }
 
-        [TestMethod]
-        public void GetTypeComments()
+        [DataTestMethod]
+        [DataRow(typeof(MyClass), "This is MyClass")]
+        [DataRow(typeof(MyNoCommentClass), null)]
+        [DataRow(typeof(MyClass.Nested), "Nested class")]
+        [DataRow(typeof(MyClass.Nested.DoubleNested), "Double nested class")]
+        [DataRow(typeof(MyClass.Nested.DoubleNested.TripleNested), "Triple nested class")]
+        [DataRow(typeof(MyClass.Nested<>), "Nested generic class")]
+        [DataRow(typeof(MyClass.Nested<>.DoubleNested<>), "Double nested generic class")]
+        public void GetTypeComments(Type type, string expectedSummaryComment)
         {
-            var mm = Reader.GetTypeComments(MyClass_Type);
-            Assert.AreEqual("This is MyClass", mm.Summary);
+            var mm = Reader.GetTypeComments(type);
+            Assert.AreEqual(expectedSummaryComment, mm.Summary);
         }
 
         [TestMethod]
@@ -35,48 +40,15 @@ namespace DocXmlUnitTests
             Assert.AreEqual("Other class", mm.Summary);
         }
 
-        [TestMethod]
-        public void GetTypeComments_Empty()
-        {
-            var mm = Reader.GetTypeComments(typeof(MyNoCommentClass));
-            Assert.IsNull(mm.Summary);
-        }
 
         [TestMethod]
         public void GetTypeComments_XPathDocument()
         {
             var m = new DocXmlReader(new XPathDocument("DocXmlUnitTests.xml"));
-            var mm = m.GetTypeComments(MyClass_Type);
+            var mm = m.GetTypeComments(typeof(MyClass));
             Assert.AreEqual("This is MyClass", mm.Summary);
         }
 
-        [TestMethod]
-        public void GetTypeComments_NestedClass()
-        {
-            var mm = Reader.GetTypeComments(typeof(MyClass.Nested));
-            Assert.AreEqual("Nested class", mm.Summary);
-        }
-
-        [TestMethod]
-        public void GetTypeComments_DoubleNestedClass()
-        {
-            var mm = Reader.GetTypeComments(typeof(MyClass.Nested.DoubleNested));
-            Assert.AreEqual("Double nested class", mm.Summary);
-        }
-
-        [TestMethod]
-        public void GetTypeComments_NestedGenericClass()
-        {
-            var mm = Reader.GetTypeComments(typeof(MyClass.Nested<>));
-            Assert.AreEqual("Nested generic class", mm.Summary);
-        }
-
-        [TestMethod]
-        public void GetTypeComments_DoubleNestedGenericClass()
-        {
-            var mm = Reader.GetTypeComments(typeof(MyClass.Nested<>.DoubleNested<>));
-            Assert.AreEqual("Double nested generic class", mm.Summary);
-        }
 
         [TestMethod]
         public void GetTypeComments_DelegateType()
@@ -87,22 +59,15 @@ namespace DocXmlUnitTests
             AssertParam(mm, 0, "parameter", "Parameter description");
         }
 
-        [TestMethod]
-        public void GetTypeComments_Inheritdoc()
+        [DataTestMethod]
+        [DataRow(typeof(ClassForInheritdoc), "Base Inheritdoc")]
+        [DataRow(typeof(InterfaceImplInheritdoc), "Interface summary")]
+        public void GetTypeComments_Inheritdoc(Type type, string expectedComment)
         {
-            var comments = Reader.GetTypeComments(typeof(ClassForInheritdoc));
+            var comments = Reader.GetTypeComments(type);
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual(string.Empty, comments.Inheritdoc.Cref);
-            Assert.AreEqual("Base Inheritdoc", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetTypeComments_InterfaceInheritdoc()
-        {
-            var comments = Reader.GetTypeComments(typeof(InterfaceImplInheritdoc));
-            Assert.IsNotNull(comments.Inheritdoc);
-            Assert.AreEqual(string.Empty, comments.Inheritdoc.Cref);
-            Assert.AreEqual("Interface summary", comments.Summary);
+            Assert.AreEqual(expectedComment, comments.Summary);
         }
 
         [TestMethod]

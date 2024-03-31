@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Xml.XPath;
-using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #pragma warning disable CS1591

@@ -1,6 +1,6 @@
-# DocXml.dll v.3.6.0.0 API documentation
+# DocXml.dll .v3.7.0.0 API documentation
 
-Created by [mddox](https://github.com/loxsmoke/mddox) on 11/23/2023
+Created by [mddox](https://github.com/loxsmoke/mddox) on 5/4/2024
 
 # All types
 
@@ -149,10 +149,11 @@ Method, operator and constructor comments
 
 | Name | Type | Summary |
 |---|---|---|
-| **Parameters** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Name, string Text)\> | "param" comments of the method. Each item in the list is the tuple<br>where Item1 is the "name" of the parameter in XML file and <br>Item2 is the body of the comment. |
+| **Parameters** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Name, string Text)\> | "param" comments of the method. Each item in the list is the tuple where <br>"Name" is the parameter in XML file and <br>"Text" is the body of the comment. |
 | **Returns** | string | "returns" comment of the method. |
-| **Responses** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Code, string Text)\> | "response" comments of the method. The list contains tuples where <br>Item1 is the "code" of the response and<br>Item1 is the body of the comment. |
-| **TypeParameters** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Name, string Text)\> | "typeparam" comments of the method. Each item in the list is the tuple<br>where Item1 is the "name" of the parameter in XML file and <br>Item2 is the body of the comment. |
+| **Responses** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Code, string Text)\> | "response" comments of the method. The list contains tuples where <br>"Code" is the response code<br>"Text" is the body of the comment. |
+| **TypeParameters** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Name, string Text)\> | "typeparam" comments of the method. Each item in the list is the tuple where<br>"Name" of the parameter in XML file and <br>"Text" is the body of the comment. |
+| **Exceptions** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)\<(string Cref, string Text)\> | "exception" comments of the method or property. Each item in the list is the tuple where<br>"Cref" is the exception type<br>"Text" is the description of the exception |
 | **Summary** | string | "summary" comment |
 | **Remarks** | string | "remarks" comment |
 | **Example** | string | "example" comment |

@@ -37,7 +37,7 @@ namespace LoxSmoke.DocXml
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{(Name?? string.Empty)}={(IsBigValue ? BigValue.ToString() : Value.ToString())}" + (Summary != null ? $" {Summary}" : string.Empty);
+            return $"{(Name ?? string.Empty)}={(IsBigValue ? BigValue.ToString() : Value.ToString())}" + (Summary != null ? $" {Summary}" : string.Empty);
         }
     }
 }

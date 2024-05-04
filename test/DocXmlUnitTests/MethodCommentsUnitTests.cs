@@ -29,8 +29,6 @@ namespace DocXmlUnitTests
 
         public MethodInfo MySubClass_TemplateMethod3;
         public MethodInfo MySubClass_MethodWithComments;
-        public MethodInfo MySubClass_MethodWithInParam;
-        public MethodInfo MySubClass_MultilineSummary;
 
         [TestInitialize]
         public new void Setup()
@@ -58,8 +56,6 @@ namespace DocXmlUnitTests
 
             MySubClass_TemplateMethod3 = typeof(MySubClass).GetMethod(nameof(MySubClass.TemplateMethod3));
             MySubClass_MethodWithComments = typeof(MySubClass).GetMethod(nameof(MySubClass.MethodWithComments));
-            MySubClass_MethodWithInParam = typeof(MySubClass).GetMethod(nameof(MySubClass.MethodWithInParam));
-            MySubClass_MultilineSummary = typeof(MySubClass).GetMethod(nameof(MySubClass.MultilineSummary));
         }
 
         [TestMethod]
@@ -87,15 +83,22 @@ namespace DocXmlUnitTests
             Assert.AreEqual("Member function description", comments.Summary);
             Assert.AreEqual(0, comments.Parameters.Count);
             Assert.AreEqual("Return value description", comments.Returns);
-            Assert.AreEqual("200", comments.Responses.First().Item1);
-            Assert.AreEqual("OK", comments.Responses.First().Item2);
+            Assert.AreEqual("200", comments.Responses.First().Code);
+            Assert.AreEqual("OK", comments.Responses.First().Text);
             Assert.AreEqual(
                 "<summary>" + Environment.NewLine +
                 "            Member function description" + Environment.NewLine +
                 "            </summary>" + Environment.NewLine +
                 "            <returns>Return value description</returns>" + Environment.NewLine +
-                "            <response code=\"200\">OK</response>",
+                "            <response code=\"200\">OK</response>" + Environment.NewLine +
+                "            <exception cref=\"T:System.NullReferenceException\">Null exception</exception>" + Environment.NewLine +
+                "            <exception cref=\"T:System.NotImplementedException\">NI exception</exception>",
                 comments.FullCommentText.Trim('\r', '\n', ' '));
+            Assert.AreEqual(2, comments.Exceptions.Count);
+            Assert.AreEqual("T:System.NullReferenceException", comments.Exceptions[0].Cref);
+            Assert.AreEqual("Null exception", comments.Exceptions[0].Text);
+            Assert.AreEqual("T:System.NotImplementedException", comments.Exceptions[1].Cref);
+            Assert.AreEqual("NI exception", comments.Exceptions[1].Text);
         }
 
         [TestMethod]
@@ -246,53 +249,18 @@ namespace DocXmlUnitTests
                 comments.FullCommentText.Trim('\r', '\n', ' '));
          }
 
-        [TestMethod]
-        public void GetMethodComments_InParamter()
+        [DataTestMethod]
+        [DataRow(typeof(MySubClass), nameof(MySubClass.MethodWithInParam), "MethodWithInParam description")]
+        [DataRow(typeof(MySubClass), nameof(MySubClass.MultilineSummary), "Summary line 1\r\nSummary line 2\r\nSummary line 3")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericArray), "MemberFunctionWithGenericTypeArray description")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericMultiDimArray), "MemberFunctionWithGenericTypeMultiDimArray description")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericJaggedArray), "MemberFunctionWithGenericTypeJaggedArray description")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericOutArray), "MemberFunctionWithGenericTypeOutArray description")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithReadOnlyStringCollection), "MemberFunctionWithReadOnlyStringCollection description")]
+        public void GetMethodComments_InParamter(Type type, string methodName, string expectedSummary)
         {
-            var comments = Reader.GetMethodComments(MySubClass_MethodWithInParam);
-            Assert.AreEqual("MethodWithInParam description", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetMethodComments_MultiLineSummary()
-        {
-            var comments = Reader.GetMethodComments(MySubClass_MultilineSummary);
-            Assert.AreEqual("Summary line 1\r\nSummary line 2\r\nSummary line 3", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetMethodComments_GenericTypeArray()
-        {
-            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericArray)));
-            Assert.AreEqual("MemberFunctionWithGenericTypeArray description", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetMethodComments_GenericTypeMultiDimArray()
-        {
-            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericMultiDimArray)));
-            Assert.AreEqual("MemberFunctionWithGenericTypeMultiDimArray description", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetMethodComments_GenericTypeJaggedArray()
-        {
-            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericJaggedArray)));
-            Assert.AreEqual("MemberFunctionWithGenericTypeJaggedArray description", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetMethodComments_GenericTypeOutArray()
-        {
-            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericOutArray)));
-            Assert.AreEqual("MemberFunctionWithGenericTypeOutArray description", comments.Summary);
-        }
-
-        [TestMethod]
-        public void GetMethodComments_ReadOnlyStringCollection()
-        {
-            var comments = Reader.GetMethodComments(typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithReadOnlyStringCollection)));
-            Assert.AreEqual("MemberFunctionWithReadOnlyStringCollection description", comments.Summary);
+            var comments = Reader.GetMethodComments(type.GetMethod(methodName));
+            Assert.AreEqual(expectedSummary, comments.Summary);
         }
 
         [TestMethod]
@@ -305,7 +273,7 @@ namespace DocXmlUnitTests
             Assert.AreEqual("Constructor2", comments.Summary);
             Assert.IsNotNull(comments.Parameters);
             Assert.AreEqual(1, comments.Parameters.Count);
-            Assert.AreEqual("x", comments.Parameters[0].Item1);
+            Assert.AreEqual("x", comments.Parameters[0].Name);
         }
 
         [TestMethod]

@@ -123,7 +123,7 @@ Enum comment function may need some explanation though. It can return documentat
 | \<response\> | code | No | Yes | No | No |
 | \<returns\> | --- | No | Yes | No | No |
 | \<inheritdoc\> | cref | Yes (cref is optional) | Yes (cref is optional) | Yes | Yes |
-
+| \<exception\> | cref | No | Yes | No | No |
 ### \<Inheritdoc\> tag resolution rules
 
 **\<inheritdoc\>** tag is helpful documentation re-use tool. It can refer to the piece of documentation directly via **cref** attribute or can retrieve documentation for classes or methods based on resolution rules.

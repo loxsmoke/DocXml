@@ -2,12 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.XPath;
-using DocXmlOtherLibForUnitTests;
-using DocXmlUnitTests.TestData;
-using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 #pragma warning disable CS1591
 namespace DocXmlUnitTests

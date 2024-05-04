@@ -148,6 +148,7 @@ namespace LoxSmoke.DocXml
             comments.TypeParameters = GetNamedComments(node, TypeParamXPath, NameAttribute);
             comments.Returns = GetReturnsComment(node);
             comments.Responses = GetNamedComments(node, ResponsesXPath, CodeAttribute);
+            comments.Exceptions = GetExceptionComments(node);
             comments = ResolveInheritdocComments(comments, methodInfo);
             return comments;
         }
@@ -277,6 +278,7 @@ namespace LoxSmoke.DocXml
         private const string ResponsesXPath = "response";
         private const string ReturnsXPath = "returns";
         private const string InheritdocXPath = "inheritdoc";
+        private const string ExceptionXPath = "exception";
 
         //  XML attribute names
         private const string NameAttribute = "name";
@@ -393,12 +395,26 @@ namespace LoxSmoke.DocXml
             return list;
         }
 
+        private List<(string Cref, string Text)> GetExceptionComments(XPathNavigator rootNode)
+        {
+            var list = new List<(string Name, string Text)>();
+            var childNodes = rootNode?.Select(ExceptionXPath);
+            if (childNodes == null) return list;
+
+            while (childNodes.MoveNext())
+            {
+                var cref = childNodes.Current.GetAttribute(CrefAttribute, string.Empty);
+                list.Add((cref, GetXmlText(childNodes.Current)));
+            }
+            return list;
+        }
+
         private InheritdocTag GetInheritdocTag(XPathNavigator rootNode)
         {
             if (rootNode == null) return null;
             var inheritdoc = GetNamedComments(rootNode, InheritdocXPath, CrefAttribute);
             if (inheritdoc.Count == 0) return null;
-            return new InheritdocTag() {Cref = inheritdoc.First().Item1};
+            return new InheritdocTag() {Cref = inheritdoc.First().Name};
         }
 
         private bool NeedsResolving(CommonComments comments)

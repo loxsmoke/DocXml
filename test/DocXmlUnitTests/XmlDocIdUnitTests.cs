@@ -4,9 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using BindingFlags = System.Reflection.BindingFlags;
 
 #pragma warning disable CS1591
 
@@ -15,6 +12,7 @@ namespace DocXmlUnitTests
     [TestClass]
     public class XmlDocIdUnitTests
     {
+        #region Null checks
         [TestMethod]
         public void MethodId_Null()
         {
@@ -34,10 +32,9 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void PropertyId_NonProperty()
+        public void EventId_Null()
         {
-            var info = typeof(MyClass).GetMember(nameof(MyClass.stringField)).First();
-            Assert.ThrowsException<ArgumentException>(() => XmlDocId.PropertyId(info));
+            Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EventId(null));
         }
 
         [TestMethod]
@@ -45,6 +42,16 @@ namespace DocXmlUnitTests
         {
             Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.FieldId(null));
         }
+        #endregion
+
+
+        [TestMethod]
+        public void PropertyId_NonProperty()
+        {
+            var info = typeof(MyClass).GetMember(nameof(MyClass.stringField)).First();
+            Assert.ThrowsException<ArgumentException>(() => XmlDocId.PropertyId(info));
+        }
+
 
         [TestMethod]
         public void FieldId_NonField()
@@ -53,11 +60,6 @@ namespace DocXmlUnitTests
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.FieldId(info));
         }
 
-        [TestMethod]
-        public void EventId_Null()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => XmlDocId.EventId(null));
-        }
 
         [TestMethod]
         public void EventId_NonEvent()
@@ -82,6 +84,7 @@ namespace DocXmlUnitTests
             Assert.ThrowsException<ArgumentException>(() => XmlDocId.EnumValueId(typeof(MyClass), "notnull"));
         }
 
+        #region Constructor tests
         [TestMethod]
         public void MemberId_Constructor()
         {
@@ -121,6 +124,7 @@ namespace DocXmlUnitTests
             var id = info.MemberId();
             Assert.AreEqual("M:DocXmlUnitTests.MyClass.#ctor(System.Collections.Generic.List{System.Int32}[]@)", id);
         }
+        #endregion
 
         [TestMethod]
         public void MemberId_Method()
@@ -138,93 +142,23 @@ namespace DocXmlUnitTests
             Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunction2(System.Int32,System.Int32@)", id);
         }
 
-        [TestMethod]
-        public void MemberId_MethodWithArrayParam()
+        [DataTestMethod]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithArray(System.Int16[],System.Int32[0:,0:])")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericArray(System.Collections.Generic.List{System.Int32}[])")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericMultiDimArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericMultiDimArray(System.Collections.Generic.List{System.Int32}[0:,0:])")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericJaggedArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericJaggedArray(System.Collections.Generic.List{System.Int32}[][])")]
+        [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericOutArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericOutArray(System.Collections.Generic.List{System.Single}[]@)")]
+        [DataRow(typeof(MyClass), nameof(MyClass.TemplateMethod), "M:DocXmlUnitTests.MyClass.TemplateMethod``1")]
+        [DataRow(typeof(MyClass), nameof(MyClass.TemplateMethod2), "M:DocXmlUnitTests.MyClass.TemplateMethod2``1(System.Collections.Generic.List{``0})")]
+        [DataRow(typeof(MyClass), nameof(MyClass.TemplateMethod3), "M:DocXmlUnitTests.MyClass.TemplateMethod3``2(System.Collections.Generic.List{``0},System.Collections.Generic.List{``1})")]
+        [DataRow(typeof(MyClass), nameof(MyClass.TemplateMethod4), "M:DocXmlUnitTests.MyClass.TemplateMethod4``1(System.Collections.Generic.List{``0}[][][]@)")]
+        [DataRow(typeof(MyClass), nameof(MyClass.TemplateMethod5), "M:DocXmlUnitTests.MyClass.TemplateMethod5``1(``0[])")]
+        [DataRow(typeof(MyClass), nameof(MyClass.TemplateMethod6), "M:DocXmlUnitTests.MyClass.TemplateMethod6``1(System.Object,``0@)")]
+        public void MemberId_Method(Type type, string methodName, string expectedId)
         {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithArray));
+            var info = type.GetMethod(methodName);
             var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithArray(System.Int16[],System.Int32[0:,0:])", id);
-        }
-
-        [TestMethod]
-        public void MemberId_MethodWithGenericArrayParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericArray));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericArray(System.Collections.Generic.List{System.Int32}[])", id);
-        }
-
-        [TestMethod]
-        public void MemberId_MethodWithGenericMultiDimArrayParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericMultiDimArray));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericMultiDimArray(System.Collections.Generic.List{System.Int32}[0:,0:])", id);
-        }
-
-        [TestMethod]
-        public void MemberId_MethodWithGenericJaggedArrayParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericJaggedArray));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericJaggedArray(System.Collections.Generic.List{System.Int32}[][])", id);
-        }
-
-        [TestMethod]
-        public void MemberId_MethodWithGenericJaggedArrayOutParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithGenericOutArray));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericOutArray(System.Collections.Generic.List{System.Single}[]@)", id);
-        }
-
-        [TestMethod]
-        public void MemberId_TemplateMethod()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod``1", id);
-        }
-
-        [TestMethod]
-        public void MemberId_TemplateMethodWithGenericParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod2));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod2``1(System.Collections.Generic.List{``0})", id);
-        }
-
-        [TestMethod]
-        public void MemberId_TemplateMethodWithTwoTemplateTypes()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod3));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod3``2(System.Collections.Generic.List{``0},System.Collections.Generic.List{``1})", id);
-        }
-
-        [TestMethod]
-        public void MemberId_TemplateMethodWithGenericJaggedArrayInParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod4));
-            var id = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod4``1(System.Collections.Generic.List{``0}[][][]@)", id);
-        }
-
-        [TestMethod]
-        public void MemberId_TemplateMethodWithGenericParamsArray()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod5));
-            var id   = info.MemberId();
-
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod5``1(``0[])",id);
-        }
-
-        [TestMethod]
-        public void MemberId_TemplateMethodWithGenericOutParam()
-        {
-            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod6));
-            var id   = info.MemberId();
-            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod6``1(System.Object,``0@)", id);
+            Assert.AreEqual(expectedId, id);
         }
 
         [TestMethod]

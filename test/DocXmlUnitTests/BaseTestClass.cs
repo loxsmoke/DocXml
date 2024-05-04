@@ -1,9 +1,7 @@
 ﻿using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 #pragma warning disable CS1591
 
@@ -38,6 +36,5 @@ namespace DocXmlUnitTests
             Assert.AreEqual(name, comments.TypeParameters[paramIndex].Name);
             Assert.AreEqual(text, comments.TypeParameters[paramIndex].Text);
         }
-
     }
 }

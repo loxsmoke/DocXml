@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#pragma warning disable CS1591
+
 namespace DocXmlUnitTests
 {
     /// <summary>
@@ -88,10 +90,8 @@ namespace DocXmlUnitTests
     /// </summary>
     public enum TestEnum2
     {
-#pragma warning disable CS1591
         Value21,
         Value22
-#pragma warning restore CS1591
     };
 
     /// <summary>
@@ -128,6 +128,8 @@ namespace DocXmlUnitTests
         /// Generic field description
         /// </summary>
         public List<Tuple<int, string>> genericTypeField;
+
+        public string noCommentField;
 
         /// <summary>
         /// Nested class
@@ -195,6 +197,8 @@ namespace DocXmlUnitTests
         /// </summary>
         /// <returns>Return value description</returns>
         /// <response code="200">OK</response>
+        /// <exception cref="NullReferenceException">Null exception</exception>
+        /// <exception cref="NotImplementedException">NI exception</exception>
         public int MemberFunction() { return 1; }
 
         /// <summary>
@@ -409,9 +413,7 @@ namespace DocXmlUnitTests
         /// </summary>
         public class NestedClass
         {
-#pragma warning disable CS1591
             public int Item { set { _ = value; } }
-#pragma warning restore CS1591
         }
 
         /// <summary>Class having a get only indexer.</summary>

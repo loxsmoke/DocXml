@@ -1,10 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using DocXml.Reflection;
-using System.Reflection;
 using DocXmlUnitTests.TestData.Reflection;
 
 #pragma warning disable CS1591

@@ -9,11 +9,11 @@ namespace LoxSmoke.DocXml
     public class MethodComments : CommonComments
     {
         /// <summary>
-        /// "param" comments of the method. Each item in the list is the tuple
-        /// where Item1 is the "name" of the parameter in XML file and 
-        /// Item2 is the body of the comment.
+        /// "param" comments of the method. Each item in the list is the tuple where 
+        /// "Name" is the parameter in XML file and 
+        /// "Text" is the body of the comment.
         /// </summary>
-        public List<(string Name, string Text)> Parameters { get; set; } = new List<(string Name, string Text)>();
+        public List<(string Name, string Text)> Parameters { get; set; } = new();
 
         /// <summary>
         /// "returns" comment of the method.
@@ -22,16 +22,23 @@ namespace LoxSmoke.DocXml
 
         /// <summary>
         /// "response" comments of the method. The list contains tuples where 
-        /// Item1 is the "code" of the response and
-        /// Item1 is the body of the comment.
+        /// "Code" is the response code
+        /// "Text" is the body of the comment.
         /// </summary>
-        public List<(string Code, string Text)> Responses { get; set; } = new List<(string Code, string Text)>();
+        public List<(string Code, string Text)> Responses { get; set; } = new();
 
         /// <summary>
-        /// "typeparam" comments of the method. Each item in the list is the tuple
-        /// where Item1 is the "name" of the parameter in XML file and 
-        /// Item2 is the body of the comment.
+        /// "typeparam" comments of the method. Each item in the list is the tuple where
+        /// "Name" of the parameter in XML file and 
+        /// "Text" is the body of the comment.
         /// </summary>
-        public List<(string Name, string Text)> TypeParameters { get; set; } = new List<(string Name, string Text)>();
+        public List<(string Name, string Text)> TypeParameters { get; set; } = new();
+
+        /// <summary>
+        /// "exception" comments of the method or property. Each item in the list is the tuple where
+        /// "Cref" is the exception type
+        /// "Text" is the description of the exception
+        /// </summary>
+        public List<(string Cref, string Text)> Exceptions { get; set; } = new();
     }
 }

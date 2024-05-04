@@ -14,12 +14,12 @@ namespace LoxSmoke.DocXml
         /// Name is the "name" attribute of "param"
         /// Text is the body of the comment
         /// </summary>
-        public List<(string Name, string Text)> Parameters { get; set; } = new List<(string Name, string Text)>();
+        public List<(string Name, string Text)> Parameters { get; set; } = new();
         /// <summary>
         /// This list contains description of generic type parameter
         /// Name is the "name" attribute of "typeparam"
         /// Text is the body of the comment
         /// </summary>
-        public List<(string Name, string Text)> TypeParameters { get; set; } = new List<(string Name, string Text)>();
+        public List<(string Name, string Text)> TypeParameters { get; set; } = new();
     }
 }

@@ -16,7 +16,5 @@ namespace DocXmlUnitTests
             Value1,
             Value2
         }
-
-        public string field;
     }
 }

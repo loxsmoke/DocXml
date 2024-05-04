@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
 using DocXmlUnitTests.TestData.Reflection;
 using LoxSmoke.DocXml.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -96,6 +94,5 @@ namespace DocXmlUnitTests
             tc.GetReferencedTypes(typeof(TCTestClass));
             Assert.IsTrue(tc.ReferencedTypes.Count > 3);
         }
-
     }
 }

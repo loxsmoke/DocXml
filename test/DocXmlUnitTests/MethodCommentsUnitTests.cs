@@ -14,72 +14,41 @@ namespace DocXmlUnitTests
     [TestClass]
     public class MethodCommentsUnitTests : BaseTestClass
     {
-        public MethodInfo MyClass_MemberFunction;
-        public MethodInfo MyClass_MemberFunction2_string;
-        public MethodInfo MyClass_MemberFunction2_int;
-        public MethodInfo MyClass_MemberFunctionWithArray;
-        public MethodInfo MyClass_TemplateMethod;
-        public MethodInfo MyClass_TemplateMethod2;
-        public MethodInfo MyClass_TemplateMethod3;
-        public MethodInfo MyClass_PlusOperator;
-        public MethodInfo MyClass_ItemProperty;
-        public MethodInfo MyClass_explicitOperator;
-
-        public MethodInfo MyNoCommentClass_Method;
-
-        public MethodInfo MySubClass_TemplateMethod3;
-        public MethodInfo MySubClass_MethodWithComments;
-
         [TestInitialize]
         public new void Setup()
         {
             base.Setup();
-            MyClass_MemberFunction = MyClass_Type.GetMethod(nameof(MyClass.MemberFunction));
-            MyClass_MemberFunction2_string = MyClass_Type.GetMethod(
-                    nameof(MyClass.MemberFunction2),
-                     new[] { typeof(string), typeof(int).MakeByRefType() });
-            MyClass_MemberFunction2_int = MyClass_Type.GetMethod(
-                    nameof(MyClass.MemberFunction2),
-                    new[] { typeof(int), typeof(int).MakeByRefType() });
-            MyClass_MemberFunctionWithArray = MyClass_Type.GetMethod(nameof(MyClass.MemberFunctionWithArray));
-            MyClass_TemplateMethod = MyClass_Type.GetMethod(nameof(MyClass.TemplateMethod));
-            MyClass_TemplateMethod2 = MyClass_Type.GetMethod(nameof(MyClass.TemplateMethod2));
-            MyClass_TemplateMethod3 = MyClass_Type.GetMethod(nameof(MyClass.TemplateMethod3));
-            MyClass_PlusOperator = MyClass_Type.GetMethods().FirstOrDefault(
-                mt => mt.IsSpecialName && mt.Name == "op_Addition");
-            MyClass_ItemProperty = MyClass_Type.GetMethods().FirstOrDefault(
-                mt => mt.IsSpecialName && mt.Name == "get_Item");
-            MyClass_explicitOperator = MyClass_Type.GetMethods().FirstOrDefault(
-                mt => mt.IsSpecialName && mt.Name == "op_Explicit");
-
-            MyNoCommentClass_Method = typeof(MyNoCommentClass).GetMethod(nameof(MyNoCommentClass.Method));
-
-            MySubClass_TemplateMethod3 = typeof(MySubClass).GetMethod(nameof(MySubClass.TemplateMethod3));
-            MySubClass_MethodWithComments = typeof(MySubClass).GetMethod(nameof(MySubClass.MethodWithComments));
         }
 
         [TestMethod]
         public void GetMethodComments_Constructor_NoParams()
         {
-            var constr = MyClass_Type.GetConstructor(Array.Empty<Type>());
-            var mm = Reader.GetMethodComments(constr);
-            Assert.AreEqual(0, mm.Parameters.Count);
-            Assert.AreEqual("Constructor with no parameters", mm.Summary);
+            var constructor = typeof(MyClass).GetConstructor(Array.Empty<Type>());
+
+            var comments = Reader.GetMethodComments(constructor);
+
+            Assert.AreEqual(0, comments.Parameters.Count);
+            Assert.AreEqual("Constructor with no parameters", comments.Summary);
         }
 
         [TestMethod]
         public void GetMethodComments_Constructor_OneParam()
         {
-            var constr = MyClass_Type.GetConstructor(new[] { typeof(int) });
-            var mm = Reader.GetMethodComments(constr);
-            AssertParam(mm, 0, "one", "Parameter one");
-            Assert.AreEqual("Constructor with one parameter", mm.Summary);
+            var constructor = typeof(MyClass).GetConstructor(new[] { typeof(int) });
+
+            var comments = Reader.GetMethodComments(constructor);
+
+            AssertParam(comments, 0, "one", "Parameter one");
+            Assert.AreEqual("Constructor with one parameter", comments.Summary);
         }
 
         [TestMethod]
         public void GetMethodComments()
         {
-            var comments = Reader.GetMethodComments(MyClass_MemberFunction);
+            var method = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunction));
+
+            var comments = Reader.GetMethodComments(method);
+
             Assert.AreEqual("Member function description", comments.Summary);
             Assert.AreEqual(0, comments.Parameters.Count);
             Assert.AreEqual("Return value description", comments.Returns);
@@ -104,141 +73,184 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void GetMethodComments_Empty()
         {
-            var mm = Reader.GetMethodComments(MyNoCommentClass_Method);
-            Assert.IsNull(mm.Summary);
-            Assert.AreEqual(0, mm.Parameters.Count);
-            Assert.IsNull(mm.Returns);
+            var method = typeof(MyNoCommentClass).GetMethod(nameof(MyNoCommentClass.Method));
+
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.IsNull(comments.Summary);
+            Assert.AreEqual(0, comments.Parameters.Count);
+            Assert.IsNull(comments.Returns);
         }
 
         [TestMethod]
         public void GetMethodComments_1_Param()
         {
-            var mm = Reader.GetMethodComments(MyClass_MemberFunction2_string);
+            var method = typeof(MyClass).GetMethod(
+                    nameof(MyClass.MemberFunction2),
+                     new[] { typeof(string), typeof(int).MakeByRefType() });
 
-            Assert.AreEqual("Member function description. 2", mm.Summary);
-            Assert.AreEqual(2, mm.Parameters.Count);
-            AssertParam(mm, 0, "one", "Parameter one");
-            AssertParam(mm, 1, "two", "Parameter two");
-            Assert.AreEqual("Return value description", mm.Returns);
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("Member function description. 2", comments.Summary);
+            Assert.AreEqual(2, comments.Parameters.Count);
+            AssertParam(comments, 0, "one", "Parameter one");
+            AssertParam(comments, 1, "two", "Parameter two");
+            Assert.AreEqual("Return value description", comments.Returns);
         }
 
         [TestMethod]
         public void GetMethodComments_2_Params()
         {
-            var mm = Reader.GetMethodComments(MyClass_MemberFunction2_int);
+            var method = typeof(MyClass).GetMethod(
+                    nameof(MyClass.MemberFunction2),
+                    new[] { typeof(int), typeof(int).MakeByRefType() });
 
-            Assert.AreEqual("Member function description. Overload 2", mm.Summary);
-            Assert.AreEqual(2, mm.Parameters.Count);
-            AssertParam(mm, 0, "one", "Parameter one");
-            AssertParam(mm, 1, "two", "Parameter two");
-            Assert.AreEqual("Return value description", mm.Returns);
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("Member function description. Overload 2", comments.Summary);
+            Assert.AreEqual(2, comments.Parameters.Count);
+            AssertParam(comments, 0, "one", "Parameter one");
+            AssertParam(comments, 1, "two", "Parameter two");
+            Assert.AreEqual("Return value description", comments.Returns);
         }
 
         [TestMethod]
         public void GetMethodComments_ArrayParams()
         {
-            var mm = Reader.GetMethodComments(MyClass_MemberFunctionWithArray);
+            var method = typeof(MyClass).GetMethod(nameof(MyClass.MemberFunctionWithArray));
 
-            Assert.AreEqual("MemberFunctionWithArray description", mm.Summary);
-            Assert.AreEqual(2, mm.Parameters.Count);
-            AssertParam(mm, 0, "array1", "Parameter array1");
-            AssertParam(mm, 1, "array2", "Parameter array2");
-            Assert.AreEqual("Return value description", mm.Returns);
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("MemberFunctionWithArray description", comments.Summary);
+            Assert.AreEqual(2, comments.Parameters.Count);
+            AssertParam(comments, 0, "array1", "Parameter array1");
+            AssertParam(comments, 1, "array2", "Parameter array2");
+            Assert.AreEqual("Return value description", comments.Returns);
         }
 
 
         [TestMethod]
         public void GetMethodComments_StaticOperator()
         {
-            var mm = Reader.GetMethodComments(MyClass_PlusOperator);
-            Assert.AreEqual("Operator description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual(2, mm.Parameters.Count);
-            AssertParam(mm, 0, "param1", "Parameter param1");
-            AssertParam(mm, 1, "param2", "Parameter param2");
+            var method = typeof(MyClass).GetMethods().FirstOrDefault(
+                mt => mt.IsSpecialName && mt.Name == "op_Addition");
+
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("Operator description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual(2, comments.Parameters.Count);
+            AssertParam(comments, 0, "param1", "Parameter param1");
+            AssertParam(comments, 1, "param2", "Parameter param2");
         }
 
         [TestMethod]
         public void GetMethodComments_IndexerProperty()
         {
-            var mm = Reader.GetMethodComments(MyClass_ItemProperty);
-            Assert.AreEqual("Property description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual(1, mm.Parameters.Count);
-            AssertParam(mm, 0, "parameter", "Parameter description");
+            var itemProperty = typeof(MyClass).GetMethods().FirstOrDefault(
+                mt => mt.IsSpecialName && mt.Name == "get_Item");
+
+            var comments = Reader.GetMethodComments(itemProperty);
+
+            Assert.AreEqual("Property description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual(1, comments.Parameters.Count);
+            AssertParam(comments, 0, "parameter", "Parameter description");
         }
 
         [TestMethod]
         public void GetMethodComments_ExplicitOperator()
         {
-            var mm = Reader.GetMethodComments(MyClass_explicitOperator);
-            Assert.AreEqual("Operator description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual(1, mm.Parameters.Count);
-            AssertParam(mm, 0,  "parameter", "Parameter description");
+            var explicitOperator = typeof(MyClass).GetMethods().FirstOrDefault(
+                mt => mt.IsSpecialName && mt.Name == "op_Explicit");
+
+            var comments = Reader.GetMethodComments(explicitOperator);
+
+            Assert.AreEqual("Operator description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual(1, comments.Parameters.Count);
+            AssertParam(comments, 0,  "parameter", "Parameter description");
         }
 
 
         [TestMethod]
         public void GetMethodComments_TemplateMethod()
         {
-            var mm = Reader.GetMethodComments(MyClass_TemplateMethod);
-            Assert.AreEqual("TemplateMethod description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns.Trim());
-            Assert.AreEqual(0, mm.Parameters.Count);
-            Assert.AreEqual(1, mm.TypeParameters.Count);
-            AssertTypeParam(mm, 0, "T", "Type parameter");
+            var method = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod));
+
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("TemplateMethod description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns.Trim());
+            Assert.AreEqual(0, comments.Parameters.Count);
+            Assert.AreEqual(1, comments.TypeParameters.Count);
+            AssertTypeParam(comments, 0, "T", "Type parameter");
         }
 
         [TestMethod]
         public void GetMethodComments_TemplateMethod_GenericParameter()
         {
-            var mm = Reader.GetMethodComments(MyClass_TemplateMethod2);
-            Assert.AreEqual("TemplateMethod2 description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual(1, mm.Parameters.Count);
-            AssertParam(mm, 0, "parameter", "Parameter description");
-            Assert.AreEqual(mm.TypeParameters.Count, 1);
-            AssertTypeParam(mm, 0, "T", "Type parameter");
+            var method = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod2));
+
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("TemplateMethod2 description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual(1, comments.Parameters.Count);
+            AssertParam(comments, 0, "parameter", "Parameter description");
+            Assert.AreEqual(comments.TypeParameters.Count, 1);
+            AssertTypeParam(comments, 0, "T", "Type parameter");
         }
 
         [TestMethod]
         public void GetMethodComments_TemplateMethod_2_GenericParameters()
         {
-            var mm = Reader.GetMethodComments(MyClass_TemplateMethod3);
-            Assert.AreEqual("TemplateMethod3 description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual(2, mm.Parameters.Count, 2);
-            AssertParam(mm, 0, "parameter1", "Parameter description");
-            AssertParam(mm, 1, "parameter2", "Parameter description");
-            Assert.AreEqual(2, mm.TypeParameters.Count);
-            AssertTypeParam(mm, 0, "X", "Type parameter");
-            AssertTypeParam(mm, 1, "Y", "Type parameter");
+            var method = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod3));
+
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("TemplateMethod3 description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual(2, comments.Parameters.Count, 2);
+            AssertParam(comments, 0, "parameter1", "Parameter description");
+            AssertParam(comments, 1, "parameter2", "Parameter description");
+            Assert.AreEqual(2, comments.TypeParameters.Count);
+            AssertTypeParam(comments, 0, "X", "Type parameter");
+            AssertTypeParam(comments, 1, "Y", "Type parameter");
         }
 
         [TestMethod]
         public void GetMethodComments_TemplateMethod_BaseClass()
         {
-            var mm = Reader.GetMethodComments(MySubClass_TemplateMethod3);
-            Assert.AreEqual("TemplateMethod3 description", mm.Summary);
-            Assert.AreEqual("Return value description", mm.Returns);
-            Assert.AreEqual(2, mm.Parameters.Count);
-            AssertParam(mm, 0, "parameter1", "Parameter description");
-            AssertParam(mm, 1, "parameter2", "Parameter description");
+            var method = typeof(MySubClass).GetMethod(nameof(MySubClass.TemplateMethod3));
+
+            var comments = Reader.GetMethodComments(method);
+
+            Assert.AreEqual("TemplateMethod3 description", comments.Summary);
+            Assert.AreEqual("Return value description", comments.Returns);
+            Assert.AreEqual(2, comments.Parameters.Count);
+            AssertParam(comments, 0, "parameter1", "Parameter description");
+            AssertParam(comments, 1, "parameter2", "Parameter description");
         }
 
         [TestMethod]
         public void GetMethodComment()
         {
             var constructors = typeof(MySubClass).GetConstructors();
+
+            var comment = Reader.GetMemberComment(constructors.First());
+
             Assert.AreEqual(1, constructors.Length);
-            Assert.AreEqual("Constructor comment", Reader.GetMemberComment(constructors.First()));
+            Assert.AreEqual("Constructor comment", comment);
         }
 
         [TestMethod]
         public void GetMethodComments_SubClass()
         {
-            var comments = Reader.GetMemberComments(MySubClass_MethodWithComments);
+            var method = typeof(MySubClass).GetMethod(nameof(MySubClass.MethodWithComments));
+            
+            var comments = Reader.GetMemberComments(method);
+            
             Assert.AreEqual("Method summary", comments.Summary);
             Assert.AreEqual("Method example", comments.Example);
             Assert.AreEqual("Method remarks", comments.Remarks);
@@ -259,16 +271,21 @@ namespace DocXmlUnitTests
         [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithReadOnlyStringCollection), "MemberFunctionWithReadOnlyStringCollection description")]
         public void GetMethodComments_InParamter(Type type, string methodName, string expectedSummary)
         {
-            var comments = Reader.GetMethodComments(type.GetMethod(methodName));
-            Assert.AreEqual(expectedSummary, comments.Summary);
+            var method = type.GetMethod(methodName);
+            
+            var comments = Reader.GetMethodComments(method);
+            
+            Assert.AreEqual(expectedSummary.ReplaceLineEndings(), comments.Summary.ReplaceLineEndings());
         }
 
         [TestMethod]
         public void GetMethodComments_Inheritdoc_Constructor()
         {
-            var comments =
-                Reader.GetMethodComments(typeof(ClassForInheritdoc)
-                    .GetConstructor(new Type[] { typeof(int) }));
+            var method = typeof(ClassForInheritdoc)
+                    .GetConstructor(new Type[] { typeof(int) });
+            
+            var comments = Reader.GetMethodComments(method);
+            
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("Constructor2", comments.Summary);
             Assert.IsNotNull(comments.Parameters);
@@ -279,9 +296,11 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void GetMethodComments_Inheritdoc_VirtualOverride()
         {
-            var comments =
-                Reader.GetMethodComments(typeof(ClassForInheritdoc)
-                    .GetMethod(nameof(ClassForInheritdoc.Method)));
+            var method = typeof(ClassForInheritdoc)
+                    .GetMethod(nameof(ClassForInheritdoc.Method));
+            
+            var comments = Reader.GetMethodComments(method);
+            
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("Method for Inheritdoc", comments.Summary);
         }
@@ -289,9 +308,11 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void GetMethodComments_Inheritdoc_InterfaceImplementation()
         {
-            var comments =
-                Reader.GetMethodComments(typeof(ClassForInheritdoc)
-                    .GetMethod(nameof(ClassForInheritdoc.InterfaceMethod)));
+            var method = typeof(ClassForInheritdoc)
+                    .GetMethod(nameof(ClassForInheritdoc.InterfaceMethod));
+
+            var comments = Reader.GetMethodComments(method);
+
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("Interface method", comments.Summary);
         }
@@ -299,9 +320,11 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void GetMethodComments_Inheritdoc_Cref()
         {
-            var comments =
-                Reader.GetMethodComments(typeof(ClassForInheritdocCref)
-                    .GetMethod(nameof(ClassForInheritdocCref.Method)));
+            var method = typeof(ClassForInheritdocCref)
+                    .GetMethod(nameof(ClassForInheritdocCref.Method));
+
+            var comments = Reader.GetMethodComments(method);
+
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("M:DocXmlUnitTests.TestData.BaseClassForInheritdoc.Method", comments.Inheritdoc.Cref);
             Assert.AreEqual("Method for Inheritdoc", comments.Summary);
@@ -314,9 +337,11 @@ namespace DocXmlUnitTests
                 new Assembly[] { typeof(MyClass).Assembly, typeof(OtherClass).Assembly},
                 (a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
 
-            var comments =
-                docReader.GetMethodComments(typeof(ClassForInheritdocCref)
-                    .GetMethod(nameof(ClassForInheritdocCref.OtherLibMethod)));
+            var method = typeof(ClassForInheritdocCref)
+                    .GetMethod(nameof(ClassForInheritdocCref.OtherLibMethod));
+
+            var comments = docReader.GetMethodComments(method);
+
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual("OtherLibMethod summary", comments.Summary);
         }
@@ -324,8 +349,10 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void GetMemberComments_Property_Inheritdoc()
         {
-            var comments =
-                Reader.GetMemberComments(typeof(ClassForInheritdoc).GetProperty(nameof(ClassForInheritdoc.Property)));
+            var property = typeof(ClassForInheritdoc).GetProperty(nameof(ClassForInheritdoc.Property));
+
+            var comments =Reader.GetMemberComments(property);
+            
             Assert.IsNotNull(comments.Inheritdoc);
         }
     }

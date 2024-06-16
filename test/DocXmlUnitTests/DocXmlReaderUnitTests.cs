@@ -52,8 +52,8 @@ First paragraph.
 </para>
 <para>
 Second paragraph.
-</para>",
-                summary);
+</para>".ReplaceLineEndings(),
+                summary.ReplaceLineEndings());
         }
 
         [TestMethod]

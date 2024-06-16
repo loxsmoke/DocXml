@@ -25,8 +25,10 @@ namespace DocXmlUnitTests
         [DataRow(nameof(MyClass.genericTypeField), "Generic field description")]
         public void GetMemberComment(string memberName, string expectedComment)
         {
-            var memberInfo = MyClass_Type.GetMember(memberName).First();
+            var memberInfo = typeof(MyClass).GetMember(memberName).First();
+
             var comment = Reader.GetMemberComment(memberInfo);
+
             Assert.AreEqual(expectedComment, comment);
         }
     }

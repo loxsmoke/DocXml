@@ -29,34 +29,37 @@ namespace DocXmlUnitTests
         [DataRow(typeof(MyClass.Nested<>.DoubleNested<>), "Double nested generic class")]
         public void GetTypeComments(Type type, string expectedSummaryComment)
         {
-            var mm = Reader.GetTypeComments(type);
-            Assert.AreEqual(expectedSummaryComment, mm.Summary);
+            var comments = Reader.GetTypeComments(type);
+            Assert.AreEqual(expectedSummaryComment, comments.Summary);
         }
 
         [TestMethod]
         public void GetTypeComments_OtherAssembly()
         {
-            var mm = MultiAssemblyReader.GetTypeComments(typeof(OtherClass));
-            Assert.AreEqual("Other class", mm.Summary);
+            var comments = MultiAssemblyReader.GetTypeComments(typeof(OtherClass));
+            Assert.AreEqual("Other class", comments.Summary);
         }
 
 
         [TestMethod]
         public void GetTypeComments_XPathDocument()
         {
-            var m = new DocXmlReader(new XPathDocument("DocXmlUnitTests.xml"));
-            var mm = m.GetTypeComments(typeof(MyClass));
-            Assert.AreEqual("This is MyClass", mm.Summary);
+            var reader = new DocXmlReader(new XPathDocument("DocXmlUnitTests.xml"));
+            
+            var comments = reader.GetTypeComments(typeof(MyClass));
+            
+            Assert.AreEqual("This is MyClass", comments.Summary);
         }
 
 
         [TestMethod]
         public void GetTypeComments_DelegateType()
         {
-            var mm = Reader.GetTypeComments(MyClass_Type.GetNestedType(nameof(MyClass.DelegateType)));
-            Assert.AreEqual("Delegate type description", mm.Summary);
-            Assert.AreEqual(1, mm.Parameters.Count);
-            AssertParam(mm, 0, "parameter", "Parameter description");
+            var comments = Reader.GetTypeComments(typeof(MyClass).GetNestedType(nameof(MyClass.DelegateType)));
+
+            Assert.AreEqual("Delegate type description", comments.Summary);
+            Assert.AreEqual(1, comments.Parameters.Count);
+            AssertParam(comments, 0, "parameter", "Parameter description");
         }
 
         [DataTestMethod]
@@ -65,6 +68,7 @@ namespace DocXmlUnitTests
         public void GetTypeComments_Inheritdoc(Type type, string expectedComment)
         {
             var comments = Reader.GetTypeComments(type);
+
             Assert.IsNotNull(comments.Inheritdoc);
             Assert.AreEqual(string.Empty, comments.Inheritdoc.Cref);
             Assert.AreEqual(expectedComment, comments.Summary);
@@ -73,12 +77,13 @@ namespace DocXmlUnitTests
         [TestMethod]
         public void GetTypeComments_TypeParam()
         {
-            var mm = Reader.GetTypeComments(typeof(ClassWithTypeParams<int, string>));
-            Assert.AreEqual(2, mm.TypeParameters.Count);
-            Assert.AreEqual("T1", mm.TypeParameters[0].Name);
-            Assert.AreEqual("Type param1", mm.TypeParameters[0].Text);
-            Assert.AreEqual("T2", mm.TypeParameters[1].Name);
-            Assert.AreEqual("Type param2", mm.TypeParameters[1].Text);
+            var comments = Reader.GetTypeComments(typeof(ClassWithTypeParams<int, string>));
+
+            Assert.AreEqual(2, comments.TypeParameters.Count);
+            Assert.AreEqual("T1", comments.TypeParameters[0].Name);
+            Assert.AreEqual("Type param1", comments.TypeParameters[0].Text);
+            Assert.AreEqual("T2", comments.TypeParameters[1].Name);
+            Assert.AreEqual("Type param2", comments.TypeParameters[1].Text);
         }
     }
 }

@@ -1,6 +1,7 @@
 # DocXml - C# XML documentation reader 
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5dvuk9y8eo6q85n4?svg=true)](https://ci.appveyor.com/project/loxsmoke/docxml-nbx6b) [![AppVeyor tests](https://img.shields.io/appveyor/tests/loxsmoke/docxml-nbx6b.svg)](https://ci.appveyor.com/project/loxsmoke/docxml-nbx6b) [![codecov](https://codecov.io/gh/loxsmoke/docxml/branch/master/graph/badge.svg)](https://codecov.io/gh/loxsmoke/docxml) [![NuGet version](https://badge.fury.io/nu/LoxSmoke.DocXml.svg)](https://badge.fury.io/nu/LoxSmoke.DocXml) [![NuGet](https://img.shields.io/nuget/dt/LoxSmoke.DocXml.svg)](https://www.nuget.org/packages/LoxSmoke.DocXml) 
+[![Build and test](https://github.com/loxsmoke/DocXml/actions/workflows/BuildAndTest.yml/badge.svg)](https://github.com/loxsmoke/DocXml/actions/workflows/BuildAndTest.yml)
+ [![codecov](https://codecov.io/gh/loxsmoke/docxml/branch/master/graph/badge.svg)](https://codecov.io/gh/loxsmoke/docxml) [![NuGet version](https://badge.fury.io/nu/LoxSmoke.DocXml.svg)](https://badge.fury.io/nu/LoxSmoke.DocXml) [![NuGet](https://img.shields.io/nuget/dt/LoxSmoke.DocXml.svg)](https://www.nuget.org/packages/LoxSmoke.DocXml) 
 
 [API reference](./api-reference.md)
 

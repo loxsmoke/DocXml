@@ -18,4 +18,5 @@ dotnet-property DocXml.csproj AssemblyVersion:%1.0
 dotnet-property DocXml.csproj FileVersion:%1.0
 dotnet build -c Release
 popd
-move ..\src\DocXml\bin\release\LoxSmoke.DocXml.%PACKAGE_VERSION%.nupkg
+move ..\src\DocXml\nupkg\LoxSmoke.DocXml.%PACKAGE_VERSION%.nupkg
+

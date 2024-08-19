@@ -19,7 +19,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build the project
-        run: dotnet build docxml.csproj -c Release
+        run: dotnet build DocXml.csproj -c Release
         working-directory: src/DocXml
 
       - name: Publish to NuGet.org

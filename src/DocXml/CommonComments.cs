@@ -33,5 +33,10 @@ namespace LoxSmoke.DocXml
         /// Full XML comment text
         /// </summary>
         public string FullCommentText { get; set; }
+
+        /// <summary>
+        /// "seealso" links.
+        /// </summary>
+        public List<SeeAlsoTag> SeeAlso { get; set; } = new();
     }
 }

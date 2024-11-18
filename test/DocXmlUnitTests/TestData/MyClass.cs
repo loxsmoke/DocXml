@@ -97,6 +97,8 @@ namespace DocXmlUnitTests
     /// <summary>
     /// This is MyClass
     /// </summary>
+    /// <seealso cref="MyClass.Nested"/>
+    /// <seealso href="https://github.com/loxsmoke/DocXml">DocXml GitHub</seealso>
     public class MyClass
     {
         /// <summary>
@@ -134,6 +136,8 @@ namespace DocXmlUnitTests
         /// <summary>
         /// Nested class
         /// </summary>
+        /// <seealso cref="MyClass"/>
+        /// <seealso href="https://github.com/loxsmoke/DocXml">DocXml GitHub</seealso>
         public class Nested
         {
             /// <summary>

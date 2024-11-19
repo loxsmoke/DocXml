@@ -85,5 +85,23 @@ namespace DocXmlUnitTests
             Assert.AreEqual("T2", comments.TypeParameters[1].Name);
             Assert.AreEqual("Type param2", comments.TypeParameters[1].Text);
         }
+
+        [TestMethod]
+        public void GetTypeComments_SeeAlso()
+        {
+            var comments = Reader.GetTypeComments(typeof(MyClass));
+            Assert.IsNotNull(comments.SeeAlso);
+            Assert.AreEqual(2, comments.SeeAlso.Count);
+
+            // Verify the <seealso cref="" /> is present
+            Assert.AreEqual("T:DocXmlUnitTests.MyClass.Nested", comments.SeeAlso[0].Cref);
+            Assert.AreEqual(string.Empty, comments.SeeAlso[0].Href);
+            Assert.AreEqual(string.Empty, comments.SeeAlso[0].Text);
+
+            // Verify the <seealso href="">Test</seealso> is present
+            Assert.AreEqual(string.Empty, comments.SeeAlso[1].Cref);
+            Assert.AreEqual("https://github.com/loxsmoke/DocXml", comments.SeeAlso[1].Href);
+            Assert.AreEqual("DocXml GitHub", comments.SeeAlso[1].Text);
+        }
     }
 }

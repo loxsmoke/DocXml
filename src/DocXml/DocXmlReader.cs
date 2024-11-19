@@ -153,6 +153,27 @@ namespace LoxSmoke.DocXml
             return comments;
         }
 
+        public List<SeeAlsoTag> GetSeeAlsoTags(XPathNavigator node)
+        {
+            var list = new List<SeeAlsoTag>();
+            var childNodes = node?.Select(SeeAlsoXPath);
+            if (childNodes == null) return list;
+
+            while (childNodes.MoveNext())
+            {
+                var cref = childNodes.Current.GetAttribute(CrefAttribute, string.Empty);
+                var href = childNodes.Current.GetAttribute(HrefAttribute, string.Empty);
+                var text = GetXmlText(childNodes.Current);
+                list.Add(new SeeAlsoTag()
+                {
+                    Cref = cref,
+                    Href = href,
+                    Text = text,
+                });
+            }
+            return list;
+        }
+
         /// <summary>
         /// Return Summary comments for specified type.
         /// For Delegate types Parameters field may be returned as well.
@@ -279,11 +300,13 @@ namespace LoxSmoke.DocXml
         private const string ReturnsXPath = "returns";
         private const string InheritdocXPath = "inheritdoc";
         private const string ExceptionXPath = "exception";
+        private const string SeeAlsoXPath = "seealso";
 
         //  XML attribute names
         private const string NameAttribute = "name";
         private const string CodeAttribute = "code";
         private const string CrefAttribute = "cref";
+        private const string HrefAttribute = "href";
         #endregion
 
         #region XML helper functions
@@ -295,6 +318,7 @@ namespace LoxSmoke.DocXml
             comments.Remarks = GetRemarksComment(rootNode);
             comments.Example = GetExampleComment(rootNode);
             comments.Inheritdoc = GetInheritdocTag(rootNode);
+            comments.SeeAlso = GetSeeAlsoTags(rootNode);
         }
 
         private XPathNavigator GetXmlMemberNode(string name, Type typeForAssembly, bool searchAllCurrentFiles = false)
@@ -307,7 +331,7 @@ namespace LoxSmoke.DocXml
             var node = GetXmlMemberNodeFromDictionary(name, typeForAssembly);
             if (node != null ||
                 !searchAllCurrentFiles ||
-                assemblyNavigators.Count <= 1 && typeForAssembly != null) 
+                assemblyNavigators.Count <= 1 && typeForAssembly != null)
                 return node;
 
             return assemblyNavigators.Values
@@ -414,7 +438,7 @@ namespace LoxSmoke.DocXml
             if (rootNode == null) return null;
             var inheritdoc = GetNamedComments(rootNode, InheritdocXPath, CrefAttribute);
             if (inheritdoc.Count == 0) return null;
-            return new InheritdocTag() {Cref = inheritdoc.First().Name};
+            return new InheritdocTag() { Cref = inheritdoc.First().Name };
         }
 
         private bool NeedsResolving(CommonComments comments)
@@ -425,8 +449,8 @@ namespace LoxSmoke.DocXml
                    string.IsNullOrEmpty(comments.Example);
         }
 
-        private bool GetCrefComments(string cref, Type typeForAssembly, CommonComments comments, 
-            Action<XPathNavigator> getCommentAction) 
+        private bool GetCrefComments(string cref, Type typeForAssembly, CommonComments comments,
+            Action<XPathNavigator> getCommentAction)
         {
             if (string.IsNullOrEmpty(cref)) return false;
             var typeNode = GetXmlMemberNode(cref, typeForAssembly, true);
@@ -443,13 +467,13 @@ namespace LoxSmoke.DocXml
                 comments?.Parameters?.Count > 0 ||
                 !string.IsNullOrEmpty(comments?.Returns) ||
                 comments?.Responses?.Count > 0 ||
-                comments?.TypeParameters?.Count > 0) 
+                comments?.TypeParameters?.Count > 0)
                 return comments;
 
             // If an explicit cref attribute is specified, the documentation from 
             // the specified namespace/type/member is inherited.
-            if (GetCrefComments(comments.Inheritdoc.Cref, methodInfo.ReflectedType, comments, 
-                (node) => GetComments(methodInfo, comments, node))) 
+            if (GetCrefComments(comments.Inheritdoc.Cref, methodInfo.ReflectedType, comments,
+                (node) => GetComments(methodInfo, comments, node)))
                 return comments;
 
             // For constructors:
@@ -464,7 +488,7 @@ namespace LoxSmoke.DocXml
                 while (baseClass != null)
                 {
                     var baseConstructor = baseClass.GetConstructor(
-                        BindingFlags.Public| BindingFlags.NonPublic| BindingFlags.Instance,
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
                         null, CallingConventions.Any, constructorSignature, null);
                     if (baseConstructor != null)
                     {
@@ -519,13 +543,13 @@ namespace LoxSmoke.DocXml
         private TypeComments ResolveInheritdocComments(TypeComments comments, Type type)
         {
             if (!NeedsResolving(comments) ||
-                comments?.Parameters?.Count > 0) 
+                comments?.Parameters?.Count > 0)
                 return comments;
 
             // If an explicit cref attribute is specified, the documentation from
             // the specified namespace/type/member is inherited. 
             if (GetCrefComments(comments.Inheritdoc.Cref, type, comments,
-                (node) => GetComments(type, comments, node))) 
+                (node) => GetComments(type, comments, node)))
                 return comments;
 
             // For types and interfaces:

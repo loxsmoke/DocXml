@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DocXmlOtherLibForUnitTests;
+using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,6 +20,14 @@ namespace DocXmlUnitTests
             var doc = new DocXmlReader((a) =>Path.GetFileNameWithoutExtension(a.Location) + ".xml");
             var mm = doc.GetTypeComments(typeof(MyClass));
             Assert.AreEqual("This is MyClass", mm.Summary);
+        }
+
+        [TestMethod]
+        public void GetRecordComments()
+        {
+            var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
+            var mm = doc.GetTypeComments(typeof(MyRecord));
+            Assert.AreEqual("My record description", mm.Summary);
         }
 
         [TestMethod]

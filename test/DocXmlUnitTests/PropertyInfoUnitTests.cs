@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Linq;
+using DocXmlUnitTests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #pragma warning disable CS1591
@@ -46,6 +44,14 @@ namespace DocXmlUnitTests
 
             var comments = Reader.GetMemberComments(getSetProperty);
             Assert.AreEqual("GetSetProperty comment", comments.Summary);
+        }
+
+        [TestMethod]
+        public void GetMemberComments_Record()
+        {
+            var firstProp = typeof(MyRecord).GetProperties().FirstOrDefault(mt => mt.Name == nameof(MyRecord.First));
+            var comments = Reader.GetMemberComments(firstProp);
+            Assert.AreEqual("First field", comments.Summary);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace DocXml.Reflection
 {
@@ -13,15 +12,15 @@ namespace DocXml.Reflection
     public static class ReflectionExtensions
     {
         /// <summary>
-        /// A dictionary containing a mapping of type to type names.
+        /// A dictionary containing a mapping of primitive types to type names.
         /// </summary>
         public static Dictionary<Type, string> KnownTypeNames
-            => _knownTypeNames ?? (_knownTypeNames = CreateKnownTypeNamesDictionary());
+            => _knownTypeNames ??= CreateKnownTypeNamesDictionary();
 
         private static Dictionary<Type, string> _knownTypeNames;
 
         /// <summary>
-        /// Create a dictionary of standard value types and a string type. 
+        /// Create a dictionary of primitive value types and a string type. 
         /// </summary>
         /// <returns>Dictionary mapping types to type names</returns>
         public static Dictionary<Type, string> CreateKnownTypeNamesDictionary()
@@ -51,10 +50,9 @@ namespace DocXml.Reflection
 
         /// <summary>
         /// Checks if the specified type is a nullable value type. 
-        /// Returns false for object references.
         /// </summary>
         /// <param name="type">Type to check.</param>
-        /// <returns>True if the type is nullable like int? or Nullable&lt;Something&gt;</returns>
+        /// <returns>Returns true if the type is nullable like int? or Nullable&lt;T&gt;. False for non-nullable types or object references.</returns>
         public static bool IsNullable(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
@@ -351,7 +349,7 @@ namespace DocXml.Reflection
         /// <summary>
         /// Hash of all possible ValueTuple type definitions for quick check if type is value tuple.
         /// </summary>
-        static HashSet<Type> GenericTuples = new HashSet<Type>(new Type[] {
+        static HashSet<Type> GenericTuples = new(new Type[] {
             typeof(ValueTuple<>),
             typeof(ValueTuple<,>),
             typeof(ValueTuple<,,>),
@@ -374,6 +372,26 @@ namespace DocXml.Reflection
         {
             var index = genericTypeName.IndexOf('`');
             return (index < 0) ? genericTypeName : genericTypeName.Substring(0, index);
+        }
+
+        /// <summary>
+        /// Check if specified type is a record type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>Return true if it is a record. False otherwise.</returns>
+        public static bool IsRecord(this Type type)
+        {
+            // Records are classes or structs
+            if (!type.IsClass && !type.IsValueType)
+                return false;
+
+            // Look for the compiler-generated PrintMembers method
+            var printMembers = type.GetMethod(
+                "PrintMembers",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly
+            );
+
+            return printMembers != null;
         }
     }
 }

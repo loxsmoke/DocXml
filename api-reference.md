@@ -1,8 +1,8 @@
-# DocXml.dll v3.8.0.0 API documentation
+# DocXml.dll v3.9.0.0 API documentation
 
-Created by [mddox](https://github.com/loxsmoke/mddox) on 11/18/2024
+Created by [mddox](https://github.com/loxsmoke/mddox) on 12/1/2025
 
-Command line: mddox DocXml.dll -s latest -c -d
+Command line: mddox.dll DocXml.dll -s latest -c -d
 
 # All types
 
@@ -23,14 +23,15 @@ Reflection extension methods with supporting properties.
 
 | Name | Type | Summary |
 |---|---|---|
-| **KnownTypeNames** | [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<[Type](https://docs.microsoft.com/en-us/dotnet/api/system.type), string> | A dictionary containing a mapping of type to type names. |
+| **KnownTypeNames** | [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<[Type](https://docs.microsoft.com/en-us/dotnet/api/system.type), string> | A dictionary containing a mapping of primitive types to type names. |
 ## Methods
 
 | Name | Returns | Summary |
 |---|---|---|
 | [CleanGenericTypeName(string genericTypeName)](#cleangenerictypenamestring-generictypename) | string | Remove the parameter count part of the generic type name. <br>For example the generic list type name is List`1.<br>This method leaves only the name part of the type such as List.<br>If specified string does not contain the number of parameters <br>part then the same string is returned. |
-| [CreateKnownTypeNamesDictionary()](#createknowntypenamesdictionary) | [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<[Type](https://docs.microsoft.com/en-us/dotnet/api/system.type), string> | Create a dictionary of standard value types and a string type. |
-| [IsNullable(Type type)](#isnullabletype-type) | bool | Checks if the specified type is a nullable value type. <br>Returns false for object references. |
+| [CreateKnownTypeNamesDictionary()](#createknowntypenamesdictionary) | [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<[Type](https://docs.microsoft.com/en-us/dotnet/api/system.type), string> | Create a dictionary of primitive value types and a string type. |
+| [IsNullable(Type type)](#isnullabletype-type) | bool | Checks if the specified type is a nullable value type. |
+| [IsRecord(Type type)](#isrecordtype-type) | bool | Check if specified type is a record type. |
 | [ToNameString(Type type, Func<Type, string> typeNameConverter)](#tonamestringtype-type-functype-string-typenameconverter) | string | Convert type to the proper type name.<br>Optional **typeNameConverter** function can convert type names to strings <br>if type names should be decorated in some way either by converting text to markdown or <br>HTML links or adding some formatting.<br><br>This method returns ValueTuple types without field names. |
 | [ToNameString(Type type, Func<Type, Queue<string>, string> typeNameConverter, bool invokeTypeNameConverterForGenericType)](#tonamestringtype-type-functype-queuestring-string-typenameconverter-bool-invoketypenameconverterforgenerictype) | string | Convert type to the proper type name.<br>Optional **typeNameConverter** function can convert type names to strings <br>if type names should be decorated in some way either by converting text to markdown or <br>HTML links or adding some formatting.<br><br>This method returns ValueTuple types without field names. |
 | [ToNameString(Type type, Queue<string> tupleFieldNames, Func<Type, Queue<string>, string> typeNameConverter, bool invokeTypeNameConverterForGenericType)](#tonamestringtype-type-queuestring-tuplefieldnames-functype-queuestring-string-typenameconverter-bool-invoketypenameconverterforgenerictype) | string | Convert type to the proper type name.<br>Optional **typeNameConverter** function can convert type names to strings <br>if type names should be decorated in some way either by converting text to markdown or <br>HTML links or adding some formatting.<br><br>This method returns named tuples with field names like this (Type1 field1, Type2 field2).  **tupleFieldNames** parameter<br>must be specified with all tuple field names stored in the same order as they are in compiler-generated TupleElementNames attribute.<br>If you do not know what it is then the better and easier way is to use ToTypeNameString() methods that retrieve field names from attributes. |
@@ -63,7 +64,7 @@ Type name without the number of parameters.
 
 ### CreateKnownTypeNamesDictionary()
 
-Create a dictionary of standard value types and a string type.
+Create a dictionary of primitive value types and a string type.
 
 
 
@@ -75,8 +76,7 @@ Dictionary mapping types to type names
 
 ### IsNullable(Type type)
 
-Checks if the specified type is a nullable value type. 
-Returns false for object references.
+Checks if the specified type is a nullable value type.
 
 | Parameter | Type | Description |
 |---|---|---|
@@ -87,7 +87,22 @@ Returns false for object references.
 
 bool
 
-True if the type is nullable like int? or Nullable&lt;Something&gt;
+Returns true if the type is nullable like int? or Nullable&lt;T&gt;. False for non-nullable types or object references.
+
+### IsRecord(Type type)
+
+Check if specified type is a record type.
+
+| Parameter | Type | Description |
+|---|---|---|
+| type | [Type](https://docs.microsoft.com/en-us/dotnet/api/system.type) |  |
+
+
+### Returns
+
+bool
+
+Return true if it is a record. False otherwise.
 
 ### ToNameString(Type type, Func\<Type, string\> typeNameConverter)
 
@@ -830,7 +845,7 @@ Settings used by TypeCollection to retrieve reflection info.
 
 | Name | Type | Summary |
 |---|---|---|
-| **Default** | [ReflectionSettings](#reflectionsettings-class) | Default reflection settings. |
+| **Default** | [ReflectionSettings](#reflectionsettings-class) | Returns instance of reflection settings with default values.<br>Includes all public and non-public instance and static properties, fields, methods, and types.<br>Returned object can be modified after retrieval to adjust settings. |
 | **PropertyFlags** | [BindingFlags](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags) | Binding flags to use when retrieving properties of the type. |
 | **MethodFlags** | [BindingFlags](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags) | Binding flags to use when retrieving methods of the type. |
 | **FieldFlags** | [BindingFlags](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.bindingflags) | Binding flags to use when retrieving fields of the type. |
@@ -974,6 +989,6 @@ Reflection information for the class, its methods, properties and fields.
 | **Type** | [Type](https://docs.microsoft.com/en-us/dotnet/api/system.type) | The type that this class describes |
 | **ReferencesIn** | [HashSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1)<[Type](https://docs.microsoft.com/en-us/dotnet/api/system.type)> | Other types referencing this type. |
 | **ReferencesOut** | [HashSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1)<[Type](https://docs.microsoft.com/en-us/dotnet/api/system.type)> | Other types referenced by this type. |
-| **Properties** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<[PropertyInfo](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.propertyinfo)> | The list of property inforation of the class. |
-| **Methods** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<[MethodBase](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.methodbase)> | The list of method inforation of the class. |
-| **Fields** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<[FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.fieldinfo)> | The list of field inforation of the class. |
+| **Properties** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<[PropertyInfo](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.propertyinfo)> | The list of property information of the class. |
+| **Methods** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<[MethodBase](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.methodbase)> | The list of method information of the class. |
+| **Fields** | [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<[FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.fieldinfo)> | The list of field information of the class. |

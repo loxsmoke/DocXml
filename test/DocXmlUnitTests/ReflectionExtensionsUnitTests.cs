@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using DocXml.Reflection;
 using DocXmlUnitTests.TestData.Reflection;
+using DocXmlUnitTests.TestData;
 
 #pragma warning disable CS1591
 
@@ -11,7 +12,7 @@ namespace DocXmlUnitTests
     [TestClass]
     public class ReflectionExtensionsUnitTests
     {
-        [DataTestMethod]        
+        [DataTestMethod]
         [DataRow(typeof(DateTime), "DateTime")]
         [DataRow(typeof(double), "double")]
         [DataRow(typeof(float), "float")]
@@ -75,14 +76,14 @@ namespace DocXmlUnitTests
         [DataRow(typeof(List<int>), false, "List<*int*>")]
         [DataRow(typeof(List<List<int>>), true, "*List*<*List*<*int*>>")]
         [DataRow(typeof(List<List<int>>), false, "List<List<*int*>>")]
-        public void ToNameString_InvokeTypeNameConverterForGenericType(Type type, 
+        public void ToNameString_InvokeTypeNameConverterForGenericType(Type type,
             bool invokeTypeNameConverterForGenericType, string expectedText)
         {
-            var text = type.ToNameString((t,q) =>
-            { 
+            var text = type.ToNameString((t, q) =>
+            {
                 if (t.IsGenericParameter) return $"+{t.Name}+";
                 if (t.IsGenericTypeDefinition) return $"*{t.Name.CleanGenericTypeName()}*";
-                return $"*{t.ToNameString()}*"; 
+                return $"*{t.ToNameString()}*";
             },
             invokeTypeNameConverterForGenericType);
             Assert.AreEqual(expectedText, text);
@@ -160,6 +161,15 @@ namespace DocXmlUnitTests
         {
             var result = type.Name.CleanGenericTypeName();
             Assert.AreEqual(expectedName, result);
+        }
+
+        [DataTestMethod]
+        [DataRow(typeof(MyRecord), true)]
+        [DataRow(typeof(MethodsReflectionClass), false)]
+        public void IsRecord(Type type, bool expectedIsRecord)
+        {
+            var result = type.IsRecord();
+            Assert.AreEqual(expectedIsRecord, result);
         }
     }
 }

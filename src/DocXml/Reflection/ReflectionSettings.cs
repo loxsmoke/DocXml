@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace LoxSmoke.DocXml.Reflection
 {
@@ -12,9 +10,11 @@ namespace LoxSmoke.DocXml.Reflection
     public class ReflectionSettings
     {
         /// <summary>
-        /// Default reflection settings.
+        /// Returns instance of reflection settings with default values.
+        /// Includes all public and non-public instance and static properties, fields, methods, and types.
+        /// Returned object can be modified after retrieval to adjust settings.
         /// </summary>
-        public static ReflectionSettings Default => new ReflectionSettings()
+        public static ReflectionSettings Default => new()
         {
             PropertyFlags = 
                 BindingFlags.Instance |

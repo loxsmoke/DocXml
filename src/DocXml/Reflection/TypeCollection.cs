@@ -32,15 +32,15 @@ namespace LoxSmoke.DocXml.Reflection
             /// </summary>
             public HashSet<Type> ReferencesOut { get; set; } = new HashSet<Type>();
             /// <summary>
-            /// The list of property inforation of the class.
+            /// The list of property information of the class.
             /// </summary>
             public List<PropertyInfo> Properties { get; set; } = new List<PropertyInfo>();
             /// <summary>
-            /// The list of method inforation of the class.
+            /// The list of method information of the class.
             /// </summary>
             public List<MethodBase> Methods { get; set; } = new List<MethodBase>();
             /// <summary>
-            /// The list of field inforation of the class.
+            /// The list of field information of the class.
             /// </summary>
             public List<FieldInfo> Fields { get; set; } = new List<FieldInfo>();
         }
@@ -217,9 +217,12 @@ namespace LoxSmoke.DocXml.Reflection
             if (VisitedPropTypes.Contains(type) || !CheckType(type)) return;
             VisitedPropTypes.Add(type);
             var thisTypeInfo = ReferencedTypes[type];
-            foreach (var info in type.GetProperties(Settings.PropertyFlags))
+
+            foreach (PropertyInfo info in type.GetProperties(Settings.PropertyFlags))
             {
                 if (Settings.PropertyFilter != null && !Settings.PropertyFilter(info)) continue;
+                if (IsCompilerGenerated(info)) continue;
+
                 thisTypeInfo.Properties.Add(info);
                 UnwrapType(type, info.PropertyType);
                 if (info.GetMethod?.GetParameters()?.Length > 0)
@@ -231,29 +234,38 @@ namespace LoxSmoke.DocXml.Reflection
                     UnwrapType(type, info.SetMethod.GetParameters()[1].ParameterType);
                 }
             }
-            foreach (var info in type.GetMethods(Settings.MethodFlags))
+
+            foreach (MethodInfo info in type.GetMethods(Settings.MethodFlags))
             {
                 if (info.IsSpecialName) continue;
                 if (Settings.MethodFilter != null && !Settings.MethodFilter(info)) continue;
+                if (IsCompilerGenerated(info)) continue;
+
                 thisTypeInfo.Methods.Add(info);
                 UnwrapType(type, info.ReturnType);
                 if (!(info.GetParameters()?.Length > 0)) continue;
-                foreach(var parameter in info.GetParameters()) UnwrapType(type, parameter.ParameterType);
+                foreach (var parameter in info.GetParameters()) UnwrapType(type, parameter.ParameterType);
             }
-            foreach (var info in type.GetConstructors(Settings.MethodFlags))
+
+            foreach (ConstructorInfo info in type.GetConstructors(Settings.MethodFlags))
             {
+                if (IsCompilerGenerated(info)) continue;
                 if (Settings.MethodFilter != null && !Settings.MethodFilter(info)) continue;
+
                 thisTypeInfo.Methods.Add(info);
                 if (!(info.GetParameters()?.Length > 0)) continue;
                 foreach (var parameter in info.GetParameters()) UnwrapType(type, parameter.ParameterType);
             }
-            foreach (var info in type.GetFields(Settings.FieldFlags))
+
+            foreach (FieldInfo info in type.GetFields(Settings.FieldFlags))
             {
                 if (IsCompilerGenerated(info)) continue;
                 if (Settings.FieldFilter != null && !Settings.FieldFilter(info)) continue;
                 thisTypeInfo.Fields.Add(info);
                 UnwrapType(type, info.FieldType);
             }
+
+
             foreach (var info in type.GetNestedTypes(Settings.NestedTypeFlags))
             {
                 UnwrapType(type, info);
@@ -322,12 +334,15 @@ namespace LoxSmoke.DocXml.Reflection
         bool IsCompilerGenerated(Type type)
         {
             return type.Name.Contains('<') ||
-                   type.CustomAttributes.Any(attr => attr.AttributeType == typeof(CompilerGeneratedAttribute));
+                   type.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
         }
         bool IsCompilerGenerated(FieldInfo fieldInfo)
         {
             return fieldInfo.FieldType.Name.Contains('<') ||
-                   fieldInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(CompilerGeneratedAttribute));
+                   fieldInfo.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
         }
+
+        bool IsCompilerGenerated(MethodBase propInfo) => propInfo.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
+        bool IsCompilerGenerated(MemberInfo propInfo) => propInfo.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
     }
 }

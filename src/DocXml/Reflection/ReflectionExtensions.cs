@@ -316,7 +316,7 @@ namespace DocXml.Reflection
                                .Select(arg => arg.argumentType.ToNameString(tupleFieldNames, typeNameConverter, invokeTypeNameConverterForGenericType) +
                                (arg.argumentName == null ? string.Empty : (" " + arg.argumentName)))) + ")";
                 }
-                else if (type.Name.Contains('`'))
+                else
                 {
                     var genericTypeName = invokeTypeNameConverterForGenericType ?
                         typeNameConverter?.Invoke(genericTypeDefinition, tupleFieldNames) : null;
@@ -324,10 +324,6 @@ namespace DocXml.Reflection
                         (genericTypeName ?? type.Name.CleanGenericTypeName()) + "<" +
                         string.Join(", ", type.GetGenericArguments()
                            .Select(argType => argType.ToNameString(tupleFieldNames, typeNameConverter, invokeTypeNameConverterForGenericType))) + ">";
-                }
-                else
-                {
-                    newTypeName = type.Name;
                 }
             }
             else if (type.IsArray)

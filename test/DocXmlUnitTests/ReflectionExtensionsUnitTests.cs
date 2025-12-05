@@ -165,7 +165,9 @@ namespace DocXmlUnitTests
 
         [DataTestMethod]
         [DataRow(typeof(MyRecord), true)]
+        [DataRow(typeof(MyRecordStruct), true)]
         [DataRow(typeof(MethodsReflectionClass), false)]
+        [DataRow(typeof(int), false)]
         public void IsRecord(Type type, bool expectedIsRecord)
         {
             var result = type.IsRecord();

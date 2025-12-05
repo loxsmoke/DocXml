@@ -2,27 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
     <Configurations>Debug;Release;Coverage</Configurations>
-
     <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>10.0</LangVersion>
     <DocumentationFile>DocXmlUnitTests.xml</DocumentationFile>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>DocXmlUnitTests.xml</DocumentationFile>
-    <LangVersion>9</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Coverage|AnyCPU'">
-    <DocumentationFile>DocXmlUnitTests.xml</DocumentationFile>
-    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

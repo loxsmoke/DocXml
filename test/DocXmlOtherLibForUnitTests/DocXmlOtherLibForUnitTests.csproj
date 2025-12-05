@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+	  <LangVersion>10.0</LangVersion>
     <Configurations>Debug;Release;Coverage</Configurations>
   </PropertyGroup>
 

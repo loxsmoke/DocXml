@@ -6,6 +6,9 @@ on:
       - 'v*.*.*'
   workflow_dispatch:  # Allows manual triggering of the workflow
 
+permissions:
+  contents: read
+  
 jobs:
   build:
     runs-on: ubuntu-latest

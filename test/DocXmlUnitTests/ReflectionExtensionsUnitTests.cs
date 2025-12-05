@@ -41,6 +41,9 @@ namespace DocXmlUnitTests
             var text = type.ToNameString();
             Assert.AreEqual(expectedText, text);
 
+            var text1 = type.ToNameString((t) => null);
+            Assert.AreEqual(expectedText, text1);
+
             var text2 = type.ToNameString((_, queue) => null);
             Assert.AreEqual(expectedText, text2);
         }
@@ -64,6 +67,9 @@ namespace DocXmlUnitTests
         {
             var text = type.MakeByRefType().ToNameString();
             Assert.AreEqual(expectedText, text);
+
+            var text1 = type.MakeByRefType().ToNameString((t) => null);
+            Assert.AreEqual(expectedText, text1);
 
             var text2 = type.MakeByRefType().ToNameString((_, queue) => null);
             Assert.AreEqual(expectedText, text2);
@@ -167,6 +173,7 @@ namespace DocXmlUnitTests
         [DataRow(typeof(MyRecord), true)]
         [DataRow(typeof(MyRecordStruct), true)]
         [DataRow(typeof(MethodsReflectionClass), false)]
+        [DataRow(typeof(MyStruct), false)]
         [DataRow(typeof(int), false)]
         public void IsRecord(Type type, bool expectedIsRecord)
         {

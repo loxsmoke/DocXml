@@ -77,17 +77,22 @@ namespace DocXmlUnitTests
             Assert.AreEqual("=0", enumComment.ToString());
         }
 
-        [TestMethod]
-        public void EnumValueComments_ToString()
+        [DataTestMethod]
+        [DataRow(5, false, "name=5 summary")]
+        [DataRow(5, true, "name=5 summary")]
+        public void EnumValueComments_ToString(int value, bool isBigValue, string expectedResult)
         {
             var enumComment = new EnumValueComment()
             {
                 Value = 5,
+                BigValue = new BigInteger(5),
+                IsBigValue = true,
                 Name = "name",
                 Summary = "summary"
             };
             Assert.AreEqual("name=5 summary", enumComment.ToString());
         }
+
 
         [TestMethod]
         public void GetEnumComments_WithValue_Comments_OtherAssembly()

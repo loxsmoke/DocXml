@@ -99,6 +99,7 @@ namespace DocXmlUnitTests
         [DataRow(typeof(DateTime), false)]
         [DataRow(typeof(DateTime?), true)]
         [DataRow(typeof(string), false)]
+        [DataRow(typeof(object), false)]
         public void IsNullable(Type type, bool expectedNullable)
         {
             Assert.AreEqual(expectedNullable, type.IsNullable());

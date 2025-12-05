@@ -27,6 +27,24 @@ namespace DocXmlUnitTests
             Assert.ThrowsException<ArgumentNullException>(() => Reader.GetMemberComments(null));
         }
 
+        [TestMethod]
+        public void GetMemberComment_NoMember()
+        {
+            var memberInfo = typeof(MemberInfoUnitTests).GetMember(nameof(GetMemberComment_NoMember)).First();
+            var commentText = Reader.GetMemberComment(memberInfo);
+            
+            Assert.IsTrue(string.IsNullOrEmpty(commentText));
+        }
+
+        [TestMethod]
+        public void GetMemberComments_NoMember()
+        {
+            var memberInfo = typeof(MemberInfoUnitTests).GetMember(nameof(GetMemberComment_NoMember)).First();
+            var comment = Reader.GetMemberComments(memberInfo);
+            
+            AssertEmpty(comment);
+        }
+
         [DataTestMethod]
         [DataRow(nameof(MyClass.stringField), "String field description")]
         [DataRow(nameof(MyClass.noCommentField), "")]

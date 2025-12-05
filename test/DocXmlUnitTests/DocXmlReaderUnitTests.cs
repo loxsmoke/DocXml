@@ -11,7 +11,7 @@ using System.Xml.XPath;
 namespace DocXmlUnitTests
 {
     [TestClass]
-    public class DocXmlReaderUnitTests
+    public class DocXmlReaderUnitTests : BaseTestClass
     {
         [TestMethod]
         public void Constructor_NullPathProvider_Throws()
@@ -40,10 +40,9 @@ namespace DocXmlUnitTests
         public void GetTypeComments_UnknownAssembly()
         {
             var doc = new DocXmlReader((a) => Path.GetFileNameWithoutExtension(a.Location) + ".xml");
-            var mm = doc.GetTypeComments(typeof(FileInfo));
-            Assert.IsNull(mm.Summary);
-            Assert.IsNull(mm.Remarks);
-            Assert.IsNull(mm.Example);
+            var comments = doc.GetTypeComments(typeof(FileInfo));
+
+            base.AssertEmpty(comments);
         }
 
         [TestMethod]

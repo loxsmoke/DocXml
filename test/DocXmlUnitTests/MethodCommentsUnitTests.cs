@@ -21,11 +21,21 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetMethodComments_NullInfo()
+        public void GetMethodComments_NullInfo_Exception()
         {
             MethodBase methodBase = null;
 
             Assert.ThrowsException<ArgumentNullException>(() => Reader.GetMethodComments(methodBase));
+        }
+
+        [TestMethod]
+        public void GetMethodComments_NullInfo()
+        {
+            var method = typeof(MyNoCommentClass).GetMethod(nameof(MyNoCommentClass.Method));
+
+            var comments = Reader.GetMethodComments(method, true);
+
+            Assert.IsNull(comments);
         }
 
         [TestMethod]
@@ -242,6 +252,14 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void GetMethodComment_Null()
+        {
+            MemberInfo memberInfo = null;
+
+            Assert.ThrowsException<ArgumentNullException>(() => Reader.GetMemberComment(memberInfo));
+        }
+
+        [TestMethod]
         public void GetMethodComment()
         {
             var constructors = typeof(MySubClass).GetConstructors();
@@ -253,7 +271,7 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetMethodComments_SubClass()
+        public void GetMemberComments_SubClass()
         {
             var method = typeof(MySubClass).GetMethod(nameof(MySubClass.MethodWithComments));
             
@@ -267,7 +285,7 @@ namespace DocXmlUnitTests
                 "            <remarks>Method remarks</remarks>" + Environment.NewLine +
                 "            <example>Method example</example>",
                 comments.FullCommentText.Trim('\r', '\n', ' '));
-         }
+        }
 
         [DataTestMethod]
         [DataRow(typeof(MySubClass), nameof(MySubClass.MethodWithInParam), "MethodWithInParam description")]

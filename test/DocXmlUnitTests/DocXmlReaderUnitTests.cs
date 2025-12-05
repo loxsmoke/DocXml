@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using DocXmlOtherLibForUnitTests;
+﻿using DocXmlOtherLibForUnitTests;
 using DocXmlUnitTests.TestData;
 using LoxSmoke.DocXml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
+using System.Xml.XPath;
 
 #pragma warning disable CS1591
 
@@ -14,6 +13,13 @@ namespace DocXmlUnitTests
     [TestClass]
     public class DocXmlReaderUnitTests
     {
+        [TestMethod]
+        public void Constructor_NullPathProvider_Throws()
+        {
+            XPathDocument xPathDocument = null!;
+            Assert.ThrowsException<ArgumentException>(() => new DocXmlReader(xPathDocument));
+        }
+
         [TestMethod]
         public void GetTypeComments()
         {

@@ -40,6 +40,22 @@ namespace DocXmlUnitTests
     /// <summary>
     /// Enum type description
     /// </summary>
+    public enum TestEnumUInt32 : uint
+    {
+        /// <summary>
+        /// Enum value one
+        /// </summary>
+        Value1 = 10,
+        
+        /// <summary>
+        /// Enum value two
+        /// </summary>
+        Value2 = 20
+    };
+
+    /// <summary>
+    /// Enum type description
+    /// </summary>
     public enum TestEnumUInt64 : ulong
     {
         /// <summary>

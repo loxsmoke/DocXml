@@ -15,6 +15,18 @@ namespace DocXmlUnitTests
             base.Setup();
         }
 
+        [TestMethod]
+        public void GetMemberComment_NullMemberInfo_ThrowsArgumentNullException()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => Reader.GetMemberComment(null));
+        }
+
+        [TestMethod]
+        public void GetMemberComments_NullMemberInfo_ThrowsArgumentNullException()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => Reader.GetMemberComments(null));
+        }
+
         [DataTestMethod]
         [DataRow(nameof(MyClass.stringField), "String field description")]
         [DataRow(nameof(MyClass.noCommentField), "")]

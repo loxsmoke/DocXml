@@ -142,6 +142,14 @@ namespace DocXmlUnitTests
             Assert.AreEqual("M:DocXmlUnitTests.MyClass.MemberFunction2(System.Int32,System.Int32@)", id);
         }
 
+        [TestMethod]
+        public void MemberId_MethodWithMultiDimensionalArray()
+        {
+            var info = typeof(MyClass).GetMethod(nameof(MyClass.TemplateMethod4));
+            var id = info.MemberId();
+            Assert.AreEqual("M:DocXmlUnitTests.MyClass.TemplateMethod4``1(System.Collections.Generic.List{``0}[][][]@)", id);
+        }
+
         [DataTestMethod]
         [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithArray(System.Int16[],System.Int32[0:,0:])")]
         [DataRow(typeof(MyClass), nameof(MyClass.MemberFunctionWithGenericArray), "M:DocXmlUnitTests.MyClass.MemberFunctionWithGenericArray(System.Collections.Generic.List{System.Int32}[])")]

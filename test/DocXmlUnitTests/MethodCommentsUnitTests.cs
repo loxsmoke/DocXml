@@ -21,6 +21,14 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
+        public void GetMethodComments_NullInfo()
+        {
+            MethodBase methodBase = null;
+
+            Assert.ThrowsException<ArgumentNullException>(() => Reader.GetMethodComments(methodBase));
+        }
+
+        [TestMethod]
         public void GetMethodComments_Constructor_NoParams()
         {
             var constructor = typeof(MyClass).GetConstructor(Array.Empty<Type>());

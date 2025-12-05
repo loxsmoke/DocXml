@@ -90,17 +90,6 @@ namespace DocXmlUnitTests
         }
 
         [TestMethod]
-        public void GetEnumComments_WithValues_Comments()
-        {
-            var comments = Reader.GetEnumComments(typeof(TestEnumWithValueComments));
-
-            Assert.AreEqual("Enum type description", comments.Summary);
-            Assert.AreEqual(2, comments.ValueComments.Count);
-            AssertEnumComment(10, "Value1", "Enum value one", comments.ValueComments[0]);
-            AssertEnumComment(20, "Value2", "Enum value two", comments.ValueComments[1]);
-        }
-
-        [TestMethod]
         public void GetEnumComments_WithValue_Comments_OtherAssembly()
         {
             var comments = new DocXmlReader().GetEnumComments(typeof(OtherEnum));
@@ -110,35 +99,33 @@ namespace DocXmlUnitTests
             AssertEnumComment(1, "Value1", "Enum value one", comments.ValueComments[0]);
         }
 
-        [TestMethod]
-        public void GetEnumComments_WithValues_UInt8()
+        [DataTestMethod]
+        [DataRow(typeof(TestEnumWithValueComments))]
+        [DataRow(typeof(TestEnumUInt8))]
+        public void GetEnumComments_WithValues(Type enumType)
         {
-            var comments = Reader.GetEnumComments(typeof(TestEnumUInt8));
+            var comments = Reader.GetEnumComments(enumType);
 
+            Assert.AreEqual("Enum type description", comments.Summary);
             Assert.AreEqual(2, comments.ValueComments.Count);
             AssertEnumComment(10, "Value1", "Enum value one", comments.ValueComments[0]);
             AssertEnumComment(20, "Value2", "Enum value two", comments.ValueComments[1]);
         }
 
-        [TestMethod]
-        public void GetEnumComments_WithValues_UInt64()
+        [DataTestMethod]
+        [DataRow(typeof(TestEnumUInt32))]
+        [DataRow(typeof(TestEnumUInt64))]
+        [DataRow(typeof(TestEnumInt64))]
+        public void GetEnumComments_Big_WithValues(Type enumType)
         {
-            var comments = Reader.GetEnumComments(typeof(TestEnumUInt64));
+            var comments = Reader.GetEnumComments(enumType);
 
+            Assert.AreEqual("Enum type description", comments.Summary);
             Assert.AreEqual(2, comments.ValueComments.Count);
             AssertBigEnumComment(new BigInteger(10L), "Value1", "Enum value one", comments.ValueComments[0]);
             AssertBigEnumComment(new BigInteger(20L), "Value2", "Enum value two", comments.ValueComments[1]);
         }
 
-        [TestMethod]
-        public void GetEnumComments_WithValues_Int64()
-        {
-            var comments = Reader.GetEnumComments(typeof(TestEnumInt64));
-
-            Assert.AreEqual(2, comments.ValueComments.Count);
-            AssertBigEnumComment(new BigInteger(10L), "Value1", "Enum value one", comments.ValueComments[0]);
-            AssertBigEnumComment(new BigInteger(20L), "Value2", "Enum value two", comments.ValueComments[1]);
-        }
 
         [TestMethod]
         public void GetEnumComments_WithNegativeValues()
